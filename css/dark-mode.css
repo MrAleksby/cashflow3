@@ -1,0 +1,81 @@
+@media (prefers-color-scheme: dark) {
+    body { 
+        background: #222; 
+    }
+    
+    .container { 
+        background: #2c2c2c; 
+        color: #fff; 
+    }
+    
+    .block { 
+        background: #333; 
+    }
+    
+    input, select, textarea {
+        color: #fff !important;
+        background: #222 !important;
+        border-color: #444;
+    }
+    
+    input::placeholder {
+        color: #bbb !important;
+    }
+    
+    #calc-display {
+        color: #fff !important;
+        background: #222 !important;
+    }
+    
+    #summary-block, 
+    #summary-block h2, 
+    #summary-block span, 
+    #summary-block div {
+        color: #d0f8ce !important;
+    }
+    
+    #summary-block {
+        background: #263238 !important;
+        border-color: #388e3c !important;
+    }
+    
+    .modal-content {
+        background: #222;
+        color: #fff;
+    }
+    
+    .close-btn {
+        color: #aaa;
+    }
+    
+    .modal-form select,
+    .modal-form input {
+        background: #333;
+        color: #fff;
+        border-color: #444;
+    }
+    
+    #main-buy-dropdown, 
+    #main-sell-dropdown, 
+    #main-action-dropdown, 
+    #main-stock-dropdown, 
+    #main-action-sum-dropdown, 
+    #main-action-regular-expense-dropdown {
+        background: #222 !important;
+        color: #fff !important;
+        border-color: #1976d2 !important;
+    }
+    
+    #main-buy-dropdown div, 
+    #main-sell-dropdown div, 
+    #main-action-dropdown div {
+        background: #222 !important;
+        color: #fff !important;
+    }
+    
+    #main-buy-dropdown .main-buy-option, 
+    #main-sell-dropdown .main-sell-option, 
+    #main-action-dropdown .main-action-option {
+        color: #90caf9 !important;
+    }
+} 

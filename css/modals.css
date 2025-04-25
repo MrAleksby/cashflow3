@@ -1,0 +1,117 @@
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0,0,0,0.35);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: #fff;
+    padding: 28px 18px 18px 18px;
+    border-radius: 14px;
+    max-width: 95vw;
+    width: 350px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    font-size: 1.5em;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+}
+
+.modal-title {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 1.2em;
+}
+
+.modal-form {
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 10px !important;
+}
+
+.modal-form label {
+    display: block;
+    margin-top: 10px;
+}
+
+.modal-form select,
+.modal-form input {
+    width: 100%;
+    margin-top: 6px;
+    padding: 8px 6px;
+    font-size: 1em;
+}
+
+.modal-button {
+    width: 100%;
+    margin-top: 16px;
+    font-size: 1.1em;
+    padding: 10px 0;
+    border-radius: 8px;
+    background: #1976d2;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-button.gold {
+    background: linear-gradient(90deg,#FFD700,#B8860B);
+    font-weight: bold;
+}
+
+.modal-button.sell {
+    background: #ffb300;
+}
+
+/* Specific modal styles */
+#bankrupt-modal .modal-content {
+    padding: 40px 24px 32px 24px;
+    border-radius: 18px;
+    width: 370px;
+    box-shadow: 0 8px 32px rgba(200,0,0,0.25);
+    text-align: center;
+}
+
+#bankrupt-modal .modal-title {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #c00;
+    letter-spacing: 2px;
+}
+
+#bankrupt-modal .modal-desc {
+    margin-top: 18px;
+    font-size: 1.2em;
+    color: #444;
+}
+
+/* Hide number input spinners in modals */
+.modal-content input[type=number]::-webkit-inner-spin-button,
+.modal-content input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.modal-content input[type=number] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+} 

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Big Money Kids</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="bottom-nav.css">
+    <link rel="stylesheet" href="calculator.css">
+    <link rel="stylesheet" href="history.css">
+    <link rel="stylesheet" href="telegram.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header-row">
+          <div id="top-cash-value">Кошелёк: <span id="top-cash-amount">0</span></div>
+          <div class="logo-title">BMK</div>
+          <img src="logo.jpg" alt="Big Money Kids Logo" class="logo-img"/>
+        </div>
+        <div id="screen-cashflow" class="screen">
+            <div id="dropdowns-wrap" class="dropdowns-wrap">
+                <div id="action-btns-wrap" style="display:flex;gap:10px;width:100%;margin:0;position:relative;">
+                    <button id="main-buy-btn" class="action-btn buy">Купить</button>
+                    <button id="main-sell-btn" class="action-btn sell">Продать</button>
+                    <button id="main-action-btn" class="action-btn action">Действие</button>
+                </div>
+                <div id="main-action-sum-dropdown" class="modal">
+                    <div class="modal-content">
+                        <button id="close-action-sum-dropdown" class="close-btn">×</button>
+                        <h2 id="action-sum-title" class="modal-title">Действие</h2>
+                        <form id="action-sum-form" class="modal-form">
+                            <label>Сумма:
+                                <input type="number" id="action-sum-input" class="modal-input" min="0" value="">
+                            </label>
+                            <label>Комментарий:
+                                <input type="text" id="action-sum-comment" class="modal-input">
+                            </label>
+                            <button type="submit" class="modal-button">OK</button>
+                            <button type="button" id="payoff-credit-btn" class="modal-button gold">Погасить кредит</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="main-buy-dropdown" class="dropdown">
+                    <div class="dropdown-content">
+                        <div class="main-buy-option dropdown-option buy" data-type="Акции">Акции</div>
+                        <div class="main-buy-option dropdown-option buy" data-type="Недвижимость">Недвижимость</div>
+                        <div class="main-buy-option dropdown-option buy" data-type="Бизнес">Бизнес</div>
+                    </div>
+                </div>
+                <div id="main-sell-dropdown" class="dropdown">
+                    <div class="dropdown-content">
+                        <div class="main-sell-option dropdown-option sell" data-type="Акции">Акции</div>
+                        <div class="main-sell-option dropdown-option sell" data-type="Недвижимость">Недвижимость</div>
+                        <div class="main-sell-option dropdown-option sell" data-type="Бизнес">Бизнес</div>
+                    </div>
+                </div>
+                <div id="main-action-dropdown" class="dropdown">
+                    <div class="dropdown-content">
+                        <div class="main-action-option" data-type="Доход">Доход</div>
+                        <div class="main-action-option" data-type="Расход">Расход</div>
+                        <div class="main-action-option" data-type="Постоянный расход">Постоянный расход</div>
+                        <div class="main-action-option" data-type="Пассивный доход">Пассивный доход</div>
+                        <div class="main-action-option" data-type="Кредит">Кредит</div>
+                    </div>
+                </div>
+                <div id="main-stock-dropdown" class="dropdown">
+                    <div class="dropdown-content">
+                        <form id="main-stock-form">
+                            <label style="font-weight:bold;">Акция:
+                                <select id="main-stock-select">
+                                    <option value="MYT4U">MYT4U</option>
+                                    <option value="ON2U">ON2U</option>
+                                    <option value="OK4U">OK4U</option>
+                                    <option value="GRO4US">GRO4US</option>
+                                    <option value="2BIG">2BIG</option>
+                                    <option value="CD">CD</option>
+                                </select>
+                            </label>
+                            <label>Количество:
+                                <input type="number" id="main-stock-qty" min="0" value="1" placeholder="Количество">
+                            </label>
+                            <label>Цена за 1 акцию:
+                                <input type="number" id="main-stock-price" min="0" value="" placeholder="Цена за 1 акцию">
+                            </label>
+                            <button type="submit">Купить</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="main-action-regular-expense-dropdown" class="modal">
+                    <div class="modal-content">
+                        <button id="close-action-regular-expense-dropdown" class="close-btn">×</button>
+                        <h2 class="modal-title">Постоянный расход</h2>
+                        <form id="action-regular-expense-form" class="modal-form">
+                            <label>Название:
+                                <input type="text" id="action-regular-expense-name" required>
+                            </label>
+                            <label>Сумма:
+                                <input type="number" id="action-regular-expense-value" min="0" required>
+                            </label>
+                            <button type="submit">OK</button>
+                        </form>
+                    </div>
+                </div>
+                <div id="main-other-asset-form-wrap" class="modal">
+                    <div class="modal-content">
+                         <form id="main-other-asset-form" class="modal-form"></form>
+                         <button type="button" id="main-other-asset-cancel-static" class="close-btn">×</button>
+                    </div>
+                </div>
+            </div>
+            <div class="block" id="summary-block" style="margin-top:32px; background:#e8f5e9; border:1px solid #b2dfdb;">
+                <h2 style="color:#388e3c;">Финансовая формула</h2>
+                <div id="summary-list" style="margin-top:10px; font-size:1.2em; display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Зарплата</span><span id="salary-value">0</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Пассивный доход</span><span id="passive-value">0</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Общий доход</span><span id="income-sum">0</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Общий расход</span><span id="expense-sum">0</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:#388e3c;">
+                        <span>Поток</span><span id="cashflow">0</span>
+                    </div>
+                </div>
+            </div>
+            <button id="payday-coin">
+              <svg viewBox="0 0 110 110" width="99" height="99" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <radialGradient id="payday-glow" cx="0.5" cy="0.5" r="0.5">
+                    <stop offset="0%" stop-color="#fffde7"/>
+                    <stop offset="60%" stop-color="#FFD700"/>
+                    <stop offset="100%" stop-color="#FFB300"/>
+                  </radialGradient>
+                  <radialGradient id="payday-glow-outer" cx="0.5" cy="0.5" r="0.5">
+                    <stop offset="0%" stop-color="#fffde7" stop-opacity="0.7"/>
+                    <stop offset="80%" stop-color="#FFD700" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#FFB300" stop-opacity="0"/>
+                  </radialGradient>
+                </defs>
+                <circle cx="55" cy="55" r="48" fill="url(#payday-glow-outer)"/>
+                <circle cx="55" cy="55" r="38" fill="url(#payday-glow)"/>
+                <circle cx="55" cy="55" r="30" fill="#fffde7" fill-opacity="0.7"/>
+                <!-- Молния -->
+                <polygon points="60,38 52,60 58,60 50,82 74,54 64,54 70,38" fill="#fff" stroke="#FFD700" stroke-width="3" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <!-- Модальное окно для продажи -->
+            <div id="sell-modal" class="modal">
+                <div class="modal-content">
+                    <button id="close-sell-modal" class="close-btn">×</button>
+                    <h2 class="modal-title">Продажа актива</h2>
+                    <form id="sell-form" class="modal-form">
+                        <label>Актив:
+                            <select id="sell-asset-select"></select>
+                        </label>
+                        <div id="sell-qty-block">
+                            <label>Количество:
+                                <input type="number" id="sell-qty" min="1" value="1">
+                            </label>
+                        </div>
+                        <label>Цена за 1:
+                            <input type="number" id="sell-price" min="0" value="">
+                        </label>
+                        <button type="submit" class="sell">Продать</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div id="screen-income" class="screen">
+            <div class="block" id="income-block">
+                <h2>Доходы</h2>
+                <ul class="item-list" id="income-list"></ul>
+                <div class="total">Итого: <span id="income-total">0</span></div>
+            </div>
+        </div>
+        <div id="screen-expense" class="screen">
+            <div class="block" id="expense-block">
+                <h2>Расходы</h2>
+                <ul class="item-list" id="expense-list"></ul>
+                <div class="total">Итого: <span id="expense-total">0</span></div>
+            </div>
+        </div>
+        <div id="screen-asset" class="screen">
+            <div class="block" id="asset-block">
+                <h2>Активы</h2>
+                <ul class="item-list" id="asset-list"></ul>
+                <div class="total">Итого: <span id="asset-total">0</span></div>
+            </div>
+        </div>
+        <div id="screen-liability" class="screen">
+            <div class="block" id="liability-block">
+                <h2>Пассивы</h2>
+                <ul class="item-list" id="liability-list"></ul>
+                <div class="total">Итого: <span id="liability-total">0</span></div>
+            </div>
+        </div>
+        <div id="screen-history" class="screen">
+            <div class="block" id="history-block">
+                <h2>История операций</h2>
+                <div id="history-container" style="max-height:300px;overflow-y:auto;"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Нижняя панель навигации -->
+    <nav id="bottom-nav">
+        <button class="nav-btn cashflow" data-screen="cashflow">
+            <span style="display:block;width:1.6em;height:1.6em;">
+                <!-- Trend Up SVG -->
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#43a047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 17 9 11 13 15 21 7"></polyline><polyline points="14 7 21 7 21 14"></polyline></svg>
+            </span>
+            <span style="font-size:0.9em;">Поток</span>
+        </button>
+        <button class="nav-btn income" data-screen="income">
+            <span style="display:block;width:1.6em;height:1.6em;">
+                <!-- Arrow Up Circle SVG -->
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#43a047" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>
+            </span>
+            <span style="font-size:0.9em;">Доходы</span>
+        </button>
+        <button class="nav-btn expense" data-screen="expense">
+            <span style="display:block;width:1.6em;height:1.6em;">
+                <!-- Arrow Down Circle SVG -->
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d32f2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="8 12 12 16 16 12"/><line x1="12" y1="8" x2="12" y2="16"/></svg>
+            </span>
+            <span style="font-size:0.9em;">Расходы</span>
+        </button>
+        <button class="nav-btn asset" data-screen="asset">
+            <span style="display:block;width:1.6em;height:1.6em;">
+                <!-- Bank SVG -->
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ff9800" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 12 4 21 11"/><rect x="4" y="11" width="16" height="7" rx="2"/><line x1="8" y1="21" x2="8" y2="18"/><line x1="16" y1="21" x2="16" y2="18"/></svg>
+            </span>
+            <span style="font-size:0.9em;">Активы</span>
+        </button>
+        <button class="nav-btn liability" data-screen="liability">
+            <span style="display:block;width:1.6em;height:1.6em;">
+                <!-- File Text SVG -->
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/></svg>
+            </span>
+            <span style="font-size:0.9em;">Пассивы</span>
+        </button>
+        <!-- Удаляю кнопку истории из навигации -->
+        <!-- <button class="nav-btn" data-screen="history" ...>...</button> -->
+    </nav>
+    <!-- Модальное окно для редактирования истории -->
+    <div id="edit-history-modal" class="modal">
+        <div class="modal-content">
+            <button id="close-edit-history-modal" class="close-btn">×</button>
+            <h2 class="modal-title">Редактировать операцию</h2>
+            <form id="edit-history-form" class="modal-form">
+                <label>Тип:<br><input type="text" id="edit-history-type" readonly></label><br>
+                <label>Категория:<br><input type="text" id="edit-history-assetType" readonly></label><br>
+                <label>Название:<br><input type="text" id="edit-history-name"></label><br>
+                <label>Сумма:<br><input type="number" id="edit-history-amount"></label><br>
+                <label>Комментарий:<br><input type="text" id="edit-history-details"></label><br>
+                <button type="submit">OK</button>
+                <button type="button" id="payoff-credit-btn">Погасить кредит</button>
+            </form>
+        </div>
+    </div>
+    <!-- Кнопка калькулятора и кнопка истории -->
+    <button id="history-btn"><span>📜</span></button>
+    <button id="calculator-btn">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="4" width="24" height="24" rx="5" fill="#fff" stroke="#1976d2" stroke-width="2"/>
+        <rect x="8" y="8" width="16" height="6" rx="2" fill="#e3f2fd"/>
+        <rect x="8" y="16" width="4" height="4" rx="1.2" fill="#90caf9"/>
+        <rect x="14" y="16" width="4" height="4" rx="1.2" fill="#90caf9"/>
+        <rect x="20" y="16" width="4" height="4" rx="1.2" fill="#90caf9"/>
+        <rect x="8" y="22" width="4" height="4" rx="1.2" fill="#90caf9"/>
+        <rect x="14" y="22" width="4" height="4" rx="1.2" fill="#90caf9"/>
+        <rect x="20" y="22" width="4" height="4" rx="1.2" fill="#90caf9"/>
+      </svg>
+    </button>
+    <!-- Модальное окно калькулятора -->
+    <div id="calculator-modal" class="modal">
+      <div class="modal-content">
+        <button id="close-calculator-modal" class="close-btn">×</button>
+        <h2 class="modal-title">Калькулятор</h2>
+        <input id="calc-display" type="text" readonly>
+        <div id="calc-buttons">
+          <button class="calc-btn" data-value="7">7</button>
+          <button class="calc-btn" data-value="8">8</button>
+          <button class="calc-btn" data-value="9">9</button>
+          <button class="calc-btn" data-value="/">÷</button>
+          <button class="calc-btn" data-value="4">4</button>
+          <button class="calc-btn" data-value="5">5</button>
+          <button class="calc-btn" data-value="6">6</button>
+          <button class="calc-btn" data-value="*">×</button>
+          <button class="calc-btn" data-value="1">1</button>
+          <button class="calc-btn" data-value="2">2</button>
+          <button class="calc-btn" data-value="3">3</button>
+          <button class="calc-btn" data-value="-">−</button>
+          <button class="calc-btn" data-value="0">0</button>
+          <button class="calc-btn" data-value=".">.</button>
+          <button class="calc-btn" id="calc-clear">C</button>
+          <button class="calc-btn" data-value="+">+</button>
+          <button class="calc-btn" data-value="%" id="calc-percent">%</button>
+          <button class="calc-btn" id="calc-equals">=</button>
+        </div>
+        <button id="calc-copy">Скопировать результат</button>
+      </div>
+    </div>
+    <!-- Модальное окно для ввода имени игрока -->
+    <div id="player-name-modal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">Введите имя игрока</h2>
+        <form id="player-name-form" class="modal-form">
+          <input type="text" id="player-name-input" placeholder="Ваше имя" required>
+          <button type="submit">OK</button>
+        </form>
+      </div>
+    </div>
+    <!-- Модальное окно банкротства -->
+    <div id="bankrupt-modal" class="modal">
+      <div class="modal-content">
+        <h2 class="modal-title">ВЫ БАНКРОТ!</h2>
+        <div class="modal-desc">Баланс не может быть отрицательным.</div>
+        <button id="close-bankrupt-modal" class="modal-button">OK</button>
+      </div>
+    </div>
+    <script src="credit.js"></script>
+    <script src="history.js"></script>
+    <script src="calculator.js"></script>
+    <script src="assets.js"></script>
+    <script src="bottom-nav.js"></script>
+    <script src="telegram.js"></script>
+</body>
+</html> 
