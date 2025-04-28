@@ -41,40 +41,44 @@
     flex: 1;
     display: block;
     color: #fff;
-    font-size: 1.3em;
-    font-weight: bold;
-    padding: 16px 0;
+    font-size: 1.1em;
+    font-weight: 600;
+    padding: 12px 0;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.10);
     cursor: pointer;
-    transition: background 0.2s;
+    transition: all 0.2s ease;
     position: relative;
     z-index: 2;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .action-btn.buy {
     background: linear-gradient(90deg,#4caf50,#388e3c);
 }
 
-.action-btn.buy:hover {
+.action-btn.buy:active {
     background: linear-gradient(90deg,#43a047,#2e7d32);
+    transform: translateY(1px);
 }
 
 .action-btn.sell {
     background: linear-gradient(90deg,#ffb300,#ff7043);
 }
 
-.action-btn.sell:hover {
+.action-btn.sell:active {
     background: linear-gradient(90deg,#ffa000,#f4511e);
+    transform: translateY(1px);
 }
 
 .action-btn.action {
     background: linear-gradient(90deg,#1976d2,#64b5f6);
 }
 
-.action-btn.action:hover {
+.action-btn.action:active {
     background: linear-gradient(90deg,#1565c0,#42a5f5);
+    transform: translateY(1px);
 }
 
 /* Tables */
@@ -157,14 +161,15 @@ th {
 /* Мобильная навигация */
 .bottom-nav {
     position: fixed;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom, 0);
     left: 0;
     right: 0;
     background: #ffffff;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 -1px 8px rgba(0, 0, 0, 0.08);
     display: flex;
-    justify-content: space-around;
-    padding: 10px 0;
+    justify-content: space-between;
+    padding: 8px 12px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0));
     z-index: 1000;
 }
 
@@ -172,25 +177,45 @@ th {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 8px 12px;
-    color: #666;
+    padding: 6px 8px;
+    color: var(--text-color-light);
     text-decoration: none;
-    font-size: 12px;
-    min-width: 60px;
+    font-size: 0.7rem;
+    min-width: 48px;
+    max-width: 72px;
+    border-radius: 6px;
 }
 
 .nav-item i {
-    font-size: 20px;
-    margin-bottom: 4px;
+    font-size: 1.2rem;
+    margin-bottom: 3px;
+    color: inherit;
 }
 
 .nav-item.active {
-    color: #4CAF50;
+    color: var(--primary-color);
+    background: #E8F5E9;
 }
 
-/* Добавляем отступ для контента, чтобы он не перекрывался навигацией */
+/* Добавляем отступ для контента */
 .main-content {
-    padding-bottom: 70px;
+    padding-bottom: calc(65px + env(safe-area-inset-bottom, 20px));
+}
+
+@media (max-width: 480px) {
+    .action-btn {
+        font-size: 1em;
+        padding: 10px 0;
+    }
+
+    .nav-item {
+        padding: 4px 6px;
+        font-size: 0.65rem;
+    }
+
+    .nav-item i {
+        font-size: 1.1rem;
+    }
 }
 
 /* Стили для тёмной темы */
