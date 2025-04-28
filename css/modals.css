@@ -236,20 +236,49 @@
 }
 
 .asset-categories {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-    padding: 20px 0;
+    display: flex;
+    gap: 10px;
+    padding: 10px 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    white-space: nowrap;
+    margin: 0 -10px;
+    padding: 10px;
+}
+
+/* Скрываем полосу прокрутки для WebKit */
+.asset-categories::-webkit-scrollbar {
+    display: none;
 }
 
 .category-card {
+    flex: 0 0 auto;
+    min-width: 120px;
     background: #fff;
-    border: 2px solid #e0e0e0;
-    border-radius: 16px;
-    padding: 24px;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s ease;
+}
+
+@media (max-width: 480px) {
+    .asset-categories {
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .category-card {
+        min-width: 100px;
+        padding: 8px;
+    }
+
+    .category-card h3 {
+        font-size: 0.9em;
+    }
 }
 
 .category-card:hover {
