@@ -54,32 +54,57 @@
         color: #fff;
         border-color: #444;
     }
+
+    /* Общие стили для всех списков активов в темном режиме */
+    .asset-list,
+    #business-list,
+    #realestate-list,
+    #stock-list,
+    #preciousmetals-list,
+    #misc-list {
+        background: #222 !important;
+        border-color: #444 !important;
+    }
     
     /* Стили для списка активов в темном режиме */
     #business-list .asset-item,
-    .asset-item {
+    .asset-item,
+    .stock-item,
+    .realestate-item,
+    .preciousmetals-item,
+    .misc-item {
         background: #333 !important;
         color: #fff !important;
         border-color: #444 !important;
     }
 
     #business-list .asset-item:hover,
-    .asset-item:hover {
+    .asset-item:hover,
+    .stock-item:hover,
+    .realestate-item:hover,
+    .preciousmetals-item:hover,
+    .misc-item:hover {
         background: #444 !important;
     }
 
     #business-list .asset-item.selected,
-    .asset-item.selected {
+    .asset-item.selected,
+    .stock-item.selected,
+    .realestate-item.selected,
+    .preciousmetals-item.selected,
+    .misc-item.selected {
         background: #1a237e !important;
         border-color: #3f51b5 !important;
     }
 
-    /* Стили для деталей бизнеса в темном режиме */
+    /* Стили для деталей всех активов в темном режиме */
     .business-details,
     .stock-details,
     .realestate-details,
     .preciousmetals-details,
-    .misc-details {
+    .misc-details,
+    .selected-stock-info,
+    .selected-asset-info {
         background: #333 !important;
         color: #fff !important;
         border-color: #444 !important;
@@ -89,7 +114,8 @@
     .stock-details p,
     .realestate-details p,
     .preciousmetals-details p,
-    .misc-details p {
+    .misc-details p,
+    .info-row label {
         color: #fff !important;
     }
 
@@ -101,24 +127,45 @@
         color: #bbb !important;
     }
 
-    /* Стили для элементов управления продажей в темном режиме */
-    .sell-controls {
+    /* Стили для элементов управления покупкой/продажей в темном режиме */
+    .sell-controls,
+    .buy-controls,
+    .stock-inputs,
+    .business-inputs,
+    .realestate-inputs,
+    .precious-metal-inputs,
+    .misc-inputs {
         background: #333 !important;
         border-color: #444 !important;
     }
 
-    .sell-controls label {
+    .sell-controls label,
+    .buy-controls label,
+    .stock-inputs label,
+    .business-inputs label,
+    .realestate-inputs label,
+    .precious-metal-inputs label,
+    .misc-inputs label {
         color: #fff !important;
     }
 
-    .sell-controls input {
+    .sell-controls input,
+    .buy-controls input,
+    .stock-inputs input,
+    .business-inputs input,
+    .realestate-inputs input,
+    .precious-metal-inputs input,
+    .misc-inputs input,
+    .info-row input {
         background: #222 !important;
         color: #fff !important;
         border-color: #444 !important;
     }
 
     /* Стили для информации о сумме в темном режиме */
-    .total-info {
+    .total-info,
+    .total-price,
+    .total-dividend {
         background: #333 !important;
         color: #fff !important;
         border-color: #444 !important;
@@ -128,8 +175,54 @@
         color: #fff !important;
     }
 
-    .total-info span {
+    .total-info span,
+    .profit-loss.positive {
         color: #4CAF50 !important;
+    }
+
+    .profit-loss.negative {
+        color: #f44336 !important;
+    }
+
+    /* Стили для категорий активов в темном режиме */
+    .category-card {
+        background: #333 !important;
+        border-color: #444 !important;
+        color: #fff !important;
+    }
+
+    .category-card:hover {
+        background: #444 !important;
+        border-color: #1976d2 !important;
+    }
+
+    .category-card.active {
+        background: #1a237e !important;
+        border-color: #3f51b5 !important;
+    }
+
+    .category-card p {
+        color: #bbb !important;
+    }
+
+    /* Стили для селекторов типа в темном режиме */
+    .type-group {
+        background: #333 !important;
+        border-color: #444 !important;
+    }
+
+    .type-group h4 {
+        color: #fff !important;
+    }
+
+    .type-btn {
+        background: #222 !important;
+        color: #fff !important;
+        border-color: #444 !important;
+    }
+
+    .type-btn:hover {
+        background: #444 !important;
     }
     
     #main-buy-dropdown, 
