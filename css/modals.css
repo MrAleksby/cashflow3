@@ -310,23 +310,28 @@
 
 /* Стили для списка активов */
 .asset-list {
+    display: block !important;
+    width: 100% !important;
     max-height: 300px;
     overflow-y: auto;
-    margin-bottom: 15px;
+    overflow-x: hidden !important;
+    margin: 10px 0;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     background: #fff;
 }
 
 .asset-item {
+    display: flex !important;
+    justify-content: space-between;
+    align-items: center;
     padding: 10px;
     border-bottom: 1px solid #e0e0e0;
     cursor: pointer;
     transition: background-color 0.2s;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     font-size: 0.9em;
+    width: 100% !important;
+    box-sizing: border-box;
 }
 
 .asset-item:last-child {
@@ -342,7 +347,20 @@
     border-left: 3px solid #4CAF50;
 }
 
-/* Стили для мобильных устройств */
+.asset-item .asset-name {
+    flex: 1;
+    margin-right: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.asset-item .asset-price {
+    flex-shrink: 0;
+    font-weight: 500;
+    color: #666;
+}
+
 @media (max-width: 480px) {
     .asset-list {
         max-height: 250px;
@@ -356,9 +374,6 @@
 
     .asset-item .asset-name {
         max-width: 60%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
     }
 
     .asset-item .asset-price {
@@ -1176,6 +1191,12 @@
 #business-list,
 #preciousmetals-list,
 #misc-list {
-    width: 100%;
-    overflow-x: hidden;
+    display: block !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
+}
+
+/* Убираем все старые стили для asset-card */
+.asset-card {
+    display: none !important;
 } 
