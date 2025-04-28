@@ -55,6 +55,83 @@
         border-color: #444;
     }
     
+    /* Стили для списка активов в темном режиме */
+    #business-list .asset-item,
+    .asset-item {
+        background: #333 !important;
+        color: #fff !important;
+        border-color: #444 !important;
+    }
+
+    #business-list .asset-item:hover,
+    .asset-item:hover {
+        background: #444 !important;
+    }
+
+    #business-list .asset-item.selected,
+    .asset-item.selected {
+        background: #1a237e !important;
+        border-color: #3f51b5 !important;
+    }
+
+    /* Стили для деталей бизнеса в темном режиме */
+    .business-details,
+    .stock-details,
+    .realestate-details,
+    .preciousmetals-details,
+    .misc-details {
+        background: #333 !important;
+        color: #fff !important;
+        border-color: #444 !important;
+    }
+
+    .business-details p,
+    .stock-details p,
+    .realestate-details p,
+    .preciousmetals-details p,
+    .misc-details p {
+        color: #fff !important;
+    }
+
+    .business-details span,
+    .stock-details span,
+    .realestate-details span,
+    .preciousmetals-details span,
+    .misc-details span {
+        color: #bbb !important;
+    }
+
+    /* Стили для элементов управления продажей в темном режиме */
+    .sell-controls {
+        background: #333 !important;
+        border-color: #444 !important;
+    }
+
+    .sell-controls label {
+        color: #fff !important;
+    }
+
+    .sell-controls input {
+        background: #222 !important;
+        color: #fff !important;
+        border-color: #444 !important;
+    }
+
+    /* Стили для информации о сумме в темном режиме */
+    .total-info {
+        background: #333 !important;
+        color: #fff !important;
+        border-color: #444 !important;
+    }
+
+    .total-info p {
+        color: #fff !important;
+    }
+
+    .total-info span {
+        color: #4CAF50 !important;
+    }
+    
     #main-buy-dropdown, 
     #main-sell-dropdown, 
     #main-action-dropdown, 
