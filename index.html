@@ -4,12 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Big Money Kids</title>
-    <link rel="stylesheet" href="css/base.css">
-    <link rel="stylesheet" href="css/layout.css">
-    <link rel="stylesheet" href="css/components.css">
-    <link rel="stylesheet" href="css/modals.css">
-    <link rel="stylesheet" href="css/dark-mode.css">
-    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
@@ -20,14 +15,13 @@
             <img src="logo.jpg" alt="Big Money Kids Logo" class="logo-img"/>
         </div>
         <div id="screen-cashflow" class="screen">
-            <div id="action-btns-wrap" style="display:flex;gap:10px;width:100%;margin:0;position:relative;">
+                <div id="action-btns-wrap" style="display:flex;gap:10px;width:100%;margin:0;position:relative;">
                 <button id="main-buy-btn" class="action-btn buy">Купить</button>
                 <button id="main-sell-btn" class="action-btn sell">Продать</button>
                 <button id="main-action-btn" class="action-btn action">Действие</button>
-            </div>
+                </div>
             
             <div class="block" id="summary-block" style="margin-top:32px; background:#e8f5e9; border:1px solid #b2dfdb;">
-                <h2 style="color:#388e3c;">Финансовая формула</h2>
                 <div id="summary-list" style="margin-top:10px; font-size:1.2em; display:flex; flex-direction:column; gap:6px;">
                     <div style="display:flex; justify-content:space-between; align-items:center;">
                         <span>Зарплата</span><span id="salary-value">0</span>
@@ -46,11 +40,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+                        </div>
 
         <div id="screen-income" class="screen" style="display:none;">
             <div class="block" id="income-block">
-                <h2>Доходы</h2>
                 <ul class="item-list" id="income-list"></ul>
                 <div class="total">Итого: <span id="income-total">0</span></div>
             </div>
@@ -58,7 +51,6 @@
 
         <div id="screen-expense" class="screen" style="display:none;">
             <div class="block" id="expense-block">
-                <h2>Расходы</h2>
                 <ul class="item-list" id="expense-list"></ul>
                 <div class="total">Итого: <span id="expense-total">0</span></div>
             </div>
@@ -66,7 +58,6 @@
 
         <div id="screen-asset" class="screen" style="display:none;">
             <div class="block" id="asset-block">
-                <h2>Активы</h2>
                 <ul class="item-list" id="asset-list"></ul>
                 <div class="total">Итого: <span id="asset-total">0</span></div>
             </div>
@@ -74,7 +65,6 @@
 
         <div id="screen-liability" class="screen" style="display:none;">
             <div class="block" id="liability-block">
-                <h2>Пассивы</h2>
                 <ul class="item-list" id="liability-list"></ul>
                 <div class="total">Итого: <span id="liability-total">0</span></div>
             </div>
@@ -90,7 +80,7 @@
 
     <!-- Нижняя панель навигации -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active" data-section="asset">
+        <a href="#" class="nav-item" data-section="asset">
             <i class="fas fa-chart-line"></i>
             <span>Активы</span>
         </a>
@@ -98,7 +88,7 @@
             <i class="fas fa-wallet"></i>
             <span>Пассивы</span>
         </a>
-        <a href="#" class="nav-item" data-section="cashflow">
+        <a href="#" class="nav-item active" data-section="cashflow">
             <i class="fas fa-stream"></i>
             <span>Поток</span>
         </a>
@@ -112,56 +102,181 @@
         </a>
     </nav>
 
-    <!-- Кнопки дополнительных функций -->
-    <button id="history-btn"><span>📜</span></button>
-    <button id="calculator-btn">
-        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="4" width="24" height="24" rx="5" fill="#fff" stroke="#1976d2" stroke-width="2"/>
-            <rect x="8" y="8" width="16" height="6" rx="2" fill="#e3f2fd"/>
-            <rect x="8" y="16" width="4" height="4" rx="1.2" fill="#90caf9"/>
-            <rect x="14" y="16" width="4" height="4" rx="1.2" fill="#90caf9"/>
-            <rect x="20" y="16" width="4" height="4" rx="1.2" fill="#90caf9"/>
-            <rect x="8" y="22" width="4" height="4" rx="1.2" fill="#90caf9"/>
-            <rect x="14" y="22" width="4" height="4" rx="1.2" fill="#90caf9"/>
-            <rect x="20" y="22" width="4" height="4" rx="1.2" fill="#90caf9"/>
-        </svg>
-    </button>
+    <style>
+        .bottom-nav {
+            position: fixed;
+            bottom: env(safe-area-inset-bottom, 0);
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+            box-shadow: 0 -1px 12px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+        }
 
-    <!-- Модальные окна калькулятора и истории -->
-    <div id="calculator-modal" class="modal">
+        .nav-item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px 12px;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border-radius: 12px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 4px;
+            transition: transform 0.2s ease;
+        }
+
+        .nav-item span {
+            white-space: nowrap;
+            transition: color 0.2s ease;
+        }
+
+        .nav-item.active {
+            color: #4CAF50;
+            background: #E8F5E9;
+        }
+
+        .nav-item.active i {
+            transform: translateY(-2px);
+        }
+
+        .nav-item:not(.active):hover {
+            background: #f5f5f5;
+            color: #4CAF50;
+        }
+
+        /* Добавляем отступ для контента */
+        body {
+            padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+        }
+
+        /* Оптимизация для маленьких экранов */
+        @media (max-width: 360px) {
+            .nav-item {
+                padding: 6px 8px;
+                font-size: 0.7rem;
+            }
+            
+            .nav-item i {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+
+    <!-- Модальное окно для покупки активов -->
+    <div id="buy-modal" class="modal">
         <div class="modal-content">
-            <button id="close-calculator-modal" class="close-btn">×</button>
-            <h2 class="modal-title">Калькулятор</h2>
-            <input id="calc-display" type="text" readonly>
-            <div id="calc-buttons">
-                <button class="calc-btn" data-value="7">7</button>
-                <button class="calc-btn" data-value="8">8</button>
-                <button class="calc-btn" data-value="9">9</button>
-                <button class="calc-btn" data-value="/">÷</button>
-                <button class="calc-btn" data-value="4">4</button>
-                <button class="calc-btn" data-value="5">5</button>
-                <button class="calc-btn" data-value="6">6</button>
-                <button class="calc-btn" data-value="*">×</button>
-                <button class="calc-btn" data-value="1">1</button>
-                <button class="calc-btn" data-value="2">2</button>
-                <button class="calc-btn" data-value="3">3</button>
-                <button class="calc-btn" data-value="-">−</button>
-                <button class="calc-btn" data-value="0">0</button>
-                <button class="calc-btn" data-value=".">.</button>
-                <button class="calc-btn" id="calc-clear">C</button>
-                <button class="calc-btn" data-value="+">+</button>
-                <button class="calc-btn" data-value="%" id="calc-percent">%</button>
-                <button class="calc-btn" id="calc-equals">=</button>
+            <button class="close-btn">&times;</button>
+            <h2>Выберите тип актива</h2>
+            <div class="asset-categories">
+                <div class="category-card" data-category="stocks">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Акции</h3>
+                    <p>Инвестиции в ценные бумаги</p>
+                </div>
+                <div class="category-card" data-category="realestate">
+                    <i class="fas fa-home"></i>
+                    <h3>Недвижимость</h3>
+                    <p>Дома, квартиры, офисы</p>
+                </div>
+                <div class="category-card" data-category="business">
+                    <i class="fas fa-store"></i>
+                    <h3>Бизнес</h3>
+                    <p>Малый и средний бизнес</p>
+                </div>
             </div>
-            <button id="calc-copy">Скопировать результат</button>
         </div>
     </div>
 
-    <script src="history.js"></script>
-    <script src="calculator.js"></script>
-    <script src="assets.js"></script>
+    <!-- Модальное окно продажи активов -->
+    <div id="sell-modal" class="modal">
+        <div class="modal-content">
+            <h2>Продажа активов</h2>
+            <span class="close-btn">&times;</span>
+            
+            <!-- Выбор типа актива -->
+            <div class="asset-type-selector">
+                <button class="asset-type-btn active" data-type="stocks">Акции</button>
+                <button class="asset-type-btn" data-type="realestate">Недвижимость</button>
+            </div>
+            
+            <!-- Список активов -->
+            <div id="stock-list" class="asset-list"></div>
+            <div id="realestate-list" class="asset-list" style="display: none;"></div>
+            
+            <!-- Информация о выбранной акции -->
+            <div id="selected-stock-info" class="selected-asset-info" style="display: none;">
+                <div class="stock-details">
+                    <p>Акция: <span class="selected-stock-name"></span></p>
+                    <p>В наличии: <span class="selected-stock-quantity"></span> шт.</p>
+                    <p>Цена покупки: <span class="selected-stock-buy-price"></span>/шт</p>
+                    
+                    <!-- Информация о дивидендах -->
+                    <div class="dividend-info" style="display: none;">
+                        <p>Текущий доход: <span class="current-dividend"></span>/мес</p>
+                    </div>
+                </div>
+                
+                <!-- Поля для продажи -->
+                <div class="sell-controls">
+                    <div class="input-group">
+                        <label>Количество для продажи:</label>
+                        <input type="number" class="sell-quantity" min="1" step="1">
+                    </div>
+                    <div class="input-group">
+                        <label>Цена продажи за акцию ($):</label>
+                        <input type="number" class="sell-price" min="0" step="1">
+                    </div>
+                    <div class="total-info">
+                        <p>Итого к получению: <span class="sell-total">$0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о выбранной недвижимости -->
+            <div id="selected-realestate-info" class="selected-asset-info" style="display: none;">
+                <div class="realestate-details">
+                    <p>Объект: <span class="selected-realestate-name"></span></p>
+                    <p>Стоимость: <span class="selected-realestate-value"></span></p>
+                    <p>Пассивный доход: <span class="selected-realestate-income"></span>/мес</p>
+                </div>
+                
+                <!-- Поля для продажи -->
+                <div class="sell-controls">
+                    <div class="input-group">
+                        <label>Цена продажи ($):</label>
+                        <input type="number" class="sell-realestate-price" min="0" step="1000">
+                    </div>
+                    <div class="total-info">
+                        <p>Итого к получению: <span class="sell-realestate-total">$0</span></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Кнопки -->
+            <div class="modal-buttons">
+                <button id="sell-asset-btn" disabled>Продать</button>
+                <button id="cancel-sell-btn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/assets.js"></script>
     <script src="js/app.js"></script>
-    <script src="telegram.js"></script>
-    <script src="modals.js"></script>
+    <script src="js/modals.js"></script>
+    <script src="js/buy-modal.js"></script>
 </body>
 </html> 

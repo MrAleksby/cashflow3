@@ -13,22 +13,8 @@
     // === ИНИЦИАЛИЗАЦИЯ КОШЕЛЬКА ===
     if (typeof window.cash !== 'number' || isNaN(window.cash)) window.cash = 0;
 
-    // Кнопки купить/продать/действие - пока без функционала
-    var buyBtn = document.getElementById('main-buy-btn');
-    var sellBtn = document.getElementById('main-sell-btn');
+    // Кнопка действие - пока без функционала
     var actionBtn = document.getElementById('main-action-btn');
-
-    if (buyBtn) {
-      buyBtn.addEventListener('click', function() {
-        console.log('Купить - функционал временно отключен');
-      });
-    }
-
-    if (sellBtn) {
-      sellBtn.addEventListener('click', function() {
-        console.log('Продать - функционал временно отключен');
-      });
-    }
 
     if (actionBtn) {
       actionBtn.addEventListener('click', function() {
@@ -45,17 +31,30 @@
     if (!window.data || !Array.isArray(window.data.asset)) {
       assetList.innerHTML = '<li style="color:#888;">Нет активов</li>';
       if (assetTotal) assetTotal.textContent = '0';
-      return;
-    }
+          return;
+        }
     if (window.data.asset.length === 0) {
       assetList.innerHTML = '<li style="color:#888;">Нет активов</li>';
       if (assetTotal) assetTotal.textContent = '0';
-      return;
-    }
+          return;
+        }
     var total = 0;
     assetList.innerHTML = window.data.asset.map(function(a) {
-      total += Number(a.value) || 0;
-      return `<li>${a.name} <span style='float:right;'>${a.value}</span></li>`;
+      let value = 0;
+      let displayText = '';
+      
+      if (a.type === 'stocks') {
+        // Для акций показываем количество и цену за штуку
+        value = a.quantity * a.price;
+        displayText = `${a.name} (${a.quantity} шт. по $${a.price}/шт)`;
+      } else {
+        // Для остальных активов показываем просто значение
+        value = Number(a.value) || 0;
+        displayText = a.name;
+      }
+      
+      total += value;
+      return `<li>${displayText} <span style='float:right;'>$${value}</span></li>`;
     }).join('');
     if (assetTotal) assetTotal.textContent = total;
   };
@@ -68,13 +67,13 @@
     if (!window.data || !Array.isArray(window.data.income)) {
       incomeList.innerHTML = '<li style="color:#888;">Нет доходов</li>';
       if (incomeTotal) incomeTotal.textContent = '0';
-      return;
-    }
+          return;
+        }
     if (window.data.income.length === 0) {
       incomeList.innerHTML = '<li style="color:#888;">Нет доходов</li>';
       if (incomeTotal) incomeTotal.textContent = '0';
-      return;
-    }
+          return;
+        }
     var total = 0;
     incomeList.innerHTML = window.data.income.map(function(a) {
       total += Number(a.value) || 0;
@@ -137,38 +136,20 @@
     if (cashElem) cashElem.textContent = cash;
   };
 
-  // === ОТРИСОВКА ФИНАНСОВОЙ ФОРМУЛЫ ===
-  window.renderSummary = function() {
-    var passiveElem = document.getElementById('passive-value');
-    var incomeSumElem = document.getElementById('income-sum');
-    var expenseSumElem = document.getElementById('expense-sum');
-    var cashflowElem = document.getElementById('cashflow');
-    var salaryElem = document.getElementById('salary-value');
-
-    var passive = 0, incomeSum = 0, expenseSum = 0, salary = 0;
-    if (window.data && Array.isArray(window.data.income)) {
-      window.data.income.forEach(function(a) {
-        if (a.name && a.name.startsWith('Пассивный доход')) passive += Number(a.value) || 0;
-        if (a.name && a.name === 'Зарплата') salary += Number(a.value) || 0;
-        incomeSum += Number(a.value) || 0;
-      });
-    }
-    if (window.data && Array.isArray(window.data.expense)) {
-      window.data.expense.forEach(function(a) {
-        expenseSum += Number(a.value) || 0;
-      });
-    }
-    if (passiveElem) passiveElem.textContent = passive;
-    if (incomeSumElem) incomeSumElem.textContent = incomeSum;
-    if (expenseSumElem) expenseSumElem.textContent = expenseSum;
-    if (salaryElem) salaryElem.textContent = salary;
-    if (cashflowElem) cashflowElem.textContent = incomeSum - expenseSum;
-  };
-
   // Инициализация данных при загрузке
   if (typeof window.data !== 'object' || !window.data) window.data = {};
   if (!Array.isArray(window.data.asset)) window.data.asset = [];
   if (!Array.isArray(window.data.income)) window.data.income = [];
   if (!Array.isArray(window.data.expense)) window.data.expense = [];
   if (!Array.isArray(window.data.liability)) window.data.liability = [];
-})();
+
+  // Функция расчета дивидендов
+  window.calculateDividends = function(stockName, quantity) {
+    const dividendRates = {
+      '2BIGPOWER': 100, // $100 за акцию
+      'CD': 50         // $50 за акцию
+    };
+    
+    return (dividendRates[stockName] || 0) * quantity;
+  };
+})(); 
