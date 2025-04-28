@@ -891,27 +891,49 @@
     background: #e9ecef;
 }
 
-/* Asset Type Selector Styles */
+/* Стили для выбора типа актива в модальном окне продажи */
 .asset-type-selector {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 10px;
+    margin-bottom: 15px;
 }
 
 .asset-type-btn {
-    padding: 10px 20px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #f5f5f5;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
+    font-size: 0.9em;
+    color: #333;
+}
+
+.asset-type-btn:hover {
+    border-color: #4CAF50;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
 }
 
 .asset-type-btn.active {
-    background: #4CAF50;
-    color: white;
     border-color: #4CAF50;
+    background: #E8F5E9;
+}
+
+@media (max-width: 480px) {
+    .asset-type-selector {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .asset-type-btn {
+        padding: 6px;
+        font-size: 0.8em;
+    }
 }
 
 .asset-list {
