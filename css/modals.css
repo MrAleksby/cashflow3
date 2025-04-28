@@ -236,85 +236,75 @@
 }
 
 .asset-categories {
-    display: flex;
-    gap: 10px;
-    padding: 10px 0;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
-    white-space: nowrap;
-    margin: 0 -10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
     padding: 10px;
 }
 
-/* Скрываем полосу прокрутки для WebKit */
-.asset-categories::-webkit-scrollbar {
-    display: none;
-}
-
 .category-card {
-    flex: 0 0 auto;
-    min-width: 120px;
     background: #fff;
     border: 1px solid #e0e0e0;
-    border-radius: 12px;
-    padding: 12px;
+    border-radius: 8px;
+    padding: 8px;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
 }
 
-@media (max-width: 480px) {
-    .asset-categories {
-        gap: 8px;
-        padding: 8px;
-    }
+.category-card i {
+    font-size: 1.5em;
+    color: #4CAF50;
+    margin-bottom: 4px;
+}
 
-    .category-card {
-        min-width: 100px;
-        padding: 8px;
-    }
+.category-card h3 {
+    margin: 0;
+    color: #333;
+    font-size: 0.9em;
+    font-weight: 500;
+}
 
-    .category-card h3 {
-        font-size: 0.9em;
-    }
+.category-card p {
+    margin: 2px 0 0 0;
+    color: #666;
+    font-size: 0.8em;
 }
 
 .category-card:hover {
     border-color: #4CAF50;
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
 }
 
-.category-card i {
-    font-size: 2.5em;
-    color: #4CAF50;
-    margin-bottom: 16px;
-}
-
-.category-card h3 {
-    margin: 0 0 8px 0;
-    color: #333;
-    font-size: 1.2em;
-}
-
-.category-card p {
-    margin: 0;
-    color: #666;
-    font-size: 0.9em;
-}
-
-/* Анимация для иконок при наведении */
-.category-card:hover i {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
-}
-
-/* Стили для активной категории */
 .category-card.active {
     border-color: #4CAF50;
     background: #E8F5E9;
+}
+
+@media (max-width: 480px) {
+    .asset-categories {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        padding: 6px;
+    }
+
+    .category-card {
+        padding: 6px;
+    }
+
+    .category-card i {
+        font-size: 1.3em;
+        margin-bottom: 2px;
+    }
+
+    .category-card h3 {
+        font-size: 0.8em;
+    }
+
+    .category-card p {
+        font-size: 0.7em;
+    }
 }
 
 /* Стили для списка активов */
