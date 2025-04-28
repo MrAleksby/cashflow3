@@ -1041,6 +1041,7 @@
     }
 }
 
+/* Стили для продажи бизнеса */
 #business-list .asset-item {
     display: flex;
     justify-content: space-between;
@@ -1051,6 +1052,7 @@
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.2s;
+    color: #333;
 }
 
 #business-list .asset-item:hover {
@@ -1060,6 +1062,79 @@
 #business-list .asset-item.selected {
     background-color: #e3f2fd;
     border-color: #2196f3;
+}
+
+.business-details {
+    margin-bottom: 15px;
+    background: #fff;
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid #e0e0e0;
+    color: #333;
+}
+
+.business-details p {
+    margin: 8px 0;
+    color: #333;
+    font-weight: 500;
+}
+
+.business-details span {
+    color: #666;
+    margin-left: 4px;
+    font-weight: normal;
+}
+
+/* Обновляем стили для элементов управления продажей */
+.sell-controls {
+    background: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    margin-top: 15px;
+}
+
+.sell-controls .input-group {
+    margin-bottom: 12px;
+}
+
+.sell-controls label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+.sell-controls input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #333;
+    background: #fff;
+}
+
+.total-info {
+    margin-top: 12px;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 6px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    color: #333;
+}
+
+.total-info p {
+    margin: 0;
+    color: #333;
+    font-weight: 600;
+}
+
+.total-info span {
+    color: #4CAF50;
+    font-size: 1.1rem;
+    margin-left: 4px;
 }
 
 .realestate-details {
