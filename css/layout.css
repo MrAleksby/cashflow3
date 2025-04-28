@@ -12,42 +12,40 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    margin-top: 18px;
+    gap: 24px;
+    margin: 24px 16px;
 }
 
 #top-cash-value {
-    font-size: 1.3em;
+    font-size: 1.1em;
     font-weight: bold;
     color: #388e3c;
-    background: #fffbe7;
-    border: 2px solid #FFD700;
-    border-radius: 12px;
-    padding: 8px 20px;
-    box-shadow: 0 2px 8px rgba(255,215,0,0.10);
+    background: #e8f5e9;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    padding: 6px 12px;
+    box-shadow: 0 2px 8px rgba(76,175,80,0.15);
     display: flex;
     align-items: center;
-    height: 64px;
-    min-width: 150px;
+    gap: 8px;
+    height: 36px;
+    min-width: 100px;
+}
+
+#top-cash-value i {
+    font-size: 1em;
+    color: #4CAF50;
 }
 
 #top-cash-amount {
-    margin-left: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-size: 1em;
 }
 
-.logo-title {
-    font-size: 2.3em;
-    font-weight: 900;
-    letter-spacing: 0.08em;
-    background: linear-gradient(90deg,#FFD700 30%,#B8860B 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-shadow: 0 2px 8px #fffbe7,0 1px 4px #B8860B44;
-    line-height: 1;
-    height: 64px;
-    display: flex;
-    align-items: center;
+#top-cash-amount::before {
+    content: '$';
+    margin-right: 2px;
+    opacity: 0.8;
 }
 
 .logo-img {

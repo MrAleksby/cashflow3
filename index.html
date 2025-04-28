@@ -10,8 +10,11 @@
 <body>
     <div class="container">
         <div class="header-row">
-            <div id="top-cash-value">Кошелёк: <span id="top-cash-amount">0</span></div>
-            <div class="logo-title">BMK</div>
+            <div id="top-cash-value">
+                <i class="fas fa-wallet"></i>
+                <span id="top-cash-amount">0</span>
+            </div>
+            <button id="new-game-btn" class="new-game-btn" onclick="window.resetGame()">Новая игра</button>
             <img src="logo.jpg" alt="Big Money Kids Logo" class="logo-img"/>
         </div>
         <div id="screen-cashflow" class="screen">
@@ -111,9 +114,9 @@
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             display: flex;
-            justify-content: space-around;
-            padding: 12px;
-            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0));
+            justify-content: space-between;
+            padding: 8px 10px;
+            padding-bottom: calc(8px + env(safe-area-inset-bottom, 0));
             box-shadow: 0 -1px 12px rgba(0, 0, 0, 0.08);
             z-index: 1000;
         }
@@ -123,25 +126,33 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 8px 12px;
+            padding: 6px 8px;
             color: #666;
             text-decoration: none;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 500;
             transition: all 0.2s ease;
-            border-radius: 12px;
+            border-radius: 8px;
             -webkit-tap-highlight-color: transparent;
+            flex: 1;
+            min-width: 48px;
+            max-width: 80px;
         }
 
         .nav-item i {
-            font-size: 1.4rem;
-            margin-bottom: 4px;
+            font-size: 1.2rem;
+            margin-bottom: 2px;
             transition: transform 0.2s ease;
         }
 
         .nav-item span {
             white-space: nowrap;
             transition: color 0.2s ease;
+            font-size: 0.65rem;
+            text-align: center;
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .nav-item.active {
@@ -150,7 +161,7 @@
         }
 
         .nav-item.active i {
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
         .nav-item:not(.active):hover {
@@ -160,18 +171,27 @@
 
         /* Добавляем отступ для контента */
         body {
-            padding-bottom: calc(80px + env(safe-area-inset-bottom, 20px));
+            padding-bottom: calc(65px + env(safe-area-inset-bottom, 20px));
         }
 
         /* Оптимизация для маленьких экранов */
-        @media (max-width: 360px) {
+        @media (max-width: 320px) {
             .nav-item {
-                padding: 6px 8px;
-                font-size: 0.7rem;
+                padding: 4px 6px;
+                font-size: 0.65rem;
+                min-width: 40px;
             }
             
             .nav-item i {
-                font-size: 1.2rem;
+                font-size: 1.1rem;
+            }
+
+            .nav-item span {
+                font-size: 0.6rem;
+            }
+
+            .bottom-nav {
+                padding: 6px 8px;
             }
         }
     </style>
@@ -211,11 +231,17 @@
             <div class="asset-type-selector">
                 <button class="asset-type-btn active" data-type="stocks">Акции</button>
                 <button class="asset-type-btn" data-type="realestate">Недвижимость</button>
+                <button class="asset-type-btn" data-type="business">Бизнес</button>
+                <button class="asset-type-btn" data-type="preciousmetals">Драгметаллы</button>
+                <button class="asset-type-btn" data-type="misc">Всякая всячина</button>
             </div>
             
             <!-- Список активов -->
             <div id="stock-list" class="asset-list"></div>
             <div id="realestate-list" class="asset-list" style="display: none;"></div>
+            <div id="business-list" class="asset-list" style="display: none;"></div>
+            <div id="preciousmetals-list" class="asset-list" style="display: none;"></div>
+            <div id="misc-list" class="asset-list" style="display: none;"></div>
             
             <!-- Информация о выбранной акции -->
             <div id="selected-stock-info" class="selected-asset-info" style="display: none;">
@@ -265,6 +291,65 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Информация о выбранном бизнесе -->
+            <div id="selected-business-info" class="selected-asset-info" style="display: none;">
+                <div class="business-details">
+                    <p>Название: <span class="selected-business-name"></span></p>
+                    <p>Стоимость покупки: <span class="selected-business-value"></span></p>
+                    <p>Ежемесячный доход: <span class="selected-business-income"></span>/мес</p>
+                </div>
+                
+                <!-- Поля для продажи -->
+                <div class="sell-controls">
+                    <div class="input-group">
+                        <label>Цена продажи ($):</label>
+                        <input type="number" class="sell-business-price" min="0" step="1000">
+                    </div>
+                    <div class="total-info">
+                        <p>Итого к получению: <span class="sell-business-total">$0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о выбранном драгметалле -->
+            <div id="selected-preciousmetals-info" class="selected-asset-info" style="display: none;">
+                <div class="preciousmetals-details">
+                    <p>Название: <span class="selected-preciousmetals-name"></span></p>
+                    <p>Стоимость покупки: <span class="selected-preciousmetals-value"></span></p>
+                </div>
+                
+                <!-- Поля для продажи -->
+                <div class="sell-controls">
+                    <div class="input-group">
+                        <label>Цена продажи ($):</label>
+                        <input type="number" class="sell-preciousmetals-price" min="0" step="100">
+                    </div>
+                    <div class="total-info">
+                        <p>Итого к получению: <span class="sell-preciousmetals-total">$0</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Информация о выбранном предмете -->
+            <div id="selected-misc-info" class="selected-asset-info" style="display: none;">
+                <div class="misc-details">
+                    <p>Название: <span class="selected-misc-name"></span></p>
+                    <p>Стоимость покупки: <span class="selected-misc-value"></span></p>
+                    <p>Ежемесячный расход: <span class="selected-misc-expense"></span>/мес</p>
+                </div>
+                
+                <!-- Поля для продажи -->
+                <div class="sell-controls">
+                    <div class="input-group">
+                        <label>Цена продажи ($):</label>
+                        <input type="number" class="sell-misc-price" min="0" step="100">
+                    </div>
+                    <div class="total-info">
+                        <p>Итого к получению: <span class="sell-misc-total">$0</span></p>
+                    </div>
+                </div>
+            </div>
             
             <!-- Кнопки -->
             <div class="modal-buttons">
@@ -274,9 +359,85 @@
         </div>
     </div>
 
+    <!-- Модальное окно для действий с деньгами -->
+    <div id="action-modal" class="modal">
+        <div class="modal-content">
+            <h2>Действия</h2>
+            <span class="close-btn">&times;</span>
+            
+            <div class="action-categories">
+                <div class="action-card" data-action="take">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h3>Взять деньги</h3>
+                    <div class="action-info">
+                        <div class="input-group">
+                            <label>Сумма ($):</label>
+                            <input type="number" class="take-money-amount" min="0" step="100" placeholder="Введите сумму">
+                        </div>
+                        <div class="input-group">
+                            <label>Описание:</label>
+                            <input type="text" class="take-money-description" placeholder="За что получены деньги">
+                        </div>
+                        <button class="take-money-btn">Взять</button>
+                    </div>
+                </div>
+
+                <div class="action-card" data-action="give">
+                    <i class="fas fa-hand-holding"></i>
+                    <h3>Отдать деньги</h3>
+                    <div class="action-info">
+                        <div class="input-group">
+                            <label>Сумма ($):</label>
+                            <input type="number" class="give-money-amount" min="0" step="100" placeholder="Введите сумму">
+                        </div>
+                        <div class="input-group">
+                            <label>Описание:</label>
+                            <input type="text" class="give-money-description" placeholder="На что потрачены деньги">
+                        </div>
+                        <button class="give-money-btn">Отдать</button>
+                    </div>
+                </div>
+
+                <div class="action-card" data-action="children">
+                    <i class="fas fa-child"></i>
+                    <h3>Управление детьми</h3>
+                    <div class="action-info">
+                        <!-- Секция добавления ребенка -->
+                        <div class="add-child-section">
+                            <h4>Добавить ребенка</h4>
+                            <div class="input-group">
+                                <label>Имя ребенка:</label>
+                                <input type="text" class="child-name" placeholder="Введите имя">
+                            </div>
+                            <div class="input-group">
+                                <label>Ежемесячный расход ($):</label>
+                                <input type="number" class="child-expense" min="0" step="100" placeholder="Введите сумму">
+                            </div>
+                            <button class="add-child-btn">Добавить</button>
+                        </div>
+
+                        <!-- Секция удаления ребенка -->
+                        <div class="remove-child-section">
+                            <h4>Удалить ребенка</h4>
+                            <div class="children-list">
+                                <!-- Список детей будет добавляться динамически -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="wallet-info">
+                В кошельке: <span id="modal-action-wallet-amount">$0</span>
+            </div>
+        </div>
+    </div>
+
     <script src="js/assets.js"></script>
     <script src="js/app.js"></script>
     <script src="js/modals.js"></script>
     <script src="js/buy-modal.js"></script>
+    <script src="js/action-modal.js"></script>
+    <script src="js/storage.js"></script>
 </body>
 </html> 

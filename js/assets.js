@@ -12,43 +12,42 @@
 
     // === ИНИЦИАЛИЗАЦИЯ КОШЕЛЬКА ===
     if (typeof window.cash !== 'number' || isNaN(window.cash)) window.cash = 0;
-
-    // Кнопка действие - пока без функционала
-    var actionBtn = document.getElementById('main-action-btn');
-
-    if (actionBtn) {
-      actionBtn.addEventListener('click', function() {
-        console.log('Действие - функционал временно отключен');
-      });
-    }
   });
 
+  // Функция-обертка для автоматического сохранения после рендеринга
+  function wrapWithAutoSave(renderFunction) {
+    return function(...args) {
+      renderFunction.apply(this, args);
+      if (typeof window.autoSave === 'function') {
+        window.autoSave();
+      }
+    };
+  }
+
   // === ОТРИСОВКА АКТИВОВ ===
-  window.renderAll = function() {
+  const originalRenderAll = function() {
     var assetList = document.getElementById('asset-list');
     var assetTotal = document.getElementById('asset-total');
     if (!assetList) return;
     if (!window.data || !Array.isArray(window.data.asset)) {
       assetList.innerHTML = '<li style="color:#888;">Нет активов</li>';
       if (assetTotal) assetTotal.textContent = '0';
-          return;
-        }
+      return;
+    }
     if (window.data.asset.length === 0) {
       assetList.innerHTML = '<li style="color:#888;">Нет активов</li>';
       if (assetTotal) assetTotal.textContent = '0';
-          return;
-        }
+      return;
+    }
     var total = 0;
     assetList.innerHTML = window.data.asset.map(function(a) {
       let value = 0;
       let displayText = '';
       
       if (a.type === 'stocks') {
-        // Для акций показываем количество и цену за штуку
         value = a.quantity * a.price;
         displayText = `${a.name} (${a.quantity} шт. по $${a.price}/шт)`;
       } else {
-        // Для остальных активов показываем просто значение
         value = Number(a.value) || 0;
         displayText = a.name;
       }
@@ -60,20 +59,20 @@
   };
 
   // === ОТРИСОВКА ДОХОДОВ ===
-  window.renderIncome = function() {
+  const originalRenderIncome = function() {
     var incomeList = document.getElementById('income-list');
     var incomeTotal = document.getElementById('income-total');
     if (!incomeList) return;
     if (!window.data || !Array.isArray(window.data.income)) {
       incomeList.innerHTML = '<li style="color:#888;">Нет доходов</li>';
       if (incomeTotal) incomeTotal.textContent = '0';
-          return;
-        }
+      return;
+    }
     if (window.data.income.length === 0) {
       incomeList.innerHTML = '<li style="color:#888;">Нет доходов</li>';
       if (incomeTotal) incomeTotal.textContent = '0';
-          return;
-        }
+      return;
+    }
     var total = 0;
     incomeList.innerHTML = window.data.income.map(function(a) {
       total += Number(a.value) || 0;
@@ -83,7 +82,7 @@
   };
 
   // === ОТРИСОВКА РАСХОДОВ ===
-  window.renderExpense = function() {
+  const originalRenderExpense = function() {
     var expenseList = document.getElementById('expense-list');
     var expenseTotal = document.getElementById('expense-total');
     if (!expenseList) return;
@@ -106,7 +105,7 @@
   };
 
   // === ОТРИСОВКА ПАССИВОВ ===
-  window.renderLiability = function() {
+  const originalRenderLiability = function() {
     var liabilityList = document.getElementById('liability-list');
     var liabilityTotal = document.getElementById('liability-total');
     if (!liabilityList) return;
@@ -129,12 +128,19 @@
   };
 
   // === ОТРИСОВКА КОШЕЛЬКА ===
-  window.renderCash = function() {
+  const originalRenderCash = function() {
     var cashElem = document.getElementById('top-cash-amount');
     var cash = Number(window.cash);
     if (isNaN(cash)) cash = 0;
     if (cashElem) cashElem.textContent = cash;
   };
+
+  // Оборачиваем все функции рендеринга в автосохранение
+  window.renderAll = wrapWithAutoSave(originalRenderAll);
+  window.renderIncome = wrapWithAutoSave(originalRenderIncome);
+  window.renderExpense = wrapWithAutoSave(originalRenderExpense);
+  window.renderLiability = wrapWithAutoSave(originalRenderLiability);
+  window.renderCash = wrapWithAutoSave(originalRenderCash);
 
   // Инициализация данных при загрузке
   if (typeof window.data !== 'object' || !window.data) window.data = {};
@@ -146,8 +152,8 @@
   // Функция расчета дивидендов
   window.calculateDividends = function(stockName, quantity) {
     const dividendRates = {
-      '2BIGPOWER': 100, // $100 за акцию
-      'CD': 50         // $50 за акцию
+      '2BIGPOWER': 100,
+      'CD': 50
     };
     
     return (dividendRates[stockName] || 0) * quantity;

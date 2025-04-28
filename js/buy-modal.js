@@ -367,7 +367,8 @@ const ASSET_CATEGORIES = {
                     id: `business-debt-${Date.now()}`,
                     name: `Долг: ${name}`,
                     type: 'business',
-                    value: liability
+                    value: liability,
+                    source: `business-${Date.now()}`
                 });
             }
 
@@ -389,6 +390,7 @@ const ASSET_CATEGORIES = {
             window.renderLiability();
             window.renderIncome();
             window.renderSummary();
+            autoSave();
 
             // Закрываем модальное окно
             modal.classList.remove('active');
@@ -485,6 +487,7 @@ const ASSET_CATEGORIES = {
             window.renderCash();
             window.renderAll();
             window.renderSummary();
+            autoSave();
 
             // Закрываем модальное окно
             modal.classList.remove('active');
@@ -628,6 +631,7 @@ const ASSET_CATEGORIES = {
             window.renderLiability();
             window.renderExpense();
             window.renderSummary();
+            autoSave();
 
             // Закрываем модальное окно
             modal.classList.remove('active');
@@ -1061,6 +1065,7 @@ const ASSET_CATEGORIES = {
             window.renderAll();
             window.renderIncome();
             window.renderSummary();
+            autoSave();
 
             sharesInput.value = '';
             if (item.type === 'speculative') {
@@ -1176,6 +1181,7 @@ const ASSET_CATEGORIES = {
             window.renderLiability();
             window.renderIncome();
             window.renderSummary();
+            autoSave();
 
             // Очищаем поля ввода
             propertyInputs.querySelector('.property-price').value = '';
@@ -1306,6 +1312,7 @@ const ASSET_CATEGORIES = {
         window.renderLiability();
         window.renderIncome();
         window.renderSummary();
+        autoSave();
 
         // Очищаем поля ввода
         propertyInputs.querySelector('.property-price').value = '';
