@@ -384,12 +384,22 @@ const ASSET_CATEGORIES = {
                 });
             }
 
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'buy',
+                assetName: name,
+                amount: downPayment,
+                date: new Date().toISOString()
+            });
+
             // Обновляем отображение
             window.renderCash();
             window.renderAll();
             window.renderLiability();
             window.renderIncome();
             window.renderSummary();
+            window.renderHistory();
             autoSave();
 
             // Закрываем модальное окно
@@ -483,10 +493,20 @@ const ASSET_CATEGORIES = {
                 isTransferred: price === 0
             });
 
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'buy',
+                assetName: item.name,
+                amount: downPayment,
+                date: new Date().toISOString()
+            });
+
             // Обновляем отображение
             window.renderCash();
             window.renderAll();
             window.renderSummary();
+            window.renderHistory();
             autoSave();
 
             // Закрываем модальное окно
@@ -625,12 +645,22 @@ const ASSET_CATEGORIES = {
                 });
             }
 
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'buy',
+                assetName: name,
+                amount: downPayment,
+                date: new Date().toISOString()
+            });
+
             // Обновляем отображение
             window.renderCash();
             window.renderAll();
             window.renderLiability();
             window.renderExpense();
             window.renderSummary();
+            window.renderHistory();
             autoSave();
 
             // Закрываем модальное окно
@@ -1061,10 +1091,20 @@ const ASSET_CATEGORIES = {
                 });
             }
 
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'buy',
+                assetName: item.name,
+                amount: totalPrice,
+                date: new Date().toISOString()
+            });
+
             window.renderCash();
             window.renderAll();
             window.renderIncome();
             window.renderSummary();
+            window.renderHistory();
             autoSave();
 
             sharesInput.value = '';
@@ -1176,11 +1216,22 @@ const ASSET_CATEGORIES = {
                 source: fullName
             });
 
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'buy',
+                assetName: fullName,
+                amount: downPayment,
+                date: new Date().toISOString()
+            });
+
+            // Обновляем отображение
             window.renderCash();
             window.renderAll();
             window.renderLiability();
             window.renderIncome();
             window.renderSummary();
+            window.renderHistory();
             autoSave();
 
             // Очищаем поля ввода
@@ -1306,12 +1357,22 @@ const ASSET_CATEGORIES = {
             source: fullName
         });
 
+        // Добавляем запись в историю
+        if (!window.data.history) window.data.history = [];
+        window.data.history.push({
+            type: 'buy',
+            assetName: fullName,
+            amount: downPayment,
+            date: new Date().toISOString()
+        });
+
         // Обновляем отображение
         window.renderCash();
         window.renderAll();
         window.renderLiability();
         window.renderIncome();
         window.renderSummary();
+        window.renderHistory();
         autoSave();
 
         // Очищаем поля ввода

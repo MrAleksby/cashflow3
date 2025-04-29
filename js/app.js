@@ -362,16 +362,16 @@ function updateRealEstateSellCalculations() {
     
     const price = parseFloat(sellRealEstatePriceInput.value) || 0;
     document.querySelector('.sell-realestate-total').textContent = `$${price}`;
-    sellAssetBtn.disabled = price <= 0;
+    sellAssetBtn.disabled = price < 0; // Разрешаем нулевую цену
 }
 
 // Обновление расчетов при продаже бизнеса
 function updateBusinessSellCalculations() {
     if (!selectedAsset || currentAssetType !== 'business') return;
     
-    const price = parseFloat(sellBusinessPriceInput.value) || 0;
-    document.querySelector('.sell-business-total').textContent = `$${price}`;
-    sellAssetBtn.disabled = price <= 0;
+    const sellPrice = parseFloat(sellBusinessPriceInput.value) || 0;
+    document.querySelector('.sell-business-total').textContent = `$${sellPrice}`;
+    sellAssetBtn.disabled = sellPrice < 0; // Разрешаем нулевую цену
 }
 
 // Обновление расчетов при продаже драгметаллов
@@ -380,7 +380,7 @@ function updatePreciousMetalsSellCalculations() {
     
     const price = parseFloat(sellPreciousMetalsPriceInput.value) || 0;
     document.querySelector('.sell-preciousmetals-total').textContent = `$${price}`;
-    sellAssetBtn.disabled = price < 0;
+    sellAssetBtn.disabled = price < 0; // Разрешаем нулевую цену
 }
 
 // Обновление расчетов при продаже всякой всячины
@@ -389,7 +389,7 @@ function updateMiscSellCalculations() {
     
     const price = parseFloat(sellMiscPriceInput.value) || 0;
     document.querySelector('.sell-misc-total').textContent = `$${price}`;
-    sellAssetBtn.disabled = price < 0;
+    sellAssetBtn.disabled = price < 0; // Разрешаем нулевую цену
 }
 
 // Продажа актива
@@ -412,31 +412,36 @@ function sellAsset() {
 // Продажа акций
 function sellStocks() {
     const quantity = parseInt(document.querySelector('.sell-quantity').value) || 0;
-    const sellPrice = parseFloat(sellPriceInput.value) || 0;
     
-    if (quantity <= 0) {
-        alert('Введите корректное количество акций!');
+    if (!selectedAsset) {
+        alert('Выберите актив для продажи!');
         return;
     }
     
-    if (quantity > selectedAsset.quantity) {
-        alert('У вас нет столько акций!');
+    if (quantity <= 0 || quantity > selectedAsset.quantity) {
+        alert('Введите корректное количество!');
         return;
     }
     
-    const totalAmount = sellPrice * quantity;
+    // Рассчитываем сумму продажи
+    const totalSale = quantity * selectedAsset.price;
     
     // Подтверждение продажи
-    const actionWord = sellPrice === 0 ? 'передачу' : 'продажу';
-    const priceText = sellPrice === 0 ? '' : `\nЦена: $${sellPrice}/шт`;
-    if (!confirm(`Подтвердите ${actionWord}:\n${quantity} акций ${selectedAsset.name}${priceText}\nИтого: $${totalAmount}`)) {
+    if (!confirm(`Подтвердите продажу:\n${quantity} шт. ${selectedAsset.name}\nСумма: $${totalSale}`)) {
         return;
     }
     
-    // Обновляем наличные только если цена больше 0
-    if (sellPrice > 0) {
-        window.cash = (parseFloat(window.cash) || 0) + totalAmount;
-    }
+    // Добавляем деньги от продажи
+    window.cash += totalSale;
+    
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push({
+        type: 'sell',
+        assetName: selectedAsset.name,
+        amount: totalSale,
+        date: new Date().toISOString()
+    });
     
     // Обновляем количество акций или удаляем их полностью
     if (quantity === selectedAsset.quantity) {
@@ -471,7 +476,16 @@ function sellStocks() {
         }
     }
     
-    updateDisplay();
+    // Обновляем отображение
+    window.renderCash();
+    window.renderAll();
+    window.renderIncome();
+    window.renderSummary();
+    window.renderHistory();
+    autoSave();
+    
+    // Закрываем модальное окно
+    closeSellStockModal();
 }
 
 // Продажа недвижимости
@@ -511,56 +525,77 @@ function sellRealEstate() {
     window.data.liability = window.data.liability.filter(liability => 
         !(liability.type === 'mortgage' && liability.id.includes(assetBaseId))
     );
+
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push({
+        type: 'sell',
+        assetName: selectedAsset.name,
+        amount: sellPrice,
+        date: new Date().toISOString()
+    });
     
-    updateDisplay();
+    // Обновляем отображение
+    window.renderCash();
+    window.renderAll();
+    window.renderIncome();
+    window.renderLiability();
+    window.renderSummary();
+    window.renderHistory();
+    autoSave();
+    
+    // Закрываем модальное окно
+    closeSellStockModal();
 }
 
 // Продажа бизнеса
 function sellBusiness() {
     if (!selectedAsset || currentAssetType !== 'business') return;
     
-    const sellPrice = parseFloat(sellBusinessPriceInput.value);
-    if (!sellPrice || sellPrice <= 0) return;
-    
-    // Находим индекс бизнеса в массиве активов
-    const assetIndex = window.data.asset.findIndex(a => 
-        a.type === 'business' && 
-        a.name === selectedAsset.name
-    );
-    
-    if (assetIndex === -1) return;
-    
-    // Удаляем бизнес из активов
-    window.data.asset.splice(assetIndex, 1);
-    
-    // Находим и удаляем связанный доход
-    const incomeIndex = window.data.income.findIndex(inc => 
-        inc.type === 'passive' && 
-        inc.source === selectedAsset.name
-    );
-    
-    if (incomeIndex !== -1) {
-        window.data.income.splice(incomeIndex, 1);
+    const sellPrice = parseFloat(sellBusinessPriceInput.value) || 0;
+    if (sellPrice < 0) {
+        alert('Цена продажи не может быть отрицательной!');
+        return;
     }
     
-    // Находим и удаляем связанный пассив (долг)
-    const liabilityIndex = window.data.liability.findIndex(liab => 
-        liab.source === selectedAsset.id
-    );
-    
-    if (liabilityIndex !== -1) {
-        window.data.liability.splice(liabilityIndex, 1);
+    // Подтверждение продажи
+    const actionWord = sellPrice === 0 ? 'передачу' : 'продажу';
+    const priceText = sellPrice === 0 ? '' : `\nЦена: $${sellPrice}`;
+    if (!confirm(`Подтвердите ${actionWord}:\n${selectedAsset.name}${priceText}`)) {
+        return;
     }
     
-    // Добавляем деньги от продажи
-    window.cash += sellPrice;
+    // Обновляем наличные только если цена больше 0
+    if (sellPrice > 0) {
+        window.cash = (parseFloat(window.cash) || 0) + sellPrice;
+    }
+    
+    // Удаляем бизнес из списка активов
+    window.data.asset = window.data.asset.filter(asset => 
+        asset.id !== selectedAsset.id
+    );
+    
+    // Удаляем связанный пассивный доход
+    window.data.income = window.data.income.filter(income => 
+        !(income.type === 'passive' && income.source === selectedAsset.name)
+    );
+    
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push({
+        type: 'sell',
+        assetName: selectedAsset.name,
+        amount: sellPrice,
+        date: new Date().toISOString()
+    });
     
     // Обновляем отображение
+    window.renderCash();
     window.renderAll();
     window.renderIncome();
-    window.renderLiability();
-    window.renderCash();
     window.renderSummary();
+    window.renderHistory();
+    autoSave();
     
     // Закрываем модальное окно
     closeSellStockModal();
@@ -590,10 +625,21 @@ function sellPreciousMetals() {
         window.cash += sellPrice;
     }
     
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push({
+        type: 'sell',
+        assetName: selectedAsset.name,
+        amount: sellPrice,
+        date: new Date().toISOString()
+    });
+    
     // Обновляем отображение
     window.renderAll();
     window.renderCash();
     window.renderSummary();
+    window.renderHistory();
+    autoSave();
     
     // Закрываем модальное окно
     closeSellStockModal();
@@ -641,6 +687,15 @@ function sellMisc() {
     if (sellPrice > 0) {
         window.cash += sellPrice;
     }
+
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push({
+        type: 'sell',
+        assetName: selectedAsset.name,
+        amount: sellPrice,
+        date: new Date().toISOString()
+    });
     
     // Закрываем модальное окно
     closeSellStockModal();
@@ -651,6 +706,8 @@ function sellMisc() {
     window.renderLiability(); // Обновляем список пассивов
     window.renderCash(); // Обновляем отображение наличных
     window.renderSummary(); // Обновляем финансовую формулу
+    window.renderHistory(); // Обновляем историю
+    autoSave(); // Сохраняем изменения
     
     // Принудительно обновляем отображение главного экрана и скрываем остальные
     document.querySelectorAll('.screen').forEach(screen => {
@@ -675,6 +732,7 @@ function updateDisplay() {
     window.renderLiability();
     window.renderCash();
     window.renderSummary();
+    window.renderHistory();
     closeSellStockModal();
 }
 
@@ -693,6 +751,11 @@ function initializeSellInterface() {
     // Добавляем обработчик для поля цены недвижимости
     if (sellRealEstatePriceInput) {
         sellRealEstatePriceInput.addEventListener('input', updateRealEstateSellCalculations);
+    }
+    
+    // Добавляем обработчик для поля цены бизнеса
+    if (sellBusinessPriceInput) {
+        sellBusinessPriceInput.addEventListener('input', updateBusinessSellCalculations);
     }
     
     // Добавляем обработчики для кнопок
@@ -767,17 +830,37 @@ const originalRenderSummary = function() {
         });
     }
 
-    // Считаем общие расходы
+    // Рассчитываем общий доход (зарплата + пассивный доход)
+    const totalIncome = salary + passiveIncome;
+
+    // Рассчитываем налог (25% от положительных доходов)
+    const taxRate = 0.25;
+    const taxableIncome = Math.max(0, totalIncome); // Берем только положительные доходы
+    const tax = Math.round(taxableIncome * taxRate);
+
+    // Обновляем или создаем запись о налогах в расходах
     if (window.data && Array.isArray(window.data.expense)) {
+        // Ищем существующую запись о налогах
+        const taxExpenseIndex = window.data.expense.findIndex(exp => exp.name === 'Налоги (25%)');
+        if (taxExpenseIndex !== -1) {
+            // Обновляем существующую запись
+            window.data.expense[taxExpenseIndex].value = tax;
+        } else {
+            // Создаем новую запись
+            window.data.expense.push({
+                name: 'Налоги (25%)',
+                value: tax,
+                type: 'tax'
+            });
+        }
+
+        // Считаем общие расходы (включая налоги)
         totalExpense = window.data.expense.reduce(function(sum, exp) {
             return sum + (Number(exp.value) || 0);
         }, 0);
     }
 
-    // Рассчитываем общий доход (зарплата + пассивный доход)
-    const totalIncome = salary + passiveIncome;
-
-    // Рассчитываем денежный поток (общий доход - общий расход)
+    // Рассчитываем денежный поток (общий доход - общий расход, включая налоги)
     const cashFlow = totalIncome - totalExpense;
 
     // Отображаем все значения
@@ -802,6 +885,10 @@ const originalRenderSummary = function() {
 // Оборачиваем функцию в автосохранение
 window.renderSummary = function(...args) {
     originalRenderSummary.apply(this, args);
+    // Добавляем обновление списка расходов после расчета налогов
+    if (typeof window.renderExpenses === 'function') {
+        window.renderExpenses();
+    }
     if (typeof window.autoSave === 'function') {
         window.autoSave();
     }
@@ -848,4 +935,622 @@ window.updateExpenseSum = function() {
     if (cashflow) {
         cashflow.textContent = incomeSum - total;
     }
-}; 
+};
+
+// В начало файла, после объявления переменных
+let paydayBtn = document.getElementById('payday-btn');
+let monthsCounter = document.getElementById('months-counter');
+
+// Функция обработки PayDay
+function handlePayDay() {
+    // Получаем текущий денежный поток
+    const cashFlow = parseInt(document.getElementById('cashflow').textContent) || 0;
+    
+    // Создаем запись для истории
+    const historyEntry = {
+        date: new Date().toISOString(),
+        type: 'payday',
+        amount: cashFlow,
+        monthNumber: (window.data.monthsCount || 0) + 1
+    };
+    
+    // Обновляем баланс
+    window.cash = (parseFloat(window.cash) || 0) + cashFlow;
+    
+    // Увеличиваем счетчик месяцев
+    window.data.monthsCount = (window.data.monthsCount || 0) + 1;
+    
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push(historyEntry);
+    
+    // Обновляем отображение
+    monthsCounter.textContent = window.data.monthsCount;
+    window.renderCash();
+    
+    // Показываем уведомление
+    const sign = cashFlow >= 0 ? '+' : '';
+    alert(`Месяц ${window.data.monthsCount}\nДенежный поток: ${sign}$${cashFlow}\nНовый баланс: $${window.cash}`);
+    
+    // Сохраняем изменения
+    if (typeof window.autoSave === 'function') {
+        window.autoSave();
+    }
+}
+
+// В функцию window.loadData добавляем инициализацию счетчика месяцев
+const originalLoadData = window.loadData;
+window.loadData = function() {
+    originalLoadData.apply(this, arguments);
+    
+    // Инициализируем счетчик месяцев
+    if (typeof window.data.monthsCount === 'undefined') {
+        window.data.monthsCount = 0;
+    }
+    monthsCounter.textContent = window.data.monthsCount;
+};
+
+// В функцию window.resetGame добавляем сброс счетчика месяцев
+window.resetGame = function() {
+    if (!confirm('Вы уверены, что хотите начать новую игру? Все текущие данные будут удалены!')) {
+        return;
+    }
+    
+    // Полностью очищаем все данные
+    window.data = {
+        income: [],
+        expense: [],
+        asset: [],
+        liability: [],
+        children: [],
+        history: [],
+        monthsCount: 0
+    };
+    window.cash = 0;
+    
+    // Тщательная очистка localStorage
+    localStorage.clear();
+    localStorage.removeItem('appData');
+    localStorage.removeItem('cash');
+    localStorage.removeItem('data');
+    
+    // Сохраняем пустые данные в localStorage
+    localStorage.setItem('appData', JSON.stringify(window.data));
+    localStorage.setItem('cash', '0');
+    
+    // Очищаем все возможные кэши
+    if (window.sessionStorage) {
+        sessionStorage.clear();
+    }
+    
+    // Показываем сообщение
+    alert('Игра успешно сброшена. Страница будет перезагружена.');
+    
+    // Принудительно перезагружаем страницу без использования кэша
+    window.location.href = window.location.href + '?nocache=' + new Date().getTime();
+};
+
+// Добавляем обработчик для кнопки PayDay
+document.addEventListener('DOMContentLoaded', function() {
+    paydayBtn = document.getElementById('payday-btn');
+    monthsCounter = document.getElementById('months-counter');
+    
+    if (paydayBtn) {
+        paydayBtn.addEventListener('click', handlePayDay);
+    }
+});
+
+// Функция форматирования даты
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+// Функция отображения истории операций
+window.renderHistory = function() {
+    const historyContainer = document.getElementById('history-container');
+    if (!historyContainer) return;
+
+    // Принудительно очищаем контейнер
+    historyContainer.innerHTML = '';
+
+    // Проверяем наличие истории
+    if (!window.data || !window.data.history || window.data.history.length === 0) {
+        historyContainer.innerHTML = '<div class="history-empty">История операций пуста</div>';
+        return;
+    }
+
+    // Получаем историю и сортируем по дате (новые сверху)
+    const history = window.data.history.sort((a, b) => 
+        new Date(b.date) - new Date(a.date)
+    );
+
+    // Создаем HTML для каждой операции
+    const historyHTML = history.map(entry => {
+        let typeText = '';
+        let amountText = '';
+        let colorClass = '';
+
+        switch (entry.type) {
+            case 'payday':
+                typeText = `PayDay (Месяц ${entry.monthNumber})`;
+                colorClass = entry.amount >= 0 ? 'positive' : 'negative';
+                amountText = `${entry.amount >= 0 ? '+' : ''}$${entry.amount}`;
+                break;
+            case 'buy':
+                typeText = `Покупка: ${entry.assetName}`;
+                colorClass = 'negative';
+                amountText = `-$${entry.amount}`;
+                break;
+            case 'sell':
+                typeText = `Продажа: ${entry.assetName}`;
+                colorClass = 'positive';
+                amountText = `+$${entry.amount}`;
+                break;
+            case 'loan':
+                typeText = `Получение кредита`;
+                colorClass = 'positive';
+                amountText = `+$${entry.amount}`;
+                break;
+            case 'loan_repayment':
+                typeText = `Погашение кредита`;
+                colorClass = 'negative';
+                amountText = `-$${entry.amount}`;
+                break;
+            case 'tax':
+                typeText = 'Налоги';
+                colorClass = 'negative';
+                amountText = `-$${entry.amount}`;
+                break;
+            case 'income':
+                typeText = `Доход: ${entry.description || 'Без описания'}`;
+                colorClass = 'positive';
+                amountText = `+$${entry.amount}`;
+                break;
+            case 'expense':
+                typeText = `Расход: ${entry.description || 'Без описания'}`;
+                colorClass = 'negative';
+                amountText = `-$${entry.amount}`;
+                break;
+            case 'job':
+                typeText = 'ПРОШЕЛ собеседование';
+                colorClass = 'positive';
+                amountText = `$${entry.amount}`;
+                break;
+            default:
+                typeText = 'Операция';
+                amountText = `$${entry.amount}`;
+        }
+
+        return `
+            <div class="history-item ${colorClass}">
+                <div class="history-date">${formatDate(entry.date)}</div>
+                <div class="history-info">
+                    <div class="history-type">${typeText}</div>
+                    <div class="history-amount">${amountText}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    historyContainer.innerHTML = historyHTML;
+};
+
+// Функция погашения кредита
+function repayLoan(loanId) {
+    // Находим кредит по ID
+    const loan = window.data.liability.find(l => l.id === loanId);
+    if (!loan || loan.type !== 'loan') {
+        alert('Кредит не найден!');
+        return;
+    }
+
+    // Запрашиваем сумму погашения
+    let repayAmount = prompt(`Введите сумму для погашения кредита (кратно 1000).\nТекущий остаток: $${loan.value}`);
+    repayAmount = parseInt(repayAmount);
+
+    // Проверяем корректность введенной суммы
+    if (isNaN(repayAmount) || repayAmount <= 0) {
+        alert('Введите корректную сумму!');
+        return;
+    }
+
+    // Проверяем кратность 1000
+    if (repayAmount % 1000 !== 0) {
+        alert('Сумма погашения должна быть кратна 1000!');
+        return;
+    }
+
+    // Проверяем, не превышает ли сумма погашения остаток по кредиту
+    if (repayAmount > loan.value) {
+        alert('Сумма погашения не может превышать остаток по кредиту!');
+        return;
+    }
+
+    // Проверяем достаточно ли денег
+    if (repayAmount > window.cash) {
+        alert('Недостаточно денег для погашения!');
+        return;
+    }
+
+    // Подтверждение операции
+    if (!confirm(`Вы уверены, что хотите погасить кредит на сумму $${repayAmount}?`)) {
+        return;
+    }
+
+    // Уменьшаем сумму кредита
+    loan.value -= repayAmount;
+
+    // Уменьшаем ежемесячный платеж пропорционально
+    const monthlyPaymentExpense = window.data.expense.find(e => 
+        e.type === 'loan' && e.name.includes(loan.name.replace('Кредит: ', ''))
+    );
+    if (monthlyPaymentExpense) {
+        monthlyPaymentExpense.value = Math.round(loan.value * 0.1);
+    }
+
+    // Уменьшаем наличные
+    window.cash -= repayAmount;
+
+    // Если кредит полностью погашен, удаляем его и связанный расход
+    if (loan.value === 0) {
+        window.data.liability = window.data.liability.filter(l => l.id !== loanId);
+        window.data.expense = window.data.expense.filter(e => 
+            !(e.type === 'loan' && e.name.includes(loan.name.replace('Кредит: ', '')))
+        );
+    }
+
+    // Добавляем запись в историю
+    if (!window.data.history) window.data.history = [];
+    window.data.history.push({
+        type: 'loan_repayment',
+        amount: repayAmount,
+        date: new Date().toISOString(),
+        description: `Погашение кредита на сумму $${repayAmount}`
+    });
+
+    // Обновляем отображение
+    window.renderCash();
+    window.renderLiability();
+    window.renderExpenses();
+    window.renderSummary();
+    window.renderHistory();
+    autoSave();
+
+    // Показываем сообщение об успешной операции
+    alert(`Кредит успешно погашен на сумму $${repayAmount}${loan.value > 0 ? `\nОстаток по кредиту: $${loan.value}` : '\nКредит полностью погашен!'}`);
+}
+
+// Функция для форматирования числа
+function formatNumber(num) {
+    if (num === null || num === undefined) return "0";
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Обновляем функцию renderLiability
+window.renderLiability = function() {
+    const liabilityList = document.getElementById('liability-list');
+    if (!liabilityList) return;
+
+    // Очищаем список
+    liabilityList.innerHTML = '';
+    
+    // Проверяем наличие массива пассивов
+    if (!window.data.liability) {
+        window.data.liability = [];
+    }
+
+    // Вычисляем общую сумму пассивов и отдельно сумму кредитов
+    let totalLiabilities = 0;
+    let totalLoans = 0;
+
+    // Сначала добавляем общую сумму кредитов, если они есть
+    const loans = window.data.liability.filter(l => l.type === 'loan');
+    if (loans.length > 0) {
+        totalLoans = loans.reduce((sum, loan) => sum + (parseFloat(loan.value) || 0), 0);
+        if (totalLoans > 0) {
+            const loanSummaryItem = document.createElement('li');
+            loanSummaryItem.className = 'item loan-summary';
+            loanSummaryItem.innerHTML = `
+                <span class="item-name">Общая сумма кредитов</span>
+                <span class="item-amount">$${formatNumber(totalLoans)}</span>
+            `;
+            liabilityList.appendChild(loanSummaryItem);
+        }
+    }
+
+    // Затем добавляем все пассивы
+    window.data.liability.forEach(liability => {
+        const value = parseFloat(liability.value) || 0;
+        totalLiabilities += value;
+        
+        const liabilityItem = document.createElement('li');
+        liabilityItem.className = 'item';
+        
+        liabilityItem.innerHTML = `
+            <span class="item-name">${liability.name}</span>
+            <span class="item-amount">$${formatNumber(value)}</span>
+        `;
+        liabilityList.appendChild(liabilityItem);
+    });
+
+    // Обновляем итоговую сумму
+    const totalElement = document.getElementById('liability-total');
+    if (totalElement) {
+        totalElement.textContent = formatNumber(totalLiabilities);
+    }
+
+    // Обновляем отображение кредита в заголовке
+    const creditDisplay = document.querySelector('.credit-display');
+    if (creditDisplay) {
+        creditDisplay.textContent = `Кредит: $${formatNumber(totalLoans)}`;
+    }
+
+    // Обновляем состояние кнопки погашения кредита
+    updateRepayLoanButton();
+};
+
+// Функция обновления кнопки погашения кредита
+function updateRepayLoanButton() {
+    const actionModal = document.getElementById('action-modal');
+    if (!actionModal) return;
+
+    // Находим контейнер для контента модального окна
+    const modalContent = actionModal.querySelector('.modal-content');
+    if (!modalContent) return;
+
+    // Проверяем наличие кредита
+    const hasLoan = window.data.liability && window.data.liability.some(l => l.type === 'loan');
+
+    // Находим или создаем секцию для кнопок кредита
+    let loanSection = modalContent.querySelector('.loan-section');
+    if (!loanSection && hasLoan) {
+        loanSection = document.createElement('div');
+        loanSection.className = 'loan-section action-section';
+        
+        // Добавляем заголовок секции
+        const sectionTitle = document.createElement('div');
+        sectionTitle.className = 'section-title';
+        sectionTitle.innerHTML = '<i class="fas fa-money-bill-wave"></i>';
+        loanSection.appendChild(sectionTitle);
+        
+        // Создаем кнопку погашения
+        const repayButton = document.createElement('button');
+        repayButton.id = 'repay-loan-btn';
+        repayButton.className = 'btn btn-primary repay-loan-btn';
+        repayButton.textContent = 'Погасить кредит';
+        
+        // Добавляем обработчик клика
+        repayButton.addEventListener('click', () => {
+            const loan = window.data.liability.find(l => l.type === 'loan');
+            if (loan) {
+                repayLoan(loan.id);
+            }
+        });
+        
+        loanSection.appendChild(repayButton);
+        
+        // Добавляем секцию в начало модального окна
+        modalContent.insertBefore(loanSection, modalContent.firstChild);
+    } else if (loanSection) {
+        // Если секция существует, показываем или скрываем её в зависимости от наличия кредита
+        loanSection.style.display = hasLoan ? 'block' : 'none';
+    }
+}
+
+// Добавляем обработчик для открытия модального окна действий
+document.addEventListener('DOMContentLoaded', function() {
+    const actionButton = document.querySelector('[data-target="#action-modal"]');
+    if (actionButton) {
+        actionButton.addEventListener('click', function() {
+            // Обновляем состояние кнопки погашения кредита при открытии модального окна
+            setTimeout(updateRepayLoanButton, 100);
+        });
+    }
+    
+    // Также обновляем при первоначальной загрузке
+    updateRepayLoanButton();
+});
+
+// Функция сохранения данных
+window.autoSave = function() {
+    // Убедимся, что у нас есть объект data
+    if (!window.data) {
+        window.data = {
+            income: [],
+            expense: [],
+            asset: [],
+            liability: [],
+            history: [],
+            monthsCount: 0
+        };
+    }
+
+    // Сохраняем все данные
+    localStorage.setItem('appData', JSON.stringify(window.data));
+    localStorage.setItem('cash', window.cash.toString());
+};
+
+// Функция загрузки данных
+window.loadData = function() {
+    try {
+        // Загружаем данные из localStorage
+        const savedData = localStorage.getItem('appData');
+        const savedCash = localStorage.getItem('cash');
+
+        if (savedData) {
+            window.data = JSON.parse(savedData);
+            
+            // Проверяем и инициализируем все необходимые массивы
+            window.data.income = window.data.income || [];
+            window.data.expense = window.data.expense || [];
+            window.data.asset = window.data.asset || [];
+            window.data.liability = window.data.liability || [];
+            window.data.history = window.data.history || [];
+            window.data.monthsCount = window.data.monthsCount || 0;
+        } else {
+            // Если данных нет, создаем пустую структуру
+            window.data = {
+                income: [],
+                expense: [],
+                asset: [],
+                liability: [],
+                history: [],
+                monthsCount: 0
+            };
+        }
+
+        // Загружаем наличные
+        window.cash = parseFloat(savedCash) || 0;
+
+        // Обновляем все отображения
+        window.renderAll();
+        window.renderIncome();
+        window.renderLiability();
+        window.renderExpenses();
+        window.renderCash();
+        window.renderSummary();
+        window.renderHistory();
+
+        // Обновляем счетчик месяцев
+        const monthsCounter = document.getElementById('months-counter');
+        if (monthsCounter) {
+            monthsCounter.textContent = window.data.monthsCount;
+        }
+    } catch (error) {
+        console.error('Ошибка при загрузке данных:', error);
+        alert('Произошла ошибка при загрузке данных. Данные будут сброшены.');
+        window.resetGame();
+    }
+};
+
+// Обновляем функцию renderLiability
+window.renderLiability = function() {
+    const liabilityList = document.getElementById('liability-list');
+    if (!liabilityList) return;
+
+    // Очищаем список
+    liabilityList.innerHTML = '';
+    
+    // Проверяем наличие массива пассивов
+    if (!window.data.liability) {
+        window.data.liability = [];
+    }
+
+    // Вычисляем общую сумму пассивов и отдельно сумму кредитов
+    let totalLiabilities = 0;
+    let totalLoans = 0;
+
+    // Сначала добавляем общую сумму кредитов, если они есть
+    const loans = window.data.liability.filter(l => l.type === 'loan');
+    if (loans.length > 0) {
+        totalLoans = loans.reduce((sum, loan) => sum + (parseFloat(loan.value) || 0), 0);
+        if (totalLoans > 0) {
+            const loanSummaryItem = document.createElement('li');
+            loanSummaryItem.className = 'item loan-summary';
+            loanSummaryItem.innerHTML = `
+                <span class="item-name">Общая сумма кредитов</span>
+                <span class="item-amount">$${formatNumber(totalLoans)}</span>
+            `;
+            liabilityList.appendChild(loanSummaryItem);
+        }
+    }
+
+    // Затем добавляем все пассивы
+    window.data.liability.forEach(liability => {
+        const value = parseFloat(liability.value) || 0;
+        totalLiabilities += value;
+        
+        const liabilityItem = document.createElement('li');
+        liabilityItem.className = 'item';
+        
+        liabilityItem.innerHTML = `
+            <span class="item-name">${liability.name}</span>
+            <span class="item-amount">$${formatNumber(value)}</span>
+        `;
+        liabilityList.appendChild(liabilityItem);
+    });
+
+    // Обновляем итоговую сумму
+    const totalElement = document.getElementById('liability-total');
+    if (totalElement) {
+        totalElement.textContent = formatNumber(totalLiabilities);
+    }
+
+    // Обновляем отображение кредита в заголовке
+    const creditDisplay = document.querySelector('.credit-display');
+    if (creditDisplay) {
+        creditDisplay.textContent = `Кредит: $${formatNumber(totalLoans)}`;
+    }
+
+    // Обновляем состояние кнопки погашения кредита
+    updateRepayLoanButton();
+};
+
+// Функция обновления кнопки погашения кредита
+function updateRepayLoanButton() {
+    const actionModal = document.getElementById('action-modal');
+    if (!actionModal) return;
+
+    // Находим контейнер для контента модального окна
+    const modalContent = actionModal.querySelector('.modal-content');
+    if (!modalContent) return;
+
+    // Проверяем наличие кредита
+    const hasLoan = window.data.liability && window.data.liability.some(l => l.type === 'loan');
+
+    // Находим или создаем секцию для кнопок кредита
+    let loanSection = modalContent.querySelector('.loan-section');
+    if (!loanSection && hasLoan) {
+        loanSection = document.createElement('div');
+        loanSection.className = 'loan-section action-section';
+        
+        // Добавляем заголовок секции
+        const sectionTitle = document.createElement('div');
+        sectionTitle.className = 'section-title';
+        sectionTitle.innerHTML = '<i class="fas fa-money-bill-wave"></i>';
+        loanSection.appendChild(sectionTitle);
+        
+        // Создаем кнопку погашения
+        const repayButton = document.createElement('button');
+        repayButton.id = 'repay-loan-btn';
+        repayButton.className = 'btn btn-primary repay-loan-btn';
+        repayButton.textContent = 'Погасить кредит';
+        
+        // Добавляем обработчик клика
+        repayButton.addEventListener('click', () => {
+            const loan = window.data.liability.find(l => l.type === 'loan');
+            if (loan) {
+                repayLoan(loan.id);
+            }
+        });
+        
+        loanSection.appendChild(repayButton);
+        
+        // Добавляем секцию в начало модального окна
+        modalContent.insertBefore(loanSection, modalContent.firstChild);
+    } else if (loanSection) {
+        // Если секция существует, показываем или скрываем её в зависимости от наличия кредита
+        loanSection.style.display = hasLoan ? 'block' : 'none';
+    }
+}
+
+// Добавляем обработчик для открытия модального окна действий
+document.addEventListener('DOMContentLoaded', function() {
+    const actionButton = document.querySelector('[data-target="#action-modal"]');
+    if (actionButton) {
+        actionButton.addEventListener('click', function() {
+            // Обновляем состояние кнопки погашения кредита при открытии модального окна
+            setTimeout(updateRepayLoanButton, 100);
+        });
+    }
+    
+    // Также обновляем при первоначальной загрузке
+    updateRepayLoanButton();
+}); 

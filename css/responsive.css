@@ -100,6 +100,55 @@
         min-height: 56px;
         font-size: 2.4em;
     }
+
+    /* Стили для модальных окон на мобильных */
+    .modal-content {
+        width: 95vw;
+        margin: 10px auto;
+        padding: 15px;
+        max-height: 90vh;
+    }
+
+    .modal {
+        padding: 10px;
+    }
+
+    .action-card.small {
+        flex: 1 1 100%;
+        margin-bottom: 10px;
+    }
+
+    .input-group input {
+        height: 40px; /* Увеличиваем высоту полей ввода для удобства */
+        font-size: 16px; /* Оптимальный размер шрифта для мобильных */
+    }
+
+    .action-info button,
+    .modal-buttons button {
+        height: 44px; /* Увеличиваем высоту кнопок */
+        font-size: 16px;
+        margin-top: 10px;
+    }
+
+    /* Увеличиваем отступы между элементами */
+    .action-cards-container {
+        gap: 15px;
+    }
+
+    /* Стили для истории */
+    .history-item {
+        padding: 15px 10px;
+    }
+
+    .history-date {
+        font-size: 0.9em;
+    }
+
+    /* Стили для кнопки закрытия */
+    .close-btn {
+        font-size: 24px;
+        padding: 10px;
+    }
 }
 
 @media (max-width: 520px) {
@@ -140,5 +189,20 @@
     
     .nav-btn span:last-child {
         font-size: 1.2em !important;
+    }
+}
+
+/* Специфичные стили для очень маленьких экранов */
+@media (max-width: 320px) {
+    .modal-content {
+        padding: 10px;
+    }
+
+    .action-card h3 {
+        font-size: 0.9em;
+    }
+
+    .input-group label {
+        font-size: 0.8em;
     }
 } 

@@ -41,6 +41,12 @@
                     <div style="display:flex; justify-content:space-between; align-items:center; font-weight:bold; color:#388e3c;">
                         <span>Поток</span><span id="cashflow">0</span>
                     </div>
+                    <div style="border-top: 1px solid #b2dfdb; margin-top: 10px; padding-top: 10px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+                            <span>Прошло месяцев:</span><span id="months-counter">0</span>
+                        </div>
+                        <button id="payday-btn" style="width: 100%; padding: 10px; background: #4CAF50; color: white; border: none; border-radius: 4px; font-size: 1.1em; cursor: pointer;">PayDay</button>
+                    </div>
                 </div>
             </div>
                         </div>
@@ -102,6 +108,10 @@
         <a href="#" class="nav-item" data-section="expense">
             <i class="fas fa-minus-circle"></i>
             <span>Расход</span>
+        </a>
+        <a href="#" class="nav-item" data-section="history">
+            <i class="fas fa-history"></i>
+            <span>История</span>
         </a>
     </nav>
 
@@ -359,76 +369,95 @@
         </div>
     </div>
 
-    <!-- Модальное окно для действий с деньгами -->
+    <!-- Модальное окно действий -->
     <div id="action-modal" class="modal">
         <div class="modal-content">
-            <h2>Действия</h2>
             <span class="close-btn">&times;</span>
-            
-            <div class="action-categories">
-                <div class="action-card" data-action="take">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    <h3>Взять деньги</h3>
+            <div class="modal-header">
+                <h2>Действия</h2>
+                <div class="wallet-display">
+                    В кошельке: <span id="modal-action-wallet-amount">$0</span>
+                </div>
+            </div>
+            <div class="action-cards-container">
+                <!-- Карточка взять деньги -->
+                <div class="action-card small" data-action="take">
+                    <div class="card-header">
+                        <i class="fas fa-plus-circle"></i>
+                        <h3>Взять деньги</h3>
+                    </div>
                     <div class="action-info">
                         <div class="input-group">
-                            <label>Сумма ($):</label>
-                            <input type="number" class="take-money-amount" min="0" step="100" placeholder="Введите сумму">
-                        </div>
-                        <div class="input-group">
-                            <label>Описание:</label>
-                            <input type="text" class="take-money-description" placeholder="За что получены деньги">
+                            <input type="number" class="take-money-amount" placeholder="Сумма">
+                            <input type="text" class="take-money-description" placeholder="Описание">
                         </div>
                         <button class="take-money-btn">Взять</button>
                     </div>
                 </div>
 
-                <div class="action-card" data-action="give">
-                    <i class="fas fa-hand-holding"></i>
-                    <h3>Отдать деньги</h3>
+                <!-- Карточка отдать деньги -->
+                <div class="action-card small" data-action="give">
+                    <div class="card-header">
+                        <i class="fas fa-minus-circle"></i>
+                        <h3>Отдать деньги</h3>
+                    </div>
                     <div class="action-info">
                         <div class="input-group">
-                            <label>Сумма ($):</label>
-                            <input type="number" class="give-money-amount" min="0" step="100" placeholder="Введите сумму">
-                        </div>
-                        <div class="input-group">
-                            <label>Описание:</label>
-                            <input type="text" class="give-money-description" placeholder="На что потрачены деньги">
+                            <input type="number" class="give-money-amount" placeholder="Сумма">
+                            <input type="text" class="give-money-description" placeholder="Описание">
                         </div>
                         <button class="give-money-btn">Отдать</button>
                     </div>
                 </div>
 
-                <div class="action-card" data-action="children">
-                    <i class="fas fa-child"></i>
-                    <h3>Управление детьми</h3>
+                <!-- Карточка добавить ребенка -->
+                <div class="action-card small" data-action="child">
+                    <div class="card-header">
+                        <i class="fas fa-child"></i>
+                        <h3>Добавить ребенка</h3>
+                    </div>
                     <div class="action-info">
-                        <!-- Секция добавления ребенка -->
-                        <div class="add-child-section">
-                            <h4>Добавить ребенка</h4>
-                            <div class="input-group">
-                                <label>Имя ребенка:</label>
-                                <input type="text" class="child-name" placeholder="Введите имя">
-                            </div>
-                            <div class="input-group">
-                                <label>Ежемесячный расход ($):</label>
-                                <input type="number" class="child-expense" min="0" step="100" placeholder="Введите сумму">
-                            </div>
-                            <button class="add-child-btn">Добавить</button>
+                        <div class="input-group">
+                            <input type="text" class="child-name" placeholder="Имя ребенка">
+                            <input type="number" class="child-expense" placeholder="Расход в месяц">
                         </div>
+                        <button class="add-child-btn">Добавить</button>
+                    </div>
+                    <div class="children-list"></div>
+                </div>
 
-                        <!-- Секция удаления ребенка -->
-                        <div class="remove-child-section">
-                            <h4>Удалить ребенка</h4>
-                            <div class="children-list">
-                                <!-- Список детей будет добавляться динамически -->
-                            </div>
+                <!-- Карточка взять кредит -->
+                <div class="action-card small" data-action="loan">
+                    <div class="card-header">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <h3>Взять кредит</h3>
+                    </div>
+                    <div class="action-info">
+                        <div class="input-group">
+                            <input type="number" class="loan-amount" min="1000" step="1000" placeholder="Сумма (кратно 1000)">
+                            <input type="text" class="loan-description" placeholder="Цель кредита">
                         </div>
+                        <div class="loan-info-text">
+                            <small>* Платеж 10% от суммы</small>
+                        </div>
+                        <button class="take-loan-btn">Взять кредит</button>
                     </div>
                 </div>
-            </div>
 
-            <div class="wallet-info">
-                В кошельке: <span id="modal-action-wallet-amount">$0</span>
+                <!-- Карточка работа -->
+                <div class="action-card small" data-action="job">
+                    <div class="card-header">
+                        <i class="fas fa-briefcase"></i>
+                        <h3>Работа</h3>
+                    </div>
+                    <div class="action-info">
+                        <div class="input-group">
+                            <input type="number" class="job-salary" min="0" step="100" placeholder="Зарплата в месяц">
+                            <input type="text" class="job-title" placeholder="Название работы">
+                        </div>
+                        <button class="set-job-btn">Установить работу</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

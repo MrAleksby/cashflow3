@@ -12,6 +12,19 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typeof window.data.children === 'undefined') {
         window.data.children = [];
     }
+    if (typeof window.data.job === 'undefined') {
+        window.data.job = {
+            title: '',
+            salary: 0
+        };
+    }
+
+    // Инициализируем отображение зарплаты
+    const salaryValue = document.getElementById('salary-value');
+    if (salaryValue) {
+        salaryValue.textContent = window.data.job.salary;
+    }
+
     if (typeof window.renderCash !== 'function') {
         window.renderCash = function() {
             const topCashAmount = document.getElementById('top-cash-amount');
@@ -33,6 +46,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const addChildBtn = actionModal.querySelector('.add-child-btn');
     const childrenList = actionModal.querySelector('.children-list');
 
+    // Получаем элементы для работы с кредитом
+    const loanAmountInput = actionModal.querySelector('.loan-amount');
+    const loanDescriptionInput = actionModal.querySelector('.loan-description');
+    const takeLoanBtn = actionModal.querySelector('.take-loan-btn');
+
     // Получаем остальные элементы модального окна
     const closeBtn = actionModal.querySelector('.close-btn');
     const takeMoneyBtn = actionModal.querySelector('.take-money-btn');
@@ -43,10 +61,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const giveMoneyDescription = actionModal.querySelector('.give-money-description');
     const walletAmount = actionModal.querySelector('#modal-action-wallet-amount');
 
+    // Получаем элементы для работы с работой
+    const jobSalaryInput = actionModal.querySelector('.job-salary');
+    const jobTitleInput = actionModal.querySelector('.job-title');
+    const setJobBtn = actionModal.querySelector('.set-job-btn');
+
     // Проверяем, что все элементы найдены
     if (!closeBtn || !takeMoneyBtn || !giveMoneyBtn || !takeMoneyAmount || 
         !giveMoneyAmount || !takeMoneyDescription || !giveMoneyDescription || !walletAmount ||
-        !childNameInput || !childExpenseInput || !addChildBtn || !childrenList) {
+        !childNameInput || !childExpenseInput || !addChildBtn || !childrenList ||
+        !loanAmountInput || !loanDescriptionInput || !takeLoanBtn ||
+        !jobSalaryInput || !jobTitleInput || !setJobBtn) {
         console.error('Не найдены необходимые элементы в модальном окне');
         return;
     }
@@ -110,6 +135,15 @@ document.addEventListener('DOMContentLoaded', function() {
             value: expense
         });
 
+        // Добавляем запись в историю
+        if (!window.data.history) window.data.history = [];
+        window.data.history.push({
+            type: 'expense',
+            description: `Добавлен ребенок: ${name}`,
+            amount: expense,
+            date: new Date().toISOString()
+        });
+
         // Обновляем отображение
         updateChildrenList();
         
@@ -121,6 +155,11 @@ document.addEventListener('DOMContentLoaded', function() {
         // Обновляем сумму расходов в финансовой формуле
         if (typeof window.renderSummary === 'function') {
             window.renderSummary();
+        }
+
+        // Обновляем историю
+        if (typeof window.renderHistory === 'function') {
+            window.renderHistory();
         }
 
         // Сохраняем изменения
@@ -173,6 +212,83 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Функция взятия кредита
+    function takeLoan() {
+        const amount = parseFloat(loanAmountInput.value);
+        const description = loanDescriptionInput.value.trim();
+
+        // Валидация
+        if (!amount || amount <= 0) {
+            alert('Введите корректную сумму кредита!');
+            return;
+        }
+
+        if (amount % 1000 !== 0) {
+            alert('Сумма кредита должна быть кратна $1000!');
+            return;
+        }
+
+        if (!description) {
+            alert('Введите описание (цель) кредита!');
+            return;
+        }
+
+        // Подтверждение
+        const monthlyPayment = amount * 0.1;
+        if (!confirm(`Подтвердите получение кредита:\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}\nЦель: ${description}`)) {
+            return;
+        }
+
+        // Добавляем деньги в кошелек
+        window.cash += amount;
+
+        // Добавляем в пассивы
+        if (!window.data.liability) window.data.liability = [];
+        window.data.liability.push({
+            id: `loan-${Date.now()}`,
+            name: `Кредит: ${description}`,
+            value: amount,
+            type: 'loan'
+        });
+
+        // Добавляем ежемесячный расход
+        if (!window.data.expense) window.data.expense = [];
+        window.data.expense.push({
+            id: `loan-payment-${Date.now()}`,
+            name: `Платеж по кредиту: ${description}`,
+            value: monthlyPayment,
+            type: 'loan'
+        });
+
+        // Добавляем в историю
+        window.data.history.push({
+            type: 'loan',
+            description: 'Кредит',
+            amount: amount,
+            date: new Date().toISOString()
+        });
+
+        // Обновляем отображение
+        window.renderCash();
+        window.renderLiability();
+        window.renderExpenses();
+        window.renderSummary();
+        window.renderHistory();
+        updateModalWalletAmount();
+        
+        // Сохраняем изменения
+        if (typeof window.autoSave === 'function') {
+            window.autoSave();
+        }
+
+        // Очищаем поля
+        loanAmountInput.value = '';
+        loanDescriptionInput.value = '';
+
+        // Показываем сообщение об успехе
+        alert(`Кредит успешно получен!\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}`);
+    }
+
     // Открытие модального окна
     window.openActionModal = function() {
         actionModal.style.display = 'block';
@@ -200,6 +316,10 @@ document.addEventListener('DOMContentLoaded', function() {
         giveMoneyDescription.value = '';
         childNameInput.value = '';
         childExpenseInput.value = '';
+        loanAmountInput.value = '';
+        loanDescriptionInput.value = '';
+        jobSalaryInput.value = '';
+        jobTitleInput.value = '';
     }
 
     // Взять деньги
@@ -291,11 +411,103 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Функция установки работы
+    function setJob() {
+        const title = jobTitleInput.value.trim();
+        const salary = parseInt(jobSalaryInput.value);
+
+        if (!title || !salary) {
+            alert('Заполните все поля!');
+            return;
+        }
+
+        // Удаляем старую работу из доходов
+        window.data.income = window.data.income.filter(inc => inc.type !== 'job');
+
+        // Добавляем новую работу в доходы
+        window.data.income.push({
+            name: title,
+            value: salary,
+            type: 'job'
+        });
+
+        // Добавляем запись в историю
+        if (!window.data.history) window.data.history = [];
+        window.data.history.push({
+            type: 'job',
+            amount: salary,
+            date: new Date().toISOString()
+        });
+
+        // Очищаем поля ввода
+        jobTitleInput.value = '';
+        jobSalaryInput.value = '';
+
+        // Обновляем отображение
+        window.renderIncome();
+        window.renderSummary();
+        window.renderHistory();
+        autoSave();
+
+        // Обновляем состояние кнопки "Уволиться"
+        updateQuitJobButton();
+
+        alert(`Устроились на работу: ${title}\nЗарплата: $${salary}`);
+    }
+
+    function quitJob() {
+        if (!confirm('Вы уверены, что хотите уволиться с работы?')) {
+            return;
+        }
+
+        // Удаляем работу из доходов
+        window.data.income = window.data.income.filter(inc => inc.type !== 'job');
+
+        // Обновляем отображение
+        window.renderIncome();
+        window.renderSummary();
+        autoSave();
+
+        // Обновляем состояние кнопки "Уволиться"
+        updateQuitJobButton();
+
+        alert('Вы уволились с работы');
+    }
+
+    function updateQuitJobButton() {
+        const quitBtn = document.getElementById('quit-job-btn');
+        const hasJob = window.data.income && window.data.income.some(inc => inc.type === 'job');
+        
+        if (quitBtn) {
+            quitBtn.disabled = !hasJob;
+        }
+    }
+
+    // Инициализация кнопки "Уволиться"
+    const jobSection = document.querySelector('.action-card[data-action="job"] .action-info');
+    if (jobSection) {
+        // Создаем кнопку "Уволиться"
+        const quitBtn = document.createElement('button');
+        quitBtn.id = 'quit-job-btn';
+        quitBtn.className = 'btn btn-danger quit-job-btn';
+        quitBtn.textContent = 'Уволиться';
+        quitBtn.onclick = quitJob;
+        quitBtn.disabled = true; // По умолчанию кнопка неактивна
+
+        // Добавляем кнопку после существующих элементов
+        jobSection.appendChild(quitBtn);
+
+        // Инициализируем состояние кнопки
+        updateQuitJobButton();
+    }
+
     // Добавляем обработчики событий
     closeBtn.addEventListener('click', closeActionModal);
     takeMoneyBtn.addEventListener('click', takeMoney);
     giveMoneyBtn.addEventListener('click', giveMoney);
     addChildBtn.addEventListener('click', addChild);
+    takeLoanBtn.addEventListener('click', takeLoan);
+    setJobBtn.addEventListener('click', setJob);
 
     // Закрытие по клику вне модального окна
     window.addEventListener('click', function(event) {
@@ -311,4 +523,29 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error('Не найдена кнопка main-action-btn');
     }
+
+    // Добавляем обработчики для улучшения работы с клавиатурой на мобильных
+    const numericInputs = document.querySelectorAll('input[type="number"]');
+    numericInputs.forEach(input => {
+        // Устанавливаем тип клавиатуры для числовых полей
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('pattern', '[0-9]*');
+        
+        // Автоматически скрываем клавиатуру при нажатии Enter
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                input.blur();
+            }
+        });
+    });
+
+    // Автоматическая прокрутка при открытии клавиатуры
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            setTimeout(() => {
+                input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
+        });
+    });
 }); 

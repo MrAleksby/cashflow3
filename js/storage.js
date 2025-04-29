@@ -17,34 +17,79 @@ window.resetGame = function() {
         return;
     }
     
-    // Очищаем все данные
+    // Полностью очищаем все данные
     window.data = {
         income: [],
         expense: [],
         asset: [],
         liability: [],
         children: [],
-        history: []
+        history: [],
+        monthsCount: 0
     };
     window.cash = 0;
     
-    // Очищаем localStorage
+    // Тщательная очистка localStorage
+    localStorage.clear();
     localStorage.removeItem('appData');
     localStorage.removeItem('cash');
+    localStorage.removeItem('data');
     
-    // Обновляем отображение
-    if (typeof window.renderAll === 'function') window.renderAll();
-    if (typeof window.renderIncome === 'function') window.renderIncome();
-    if (typeof window.renderExpense === 'function') window.renderExpense();
-    if (typeof window.renderCash === 'function') window.renderCash();
-    if (typeof window.renderSummary === 'function') window.renderSummary();
+    // Сохраняем пустые данные в localStorage
+    localStorage.setItem('appData', JSON.stringify(window.data));
+    localStorage.setItem('cash', '0');
     
-    alert('Игра успешно сброшена. Можете начинать заново!');
+    // Очищаем все возможные кэши
+    if (window.sessionStorage) {
+        sessionStorage.clear();
+    }
+    
+    // Показываем сообщение
+    alert('Игра успешно сброшена. Страница будет перезагружена.');
+    
+    // Принудительно перезагружаем страницу без использования кэша
+    window.location.href = window.location.pathname + '?clear=' + new Date().getTime();
 };
 
 // Функция загрузки данных из localStorage
 window.loadData = function() {
     try {
+        // Проверяем наличие параметров clear или nocache в URL
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('clear') || urlParams.has('nocache')) {
+            // Если есть параметр clear или nocache, убеждаемся что все очищено
+            localStorage.clear();
+            window.data = {
+                income: [],
+                expense: [],
+                asset: [],
+                liability: [],
+                children: [],
+                history: [],
+                monthsCount: 0
+            };
+            window.cash = 0;
+            
+            // Принудительно очищаем контейнер истории
+            const historyContainer = document.getElementById('history-container');
+            if (historyContainer) {
+                historyContainer.innerHTML = '<div class="history-empty">История операций пуста</div>';
+            }
+            
+            // Удаляем параметры из URL
+            window.history.replaceState({}, document.title, window.location.pathname);
+            
+            // Обновляем отображение
+            if (typeof window.renderAll === 'function') window.renderAll();
+            if (typeof window.renderIncome === 'function') window.renderIncome();
+            if (typeof window.renderExpense === 'function') window.renderExpense();
+            if (typeof window.renderCash === 'function') window.renderCash();
+            if (typeof window.renderSummary === 'function') window.renderSummary();
+            if (typeof window.renderHistory === 'function') window.renderHistory();
+            
+            return;
+        }
+        
         // Загружаем основные данные
         const savedData = localStorage.getItem('appData');
         if (savedData) {
@@ -57,6 +102,7 @@ window.loadData = function() {
             if (!Array.isArray(window.data.liability)) window.data.liability = [];
             if (!Array.isArray(window.data.children)) window.data.children = [];
             if (!Array.isArray(window.data.history)) window.data.history = [];
+            if (typeof window.data.monthsCount === 'undefined') window.data.monthsCount = 0;
         } else {
             // Инициализируем пустые данные если ничего не сохранено
             window.data = {
@@ -65,7 +111,8 @@ window.loadData = function() {
                 asset: [],
                 liability: [],
                 children: [],
-                history: []
+                history: [],
+                monthsCount: 0
             };
         }
 
@@ -74,14 +121,12 @@ window.loadData = function() {
         window.cash = savedCash ? parseFloat(savedCash) : 0;
 
         // Обновляем все отображения
-        setTimeout(() => {
             if (typeof window.renderAll === 'function') window.renderAll();
             if (typeof window.renderIncome === 'function') window.renderIncome();
             if (typeof window.renderExpense === 'function') window.renderExpense();
             if (typeof window.renderCash === 'function') window.renderCash();
             if (typeof window.renderSummary === 'function') window.renderSummary();
-            console.log('Отображение обновлено');
-        }, 100);
+        if (typeof window.renderHistory === 'function') window.renderHistory();
         
         console.log('Данные успешно загружены');
     } catch (error) {
@@ -93,9 +138,24 @@ window.loadData = function() {
             asset: [],
             liability: [],
             children: [],
-            history: []
+            history: [],
+            monthsCount: 0
         };
         window.cash = 0;
+        
+        // Принудительно очищаем контейнер истории
+        const historyContainer = document.getElementById('history-container');
+        if (historyContainer) {
+            historyContainer.innerHTML = '<div class="history-empty">История операций пуста</div>';
+        }
+        
+        // Обновляем отображение
+        if (typeof window.renderAll === 'function') window.renderAll();
+        if (typeof window.renderIncome === 'function') window.renderIncome();
+        if (typeof window.renderExpense === 'function') window.renderExpense();
+        if (typeof window.renderCash === 'function') window.renderCash();
+        if (typeof window.renderSummary === 'function') window.renderSummary();
+        if (typeof window.renderHistory === 'function') window.renderHistory();
     }
 };
 
