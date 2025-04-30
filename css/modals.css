@@ -879,15 +879,43 @@
 }
 
 .asset-type-btn {
-    background: #fff;
+    padding: 10px 8px;
+    font-size: 0.9em;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+    background: #f5f5f5;
+    color: #333;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 8px;
-    text-align: center;
-    cursor: pointer;
     transition: all 0.2s ease;
-    font-size: 0.9em;
-    color: #333;
+    margin: 0;
+}
+
+@media (max-width: 480px) {
+    .asset-type-selector {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        padding: 8px;
+    }
+
+    .asset-type-btn {
+        padding: 10px 4px;
+        font-size: 0.85em;
+        min-height: 44px;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+
+    /* Последняя кнопка занимает всю ширину */
+    .asset-type-btn:last-child {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
 }
 
 .asset-type-btn:hover {
