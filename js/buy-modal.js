@@ -575,7 +575,7 @@ const ASSET_CATEGORIES = {
         const buyButton = form.querySelector('.buy-misc-btn');
 
         // Обработчик покупки
-        buyButton.addEventListener('click', () => {
+        const handleMiscPurchase = () => {
             const name = nameInput.value.trim();
             const price = parseFloat(priceInput.value) || 0;
             const downPayment = parseFloat(downPaymentInput.value) || 0;
@@ -676,6 +676,18 @@ const ASSET_CATEGORIES = {
 
             // Закрываем модальное окно
             modal.classList.remove('active');
+        };
+
+        // Добавляем обработчики для клика и touch-событий
+        buyButton.addEventListener('click', handleMiscPurchase);
+        buyButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this.style.opacity = '0.7';
+        });
+        buyButton.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            this.style.opacity = '1';
+            handleMiscPurchase();
         });
 
         // Добавляем обработчик для кнопки "Назад"
