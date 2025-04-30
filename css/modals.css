@@ -602,25 +602,41 @@
 
 .buy-business-btn {
     width: 100%;
-    padding: 0.8rem;
-    margin-top: 1rem;
+    height: 48px;
+    margin: 20px 0;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
     background: #4CAF50;
     color: white;
-    border: none;
-    border-radius: 4px;
-    font-size: 1rem;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible;
+    line-height: 1;
 }
 
-.buy-business-btn:hover {
-    background: #388e3c;
+.buy-business-btn span {
+    display: inline-block;
+    white-space: nowrap;
+    width: auto;
 }
 
-.buy-business-btn:disabled {
-    background: #ccc;
-    cursor: not-allowed;
+@media (max-width: 480px) {
+    .buy-business-btn {
+        margin: 16px 0;
+        font-size: 15px;
+        height: 44px;
+        width: 100%;
+        max-width: none;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
 }
 
 /* Удаляем старые стили */
