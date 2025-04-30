@@ -1020,6 +1020,13 @@
         color: white;
         border: none;
         font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        padding: 0 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     /* Стили для кнопок возврата */
@@ -1043,6 +1050,12 @@
 
     input[type="number"] {
         -moz-appearance: textfield;
+    }
+
+    /* Специальные стили для кнопки покупки бизнеса */
+    .buy-business-btn {
+        font-size: 15px;
+        letter-spacing: -0.2px;
     }
 }
 
