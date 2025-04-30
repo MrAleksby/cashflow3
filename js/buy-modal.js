@@ -304,7 +304,18 @@ const ASSET_CATEGORIES = {
         const nameInput = form.querySelector('.business-name');
 
         // Обработчик покупки бизнеса
-        buyButton.addEventListener('click', () => {
+        buyButton.addEventListener('click', handleBusinessPurchase);
+        buyButton.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this.style.opacity = '0.7';
+        });
+        buyButton.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            this.style.opacity = '1';
+            handleBusinessPurchase();
+        });
+
+        function handleBusinessPurchase() {
             const name = nameInput.value.trim();
             const price = parseFloat(priceInput.value) || 0;
             const downPayment = parseFloat(downPaymentInput.value) || 0;
@@ -404,7 +415,7 @@ const ASSET_CATEGORIES = {
 
             // Закрываем модальное окно
             modal.classList.remove('active');
-        });
+        }
 
         // Добавляем обработчик для кнопки "Назад"
         content.querySelector('.back-button').addEventListener('click', showCategories);
@@ -1169,9 +1180,6 @@ const ASSET_CATEGORIES = {
             if (downPayment > 0) {
                 confirmText += `Первый взнос: $${downPayment}\n`;
             }
-            if (mortgage > 0) {
-                confirmText += `Ипотека: $${mortgage}\n`;
-            }
             confirmText += `Денежный поток: $${cashflow}`;
 
             if (!confirm(confirmText)) {
@@ -1307,9 +1315,6 @@ const ASSET_CATEGORIES = {
         }
         if (downPayment > 0) {
             confirmText += `Первый взнос: $${downPayment}\n`;
-        }
-        if (mortgage > 0) {
-            confirmText += `Ипотека: $${mortgage}\n`;
         }
         confirmText += `Денежный поток: $${cashflow}`;
 
@@ -1451,7 +1456,7 @@ const ASSET_CATEGORIES = {
 
     // Инициализация обработчиков для кнопок покупки
     function initializeBuyButtons() {
-        const buyButtons = document.querySelectorAll('.buy-button, .buy-stock-btn, .buy-business-btn, .buy-metal-btn, .buy-misc-btn, .buy-property-btn');
+        const buyButtons = document.querySelectorAll('.buy-button, .buy-stock-btn, .buy-metal-btn, .buy-misc-btn, .buy-property-btn');
         
         buyButtons.forEach(button => {
             // Добавляем обработчик для touchstart
