@@ -412,6 +412,7 @@ function sellAsset() {
 // Продажа акций
 function sellStocks() {
     const quantity = parseInt(document.querySelector('.sell-quantity').value) || 0;
+    const sellPrice = parseFloat(document.querySelector('.sell-price').value) || 0;
     
     if (!selectedAsset) {
         alert('Выберите актив для продажи!');
@@ -423,8 +424,8 @@ function sellStocks() {
         return;
     }
     
-    // Рассчитываем сумму продажи
-    const totalSale = quantity * selectedAsset.price;
+    // Рассчитываем сумму продажи используя цену продажи
+    const totalSale = quantity * sellPrice;
     
     // Подтверждение продажи
     if (!confirm(`Подтвердите продажу:\n${quantity} шт. ${selectedAsset.name}\nСумма: $${totalSale}`)) {

@@ -25,25 +25,24 @@
     border-radius: 16px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     overflow-x: hidden;
+    padding-top: 40px;
 }
 
 .close-btn {
     position: absolute;
-    right: 20px;
-    top: 20px;
-    background: none;
-    border: none;
-    font-size: 24px;
-    cursor: pointer;
-    color: #666;
-    padding: 0;
+    top: 10px;
+    right: 10px;
     width: 30px;
     height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: all 0.2s ease;
+    line-height: 30px;
+    text-align: center;
+    font-size: 24px;
+    color: #666;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    z-index: 1000;
 }
 
 .close-btn:hover {
@@ -1366,5 +1365,22 @@ button {
 
     #sell-modal .button-group button {
         width: 100%;
+    }
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 600px) {
+    .modal-content {
+        padding-top: 50px;
+    }
+
+    .close-btn {
+        top: 15px;
+        right: 15px;
+    }
+
+    .modal-content > button:first-of-type:not(.close-btn) {
+        margin-top: -30px;
+        margin-bottom: 20px;
     }
 } 

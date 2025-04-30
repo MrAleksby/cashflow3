@@ -421,11 +421,11 @@ const ASSET_CATEGORIES = {
                         <div class="precious-metal-inputs">
                             <div class="input-group">
                                 <label>Цена ($):</label>
-                                <input type="number" class="metal-price" min="0" step="1000" placeholder="Полная стоимость">
+                                <input type="number" class="metal-price" min="0" step="1000" inputmode="numeric" pattern="[0-9]*">
                             </div>
                             <div class="input-group">
                                 <label>Первый взнос ($):</label>
-                                <input type="number" class="metal-down-payment" min="0" step="10" placeholder="Сумма первого взноса">
+                                <input type="number" class="metal-down-payment" min="0" step="10" inputmode="numeric" pattern="[0-9]*">
                             </div>
                             <button class="buy-metal-btn">Купить</button>
                         </div>
@@ -534,15 +534,15 @@ const ASSET_CATEGORIES = {
                             </div>
                             <div class="input-group">
                                 <label>Цена ($):</label>
-                                <input type="number" class="misc-price" min="0" step="10" placeholder="Полная стоимость">
+                                <input type="number" class="misc-price" min="0" step="10" inputmode="numeric" pattern="[0-9]*">
                             </div>
                             <div class="input-group">
                                 <label>Первый взнос ($):</label>
-                                <input type="number" class="misc-down-payment" min="0" step="10" placeholder="Сумма первого взноса">
+                                <input type="number" class="misc-down-payment" min="0" step="10" inputmode="numeric" pattern="[0-9]*">
                             </div>
                             <div class="input-group">
                                 <label>Ежемесячный расход ($):</label>
-                                <input type="number" class="misc-expense" min="0" step="10" placeholder="Сумма ежемесячного расхода">
+                                <input type="number" class="misc-expense" min="0" step="10" inputmode="numeric" pattern="[0-9]*">
                             </div>
                             <button class="buy-misc-btn">Купить</button>
                         </div>
@@ -778,11 +778,11 @@ const ASSET_CATEGORIES = {
                             <div class="stock-inputs">
                                 <div class="input-group">
                                     <label>Цена за акцию ($):</label>
-                                    <input type="number" class="price-per-share" min="0" step="1">
+                                    <input type="number" class="price-per-share" min="0" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Количество акций:</label>
-                                    <input type="number" class="shares-amount" min="1" step="1">
+                                    <input type="number" class="shares-amount" min="1" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="total-price">Общая стоимость: $<span>0</span></div>
                                 <button class="buy-stock-btn">Купить</button>
@@ -817,23 +817,23 @@ const ASSET_CATEGORIES = {
                             <div class="property-inputs">
                                 <div class="input-group">
                                     <label>Количество акров:</label>
-                                    <input type="number" class="property-acres" step="0.1">
+                                    <input type="number" class="property-acres" step="0.1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Цена ($):</label>
-                                    <input type="number" class="property-price" step="1">
+                                    <input type="number" class="property-price" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Первый взнос ($):</label>
-                                    <input type="number" class="property-down-payment" step="1">
+                                    <input type="number" class="property-down-payment" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Ипотека ($):</label>
-                                    <input type="number" class="property-mortgage" step="1">
+                                    <input type="number" class="property-mortgage" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1">
+                                    <input type="number" class="property-cashflow" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -846,23 +846,23 @@ const ASSET_CATEGORIES = {
                             <div class="property-inputs">
                                 <div class="input-group">
                                     <label>Количество квартир:</label>
-                                    <input type="number" class="property-units" step="1">
+                                    <input type="number" class="property-units" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Цена ($):</label>
-                                    <input type="number" class="property-price" step="1">
+                                    <input type="number" class="property-price" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Первый взнос ($):</label>
-                                    <input type="number" class="property-down-payment" step="1">
+                                    <input type="number" class="property-down-payment" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Ипотека ($):</label>
-                                    <input type="number" class="property-mortgage" step="1">
+                                    <input type="number" class="property-mortgage" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1">
+                                    <input type="number" class="property-cashflow" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -875,19 +875,19 @@ const ASSET_CATEGORIES = {
                             <div class="property-inputs">
                                 <div class="input-group">
                                     <label>Цена ($):</label>
-                                    <input type="number" class="property-price" step="1">
+                                    <input type="number" class="property-price" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Первый взнос ($):</label>
-                                    <input type="number" class="property-down-payment" step="1">
+                                    <input type="number" class="property-down-payment" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Ипотека ($):</label>
-                                    <input type="number" class="property-mortgage" step="1">
+                                    <input type="number" class="property-mortgage" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1">
+                                    <input type="number" class="property-cashflow" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
