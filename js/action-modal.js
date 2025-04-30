@@ -509,6 +509,29 @@ document.addEventListener('DOMContentLoaded', function() {
     takeLoanBtn.addEventListener('click', takeLoan);
     setJobBtn.addEventListener('click', setJob);
 
+    // Добавляем обработчики для мобильных устройств
+    takeLoanBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        takeLoan();
+    });
+    setJobBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        setJob();
+    });
+
+    // Улучшаем отзывчивость кнопок на мобильных
+    const allButtons = actionModal.querySelectorAll('button');
+    allButtons.forEach(button => {
+        button.style.cursor = 'pointer';
+        button.style.touchAction = 'manipulation';
+        button.addEventListener('touchstart', function(e) {
+            this.style.opacity = '0.7';
+        });
+        button.addEventListener('touchend', function(e) {
+            this.style.opacity = '1';
+        });
+    });
+
     // Закрытие по клику вне модального окна
     window.addEventListener('click', function(event) {
         if (event.target === actionModal) {

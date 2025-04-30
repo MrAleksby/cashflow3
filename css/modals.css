@@ -1178,4 +1178,193 @@
 #misc-list {
     width: 100%;
     overflow-x: hidden;
+}
+
+/* Стили для кнопок на мобильных устройствах */
+button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+}
+
+.take-loan-btn,
+.set-job-btn {
+    min-height: 44px; /* Минимальная высота для удобного нажатия */
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.take-loan-btn:active,
+.set-job-btn:active {
+    transform: scale(0.98);
+}
+
+@media (max-width: 768px) {
+    .take-loan-btn,
+    .set-job-btn {
+        padding: 14px 24px; /* Увеличенный отступ для мобильных */
+        font-size: 18px; /* Увеличенный размер шрифта для мобильных */
+    }
+}
+
+/* Улучшенные стили для кнопок покупки и продажи на мобильных */
+.buy-button,
+.buy-stock-btn,
+.buy-business-btn,
+.buy-metal-btn,
+.buy-misc-btn,
+.sell-stock-btn,
+.sell-business-btn,
+.sell-realestate-btn,
+.sell-metal-btn,
+.sell-misc-btn {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    min-height: 44px;
+    padding: 12px 20px;
+    margin: 8px 0;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+/* Эффект при нажатии */
+.buy-button:active,
+.buy-stock-btn:active,
+.buy-business-btn:active,
+.buy-metal-btn:active,
+.buy-misc-btn:active,
+.sell-stock-btn:active,
+.sell-business-btn:active,
+.sell-realestate-btn:active,
+.sell-metal-btn:active,
+.sell-misc-btn:active {
+    transform: scale(0.98);
+    opacity: 0.9;
+}
+
+/* Стили для мобильных устройств */
+@media (max-width: 768px) {
+    .buy-button,
+    .buy-stock-btn,
+    .buy-business-btn,
+    .buy-metal-btn,
+    .buy-misc-btn,
+    .sell-stock-btn,
+    .sell-business-btn,
+    .sell-realestate-btn,
+    .sell-metal-btn,
+    .sell-misc-btn {
+        padding: 14px 24px;
+        font-size: 18px;
+        margin: 10px 0;
+    }
+}
+
+/* Улучшенная обратная связь при касании */
+.buy-button:focus,
+.buy-stock-btn:focus,
+.buy-business-btn:focus,
+.buy-metal-btn:focus,
+.buy-misc-btn:focus,
+.sell-stock-btn:focus,
+.sell-business-btn:focus,
+.sell-realestate-btn:focus,
+.sell-metal-btn:focus,
+.sell-misc-btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.3);
+}
+
+/* Стили для кнопок продажи */
+#sell-asset-btn,
+#cancel-sell-btn,
+.asset-type-btn {
+    min-height: 44px;
+    padding: 12px 24px;
+    margin: 8px;
+    font-size: 16px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+}
+
+#sell-asset-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+}
+
+#cancel-sell-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+}
+
+.asset-type-btn {
+    background-color: #2196F3;
+    color: white;
+    border: none;
+}
+
+.asset-type-btn.active {
+    background-color: #1976D2;
+    transform: scale(0.98);
+}
+
+/* Эффекты при нажатии для мобильных устройств */
+#sell-asset-btn:active,
+#cancel-sell-btn:active,
+.asset-type-btn:active {
+    transform: scale(0.95);
+    opacity: 0.8;
+}
+
+/* Стили для модального окна продажи на мобильных устройствах */
+@media (max-width: 768px) {
+    #sell-modal .modal-content {
+        width: 95%;
+        max-width: 400px;
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    #sell-modal input[type="number"],
+    #sell-modal input[type="text"] {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px;
+        padding: 8px;
+        margin: 8px 0;
+    }
+
+    #sell-modal .close-btn {
+        min-width: 44px;
+        min-height: 44px;
+        font-size: 24px;
+        padding: 8px;
+    }
+
+    #sell-modal .button-group {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    #sell-modal .button-group button {
+        width: 100%;
+    }
 } 

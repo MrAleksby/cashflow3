@@ -1448,4 +1448,65 @@ const ASSET_CATEGORIES = {
             modal.classList.remove('active');
         }
     });
+
+    // Инициализация обработчиков для кнопок покупки
+    function initializeBuyButtons() {
+        const buyButtons = document.querySelectorAll('.buy-button, .buy-stock-btn, .buy-business-btn, .buy-metal-btn, .buy-misc-btn, .buy-property-btn');
+        
+        buyButtons.forEach(button => {
+            // Добавляем обработчик для touchstart
+            button.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                this.style.opacity = '0.7';
+                // Вызываем соответствующую функцию покупки
+                const card = this.closest('.asset-card');
+                if (card) {
+                    const itemId = card.dataset.itemId;
+                    const item = findItemById(itemId);
+                    if (item) {
+                        showAssetDetails(item, getCurrentCategory());
+                    }
+                }
+            });
+
+            // Добавляем обработчик для touchend
+            button.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                this.style.opacity = '1';
+            });
+
+            // Улучшаем отзывчивость на мобильных
+            button.style.cursor = 'pointer';
+            button.style.touchAction = 'manipulation';
+        });
+    }
+
+    // Вспомогательная функция для поиска элемента по ID
+    function findItemById(id) {
+        for (const category in ASSET_CATEGORIES) {
+            const items = ASSET_CATEGORIES[category].items;
+            const item = items.find(i => i.id === id);
+            if (item) return item;
+        }
+        return null;
+    }
+
+    // Вспомогательная функция для получения текущей категории
+    function getCurrentCategory() {
+        const activeCard = document.querySelector('.category-card.active');
+        return activeCard ? activeCard.dataset.category : null;
+    }
+
+    // Вызываем инициализацию при показе категорий и элементов
+    const originalShowCategories = showCategories;
+    showCategories = function() {
+        originalShowCategories();
+        initializeBuyButtons();
+    };
+
+    const originalShowCategoryItems = showCategoryItems;
+    showCategoryItems = function(category) {
+        originalShowCategoryItems(category);
+        initializeBuyButtons();
+    };
 })(); 

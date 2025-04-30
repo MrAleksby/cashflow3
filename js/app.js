@@ -736,7 +736,7 @@ function updateDisplay() {
     closeSellStockModal();
 }
 
-// Инициализация интерфейса продажи
+// Инициализация интерфейса продажи с улучшенной поддержкой мобильных устройств
 function initializeSellInterface() {
     // Добавляем обработчики для полей ввода акций
     const quantityInput = document.querySelector('.sell-quantity');
@@ -758,7 +758,40 @@ function initializeSellInterface() {
         sellBusinessPriceInput.addEventListener('input', updateBusinessSellCalculations);
     }
     
-    // Добавляем обработчики для кнопок
+    // Улучшенные обработчики для кнопок с поддержкой мобильных устройств
+    const sellButtons = document.querySelectorAll('#sell-asset-btn, #cancel-sell-btn, .asset-type-btn');
+    sellButtons.forEach(button => {
+        // Добавляем обработчик для touchstart
+        button.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this.style.opacity = '0.7';
+            
+            // Определяем действие в зависимости от кнопки
+            if (this.id === 'sell-asset-btn') {
+                sellAsset();
+            } else if (this.id === 'cancel-sell-btn') {
+                closeSellStockModal();
+            } else if (this.classList.contains('asset-type-btn')) {
+                currentAssetType = this.dataset.type;
+                document.querySelectorAll('.asset-type-btn').forEach(b => 
+                    b.classList.toggle('active', b === this)
+                );
+                updateAssetDisplay();
+            }
+        });
+
+        // Добавляем обработчик для touchend
+        button.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            this.style.opacity = '1';
+        });
+
+        // Улучшаем отзывчивость на мобильных
+        button.style.cursor = 'pointer';
+        button.style.touchAction = 'manipulation';
+    });
+    
+    // Добавляем стандартные обработчики click для совместимости
     if (sellAssetBtn) {
         sellAssetBtn.addEventListener('click', sellAsset);
     }
@@ -771,6 +804,18 @@ function initializeSellInterface() {
     const closeBtn = document.querySelector('#sell-modal .close-btn');
     if (closeBtn) {
         closeBtn.addEventListener('click', closeSellStockModal);
+        
+        // Добавляем поддержку мобильных устройств для кнопки закрытия
+        closeBtn.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this.style.opacity = '0.7';
+            closeSellStockModal();
+        });
+        
+        closeBtn.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            this.style.opacity = '1';
+        });
     }
     
     // Добавляем обработчики для кнопок выбора типа актива
@@ -783,17 +828,6 @@ function initializeSellInterface() {
             updateAssetDisplay();
         });
     });
-    
-    // Добавляем обработчики для полей цены
-    if (sellRealEstatePriceInput) {
-        sellRealEstatePriceInput.addEventListener('input', updateRealEstateSellCalculations);
-    }
-    if (sellPreciousMetalsPriceInput) {
-        sellPreciousMetalsPriceInput.addEventListener('input', updatePreciousMetalsSellCalculations);
-    }
-    if (sellMiscPriceInput) {
-        sellMiscPriceInput.addEventListener('input', updateMiscSellCalculations);
-    }
 }
 
 // Вызываем инициализацию после загрузки страницы
