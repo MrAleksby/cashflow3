@@ -337,7 +337,8 @@
 @media (max-width: 480px) {
     /* Общие стили для модальных окон */
     #action-modal .modal-content,
-    #sell-modal .modal-content {
+    #sell-modal .modal-content,
+    #buy-modal .modal-content {
         margin: 0;
         padding: 6px;
         width: 94%;
@@ -350,14 +351,16 @@
     }
 
     #action-modal .modal-content h2,
-    #sell-modal .modal-content h2 {
+    #sell-modal .modal-content h2,
+    #buy-modal .modal-content h2 {
         font-size: 1em;
         margin: 4px 0;
         text-align: center;
     }
 
     #action-modal .close-btn,
-    #sell-modal .close-btn {
+    #sell-modal .close-btn,
+    #buy-modal .close-btn {
         top: 2px;
         right: 2px;
         width: 20px;
@@ -368,7 +371,8 @@
 
     /* Стили для карточек */
     #action-modal .category-card,
-    #sell-modal .asset-type-btn {
+    #sell-modal .asset-type-btn,
+    #buy-modal .category-card {
         min-height: 32px;
         padding: 4px 6px;
         flex-direction: row;
@@ -385,7 +389,8 @@
     }
 
     #action-modal .category-card i,
-    #sell-modal .asset-type-btn i {
+    #sell-modal .asset-type-btn i,
+    #buy-modal .category-card i {
         font-size: 1em;
         margin: 0;
         min-width: 16px;
@@ -396,7 +401,8 @@
     }
 
     #action-modal .category-card h3,
-    #sell-modal .asset-type-btn h3 {
+    #sell-modal .asset-type-btn h3,
+    #buy-modal .category-card h3 {
         font-size: 0.85em;
         margin: 0;
         line-height: 1;
@@ -405,25 +411,29 @@
     }
 
     #action-modal .category-card p,
-    #sell-modal .asset-type-btn p {
+    #sell-modal .asset-type-btn p,
+    #buy-modal .category-card p {
         display: none;
     }
 
     #action-modal .category-card:active,
-    #sell-modal .asset-type-btn:active {
+    #sell-modal .asset-type-btn:active,
+    #buy-modal .category-card:active {
         transform: scale(0.98);
         background: #444;
     }
 
     #action-modal .category-card.active,
-    #sell-modal .asset-type-btn.active {
+    #sell-modal .asset-type-btn.active,
+    #buy-modal .category-card.active {
         background: #444;
         border-color: #4CAF50;
     }
 
     /* Контейнеры для списков */
     #action-modal .asset-categories,
-    #sell-modal .asset-type-selector {
+    #sell-modal .asset-type-selector,
+    #buy-modal .asset-categories {
         display: grid;
         grid-template-columns: 1fr;
         gap: 3px;
@@ -432,46 +442,30 @@
         width: 100%;
     }
 
-    /* Дополнительные стили для окна продажи */
-    #sell-modal .asset-list {
+    /* Стили для форм в модальном окне покупки */
+    #buy-modal .assets-list {
         margin: 4px 0;
-        max-height: 150px;
+    }
+
+    #buy-modal .asset-card {
+        padding: 4px 6px;
         border-radius: 6px;
         background: #333;
         border: 1px solid #444;
-    }
-
-    #sell-modal .asset-item {
-        padding: 4px 6px;
-        font-size: 0.85em;
-        color: white;
-        border-bottom: 1px solid #444;
-    }
-
-    #sell-modal .asset-item:last-child {
-        border-bottom: none;
-    }
-
-    #sell-modal .selected-asset-info {
-        margin-top: 4px;
-        font-size: 0.85em;
-        padding: 6px;
-        background: #333;
-        border-radius: 6px;
         color: white;
     }
 
-    #sell-modal .input-group {
+    #buy-modal .input-group {
         margin-bottom: 4px;
     }
 
-    #sell-modal .input-group label {
+    #buy-modal .input-group label {
         font-size: 0.85em;
         margin-bottom: 2px;
         color: #aaa;
     }
 
-    #sell-modal .input-group input {
+    #buy-modal .input-group input {
         height: 32px;
         padding: 4px 6px;
         font-size: 14px;
@@ -482,13 +476,13 @@
         width: 100%;
     }
 
-    #sell-modal .modal-buttons {
+    #buy-modal .buy-controls {
         margin-top: 8px;
         display: flex;
         gap: 6px;
     }
 
-    #sell-modal .modal-buttons button {
+    #buy-modal .buy-controls button {
         flex: 1;
         height: 32px;
         font-size: 0.85em;
@@ -500,13 +494,13 @@
         cursor: pointer;
     }
 
-    #sell-modal .modal-buttons button:disabled {
+    #buy-modal .back-button {
         background: #666;
-        cursor: not-allowed;
     }
 
-    #sell-modal .modal-buttons #cancel-sell-btn {
-        background: #666;
+    #buy-modal .wallet-info {
+        font-size: 0.85em;
+        color: #aaa;
     }
 }
 
