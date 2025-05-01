@@ -1526,4 +1526,30 @@ const ASSET_CATEGORIES = {
         originalShowCategoryItems(category);
         initializeBuyButtons();
     };
+
+    // Функция для настройки числового поля ввода
+    function setupNumericInput(input) {
+        if (!input) return;
+        
+        // Устанавливаем тип клавиатуры для числовых полей
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('pattern', '[0-9]*');
+        
+        // Добавляем обработчик события input для мгновенного обновления значения
+        input.addEventListener('input', function(e) {
+            // Удаляем все нецифровые символы
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            
+            // Обновляем значение поля
+            e.target.value = value;
+            
+            // Принудительно обновляем отображение
+            input.blur();
+            input.focus();
+        });
+    }
+
+    // Инициализируем обработчики при загрузке
+    const numericInputs = modal.querySelectorAll('input[type="number"]');
+    numericInputs.forEach(setupNumericInput);
 })(); 
