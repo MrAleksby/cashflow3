@@ -234,16 +234,34 @@
     <!-- Модальное окно продажи активов -->
     <div id="sell-modal" class="modal">
         <div class="modal-content">
-            <h2>Продажа активов</h2>
-            <span class="close-btn">&times;</span>
-            
-            <!-- Выбор типа актива -->
+            <button class="close-btn">&times;</button>
+            <h2>Выберите тип актива для продажи</h2>
             <div class="asset-type-selector">
-                <button class="asset-type-btn active" data-type="stocks">Акции</button>
-                <button class="asset-type-btn" data-type="realestate">Недвижимость</button>
-                <button class="asset-type-btn" data-type="business">Бизнес</button>
-                <button class="asset-type-btn" data-type="preciousmetals">Драгметаллы</button>
-                <button class="asset-type-btn" data-type="misc">Всякая всячина</button>
+                <div class="asset-type-btn" data-type="stocks">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Акции</h3>
+                    <p>Продажа ценных бумаг</p>
+                </div>
+                <div class="asset-type-btn" data-type="realestate">
+                    <i class="fas fa-home"></i>
+                    <h3>Недвижимость</h3>
+                    <p>Продажа недвижимости</p>
+                </div>
+                <div class="asset-type-btn" data-type="business">
+                    <i class="fas fa-store"></i>
+                    <h3>Бизнес</h3>
+                    <p>Продажа бизнеса</p>
+                </div>
+                <div class="asset-type-btn" data-type="preciousmetals">
+                    <i class="fas fa-coins"></i>
+                    <h3>Драгметаллы</h3>
+                    <p>Продажа драгметаллов</p>
+                </div>
+                <div class="asset-type-btn" data-type="misc">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>Всякая всячина</h3>
+                    <p>Продажа прочих активов</p>
+                </div>
             </div>
             
             <!-- Список активов -->
@@ -372,90 +390,81 @@
     <!-- Модальное окно действий -->
     <div id="action-modal" class="modal">
         <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <div class="modal-header">
-                <h2>Действия</h2>
-                <div class="wallet-display">
-                    В кошельке: <span id="modal-action-wallet-amount">$0</span>
-                </div>
+            <button class="close-btn">&times;</button>
+            <h2>Выберите действие</h2>
+            <div class="wallet-balance">
+                Баланс: <span id="modal-action-wallet-amount">0</span>
             </div>
-            <div class="action-cards-container">
+            <div class="asset-categories">
                 <!-- Карточка взять деньги -->
-                <div class="action-card small" data-action="take">
-                    <div class="card-header">
-                        <i class="fas fa-plus-circle"></i>
-                        <h3>Взять деньги</h3>
-                    </div>
-                    <div class="action-info">
+                <div class="category-card" data-action="take">
+                    <i class="fas fa-plus-circle"></i>
+                    <h3>Взять деньги</h3>
+                    <p>Добавить деньги в кошелек</p>
+                    <div class="action-form" style="display: none;">
                         <div class="input-group">
                             <input type="number" class="take-money-amount" placeholder="Сумма">
                             <input type="text" class="take-money-description" placeholder="Описание">
+                            <button class="take-money-btn">Подтвердить</button>
                         </div>
-                        <button class="take-money-btn">Взять</button>
                     </div>
                 </div>
 
                 <!-- Карточка отдать деньги -->
-                <div class="action-card small" data-action="give">
-                    <div class="card-header">
-                        <i class="fas fa-minus-circle"></i>
-                        <h3>Отдать деньги</h3>
-                    </div>
-                    <div class="action-info">
+                <div class="category-card" data-action="give">
+                    <i class="fas fa-minus-circle"></i>
+                    <h3>Отдать деньги</h3>
+                    <p>Вычесть деньги из кошелька</p>
+                    <div class="action-form" style="display: none;">
                         <div class="input-group">
                             <input type="number" class="give-money-amount" placeholder="Сумма">
                             <input type="text" class="give-money-description" placeholder="Описание">
+                            <button class="give-money-btn">Подтвердить</button>
                         </div>
-                        <button class="give-money-btn">Отдать</button>
                     </div>
                 </div>
 
                 <!-- Карточка добавить ребенка -->
-                <div class="action-card small" data-action="child">
-                    <div class="card-header">
-                        <i class="fas fa-child"></i>
-                        <h3>Добавить ребенка</h3>
-                    </div>
-                    <div class="action-info">
+                <div class="category-card" data-action="child">
+                    <i class="fas fa-child"></i>
+                    <h3>Добавить ребенка</h3>
+                    <p>Добавить расходы на ребенка</p>
+                    <div class="action-form" style="display: none;">
                         <div class="input-group">
                             <input type="text" class="child-name" placeholder="Имя ребенка">
-                            <input type="number" class="child-expense" placeholder="Расход в месяц">
+                            <input type="number" class="child-expense" placeholder="Сумма расходов">
+                            <button class="add-child-btn">Добавить</button>
                         </div>
-                        <button class="add-child-btn">Добавить</button>
+                        <div class="children-list"></div>
                     </div>
-                    <div class="children-list"></div>
                 </div>
 
                 <!-- Карточка взять кредит -->
-                <div class="action-card small" data-action="loan">
-                    <div class="card-header">
-                        <i class="fas fa-money-bill-wave"></i>
-                        <h3>Взять кредит</h3>
-                    </div>
-                    <div class="action-info">
+                <div class="category-card" data-action="loan">
+                    <i class="fas fa-hand-holding-usd"></i>
+                    <h3>Взять кредит</h3>
+                    <p>Оформить кредит в банке</p>
+                    <div class="action-form" style="display: none;">
                         <div class="input-group">
-                            <input type="number" class="loan-amount" min="1000" step="1000" placeholder="Сумма (кратно 1000)">
+                            <input type="number" class="loan-amount" placeholder="Сумма кредита">
                             <input type="text" class="loan-description" placeholder="Цель кредита">
+                            <button class="take-loan-btn">Оформить</button>
                         </div>
-                        <div class="loan-info-text">
-                            <small>* Платеж 10% от суммы</small>
-                        </div>
-                        <button class="take-loan-btn">Взять кредит</button>
                     </div>
                 </div>
 
                 <!-- Карточка работа -->
-                <div class="action-card small" data-action="job">
-                    <div class="card-header">
-                        <i class="fas fa-briefcase"></i>
-                        <h3>Работа</h3>
-                    </div>
-                    <div class="action-info">
+                <div class="category-card" data-action="job">
+                    <i class="fas fa-briefcase"></i>
+                    <h3>Работа</h3>
+                    <p>Устроиться на работу</p>
+                    <div class="action-form" style="display: none;">
                         <div class="input-group">
-                            <input type="number" class="job-salary" min="0" step="100" placeholder="Зарплата в месяц">
-                            <input type="text" class="job-title" placeholder="Название работы">
+                            <input type="text" class="job-title" placeholder="Название должности">
+                            <input type="number" class="job-salary" placeholder="Зарплата">
+                            <button class="set-job-btn">Устроиться</button>
+                            <button id="quit-job-btn" class="btn btn-danger quit-job-btn" disabled>Уволиться</button>
                         </div>
-                        <button class="set-job-btn">Установить работу</button>
                     </div>
                 </div>
             </div>

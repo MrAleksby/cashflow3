@@ -235,77 +235,107 @@
     animation: modalFadeIn 0.3s ease;
 }
 
-.asset-categories {
+/* Общие стили для сеток в модальных окнах */
+.asset-categories,
+.asset-type-selector {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     padding: 15px;
 }
 
-.category-card {
-    background: #fff;
-    border: 1px solid #e0e0e0;
+/* Общие стили для карточек */
+.category-card,
+.asset-type-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #333;
+    border: 1px solid #444;
     border-radius: 12px;
-    padding: 12px;
+    padding: 16px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 120px;
+    min-height: 140px;
+    color: white;
 }
 
-.category-card i {
+.category-card i,
+.asset-type-btn i {
     font-size: 2.25em;
     color: #4CAF50;
-    margin-bottom: 6px;
+    margin-bottom: 12px;
 }
 
-.category-card h3 {
+.category-card h3,
+.asset-type-btn h3 {
     margin: 0;
-    color: #333;
+    color: white;
     font-size: 1.35em;
     font-weight: 500;
 }
 
-.category-card p {
+.category-card p,
+.asset-type-btn p {
     margin: 3px 0 0 0;
-    color: #666;
+    color: #aaa;
     font-size: 1.2em;
 }
 
-.category-card:hover {
-    border-color: #4CAF50;
+.category-card:hover,
+.asset-type-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-color: #4CAF50;
 }
 
-.category-card.active {
+.category-card.active,
+.asset-type-btn.active {
+    background: #1b5e20;
     border-color: #4CAF50;
-    background: #E8F5E9;
 }
 
 @media (max-width: 480px) {
-    .asset-categories {
-        grid-template-columns: repeat(2, 1fr);
+    .asset-categories,
+    .asset-type-selector {
+        grid-template-columns: 1fr;
         gap: 9px;
         padding: 9px;
     }
 
-    .category-card {
-        padding: 9px;
-        min-height: 90px;
+    .category-card,
+    .asset-type-btn {
+        padding: 12px;
+        min-height: 110px;
+        font-size: 0.95em;
     }
 
-    .category-card i {
+    .category-card i,
+    .asset-type-btn i {
         font-size: 1.95em;
-        margin-bottom: 3px;
+        margin-bottom: 9px;
     }
 
-    .category-card h3 {
+    .category-card h3,
+    .asset-type-btn h3 {
         font-size: 1.2em;
     }
 
-    .category-card p {
+    .category-card p,
+    .asset-type-btn p {
         font-size: 1.05em;
+    }
+}
+
+/* Добавляем активное состояние для тач-устройств */
+@media (hover: none) {
+    .category-card:active,
+    .asset-type-btn:active {
+        transform: scale(0.98);
+        background: #1b5e20;
+        border-color: #4CAF50;
     }
 }
 
@@ -892,8 +922,7 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    padding: 12px;
-    width: 100%;
+    padding: 15px;
 }
 
 .asset-type-btn {
@@ -901,62 +930,45 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 18px 12px;
-    border: 2px solid #e0e0e0;
+    background: #333;
+    border: 1px solid #444;
     border-radius: 12px;
-    background: #fff;
-    color: #333;
-    font-size: 0.7em;
-    font-weight: 500;
+    padding: 12px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-height: 90px;
-    box-shadow: 0 2px 3px rgba(0,0,0,0.1);
+    min-height: 120px;
+    color: white;
+}
+
+.asset-type-btn i {
+    font-size: 2.25em;
+    color: #4CAF50;
+    margin-bottom: 12px;
+}
+
+.asset-type-btn h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.35em;
+    font-weight: 500;
+}
+
+.asset-type-btn p {
+    margin: 3px 0 0 0;
+    color: #aaa;
+    font-size: 1.2em;
 }
 
 .asset-type-btn:hover {
-    border-color: #4CAF50;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-color: #4CAF50;
 }
 
 .asset-type-btn.active {
-    background: #E8F5E9;
+    background: #1b5e20;
     border-color: #4CAF50;
-    color: #2E7D32;
-}
-
-/* Добавляем иконки для каждого типа актива */
-.asset-type-btn::before {
-    content: '';
-    display: block;
-    width: 36px;
-    height: 36px;
-    margin-bottom: 9px;
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.asset-type-btn[data-type="stocks"]::before {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M3.5 18.5L9.5 12.5L13.5 16.5L22 6.92L20.59 5.5L13.5 13.5L9.5 9.5L2 17L3.5 18.5Z"/></svg>');
-}
-
-.asset-type-btn[data-type="realestate"]::before {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z"/></svg>');
-}
-
-.asset-type-btn[data-type="business"]::before {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M12,5V1L7,6L12,11V7A6,6 0 0,1 18,13A6,6 0 0,1 12,19A6,6 0 0,1 6,13H4A8,8 0 0,0 12,21A8,8 0 0,0 20,13A8,8 0 0,0 12,5Z"/></svg>');
-}
-
-.asset-type-btn[data-type="preciousmetals"]::before {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M12,2L1,21H23L12,2M12,6L19.5,19H4.5L12,6Z"/></svg>');
-}
-
-.asset-type-btn[data-type="misc"]::before {
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%234CAF50"><path d="M19,6H17C17,3.2 14.8,1 12,1S7,3.2 7,6H5C3.9,6 3,6.9 3,8V20C3,21.1 3.9,22 5,22H19C20.1,22 21,21.1 21,20V8C21,6.9 20.1,6 19,6M12,3C13.7,3 15,4.3 15,6H9C9,4.3 10.3,3 12,3M19,20H5V8H19V20M12,12C10.3,12 9,10.7 9,9H7C7,11.8 9.2,14 12,14S17,11.8 17,9H15C15,10.7 13.7,12 12,12Z"/></svg>');
 }
 
 @media (max-width: 480px) {
@@ -967,24 +979,23 @@
     }
 
     .asset-type-btn {
-        padding: 15px 12px;
-        min-height: 75px;
-        font-size: 0.6em;
+        padding: 9px;
+        min-height: 90px;
+        font-size: 0.95em;
     }
 
-    .asset-type-btn::before {
-        width: 27px;
-        height: 27px;
-        margin-bottom: 6px;
+    .asset-type-btn i {
+        font-size: 1.95em;
+        margin-bottom: 9px;
     }
 }
 
 /* Добавляем активное состояние для тач-устройств */
 @media (hover: none) {
     .asset-type-btn:active {
-        background: #E8F5E9;
-        border-color: #4CAF50;
         transform: scale(0.98);
+        background: #1b5e20;
+        border-color: #4CAF50;
     }
 }
 
@@ -1001,6 +1012,135 @@
 
     .modal-content > button:first-of-type:not(.close-btn) {
         margin-top: -30px;
-        margin-bottom: 20px;
+    margin-bottom: 20px;
+}
+}
+
+/* Стили для форм в карточках действий */
+.category-card .action-form {
+    margin-top: 15px;
+    padding-top: 15px;
+    border-top: 1px solid #444;
+    width: 100%;
+}
+
+.category-card .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.category-card input {
+    background: #222;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.95em;
+}
+
+.category-card input::placeholder {
+    color: #888;
+}
+
+.category-card button {
+    width: 100%;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.category-card button:hover {
+    background: #388e3c;
+}
+
+.category-card button.btn-danger {
+    background: #dc3545;
+    margin-top: 8px;
+}
+
+.category-card button.btn-danger:hover {
+    background: #c82333;
+}
+
+.category-card.active {
+    background: #444;
+    border-color: #4CAF50;
+}
+
+/* Стили для списка детей */
+.children-list {
+    margin-top: 15px;
+    width: 100%;
+}
+
+.child-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #222;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+}
+
+.child-info {
+    flex: 1;
+}
+
+.child-name {
+    color: white;
+    font-weight: 500;
+}
+
+.child-expense {
+    color: #aaa;
+    font-size: 0.9em;
+}
+
+.remove-child-btn {
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.8em;
+}
+
+.remove-child-btn:hover {
+    background: #c82333;
+}
+
+@media (max-width: 480px) {
+    .asset-categories {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        padding: 10px;
     }
+
+    .category-card {
+        min-height: 120px;
+    }
+}
+
+.wallet-balance {
+    text-align: center;
+    margin: 10px 0 20px;
+    padding: 10px;
+    background: #333;
+    border-radius: 8px;
+    color: white;
+    font-size: 1.2em;
+}
+
+.wallet-balance span {
+    color: #4CAF50;
+    font-weight: bold;
 } 
