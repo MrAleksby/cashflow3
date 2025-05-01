@@ -374,9 +374,11 @@
     #sell-modal .asset-type-btn,
     #buy-modal .category-card {
         min-height: 32px;
+        height: 32px;
         padding: 4px 6px;
         flex-direction: row;
         justify-content: flex-start;
+        align-items: center;
         text-align: left;
         gap: 6px;
         border-radius: 6px;
