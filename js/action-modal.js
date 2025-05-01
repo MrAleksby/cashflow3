@@ -296,10 +296,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupNumericInput(input) {
         if (!input) return;
         
-        // Меняем тип поля на tel - он лучше работает с цифровым вводом на мобильных
-        input.type = 'tel';
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('pattern', '[0-9]*');
         
-        // Только базовая валидация при потере фокуса
+        // Добавляем только валидацию при потере фокуса
         input.addEventListener('blur', function(e) {
             let value = e.target.value.replace(/[^0-9]/g, '');
             e.target.value = value;
@@ -638,4 +638,47 @@ document.addEventListener('DOMContentLoaded', function() {
             e.target.value = value;
         });
     }
+
+    // Добавляем обработку для всех полей ввода в модальном окне
+    const modal = document.getElementById('action-modal');
+    
+    function fixMobileInput() {
+        const inputs = modal.querySelectorAll('input');
+        inputs.forEach(input => {
+            // Предотвращаем скрытие полей при открытой клавиатуре
+            input.addEventListener('focus', function() {
+                // Устанавливаем таймаут, чтобы дать время клавиатуре появиться
+                setTimeout(() => {
+                    // Прокручиваем к активному полю
+                    input.scrollIntoView(false);
+                    
+                    // Принудительно обновляем отображение
+                    window.scrollTo(0, window.scrollY);
+                }, 300);
+            });
+            
+            // Обработка ввода для всех типов полей
+            input.addEventListener('input', function(e) {
+                // Сохраняем текущую позицию курсора
+                const start = e.target.selectionStart;
+                const end = e.target.selectionEnd;
+                
+                // Обновляем значение
+                const value = e.target.value;
+                
+                // Используем requestAnimationFrame для синхронизации с отрисовкой
+                requestAnimationFrame(() => {
+                    e.target.value = value;
+                    
+                    // Восстанавливаем позицию курсора
+                    if (document.activeElement === e.target) {
+                        e.target.setSelectionRange(start, end);
+                    }
+                });
+            });
+        });
+    }
+
+    // Вызываем функцию при открытии модального окна
+    modal.addEventListener('show', fixMobileInput);
 }); 
