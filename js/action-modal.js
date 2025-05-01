@@ -522,78 +522,74 @@ document.addEventListener('DOMContentLoaded', function() {
         setJob();
     });
 
-    // Функция для переключения состояния карточки
+    // Простая функция для переключения карточки
     function toggleCard(card) {
-        // Если карточка уже активна
-        if (card === activeCard) {
-            const form = card.querySelector('.action-form');
-            form.style.display = 'none';
-            card.classList.remove('active');
-            activeCard = null;
-        } else {
-            // Если есть другая активная карточка, деактивируем её
-            if (activeCard) {
-                const prevForm = activeCard.querySelector('.action-form');
-                prevForm.style.display = 'none';
-                activeCard.classList.remove('active');
-            }
+        console.log('Toggle card called'); // Отладочный вывод
 
-            // Активируем текущую карточку
-            const form = card.querySelector('.action-form');
-            form.style.display = 'block';
-            card.classList.add('active');
-            activeCard = card;
-
-            // Прокручиваем к активной карточке
-            setTimeout(() => {
-                card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }, 100);
+        // Если есть активная карточка, скрываем её форму
+        if (activeCard) {
+            const prevForm = activeCard.querySelector('.action-form');
+            prevForm.style.display = 'none';
+            activeCard.classList.remove('active');
         }
 
-        // Обновляем отображение баланса
-        updateModalWalletAmount();
+        // Если нажали на ту же карточку, просто деактивируем
+        if (card === activeCard) {
+            activeCard = null;
+            return;
+        }
+
+        // Активируем новую карточку
+        const form = card.querySelector('.action-form');
+        form.style.display = 'block';
+        card.classList.add('active');
+        activeCard = card;
+
+        // Прокручиваем к форме
+        setTimeout(() => {
+            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }, 100);
     }
 
     // Добавляем обработчики для каждой карточки
     actionCards.forEach(card => {
-        // Обработчик для мобильных устройств
-        let touchStartY = 0;
-        let touchMoved = false;
-
-        card.addEventListener('touchstart', function(e) {
-            touchStartY = e.touches[0].clientY;
-            touchMoved = false;
-            this.style.transform = 'scale(0.98)';
-        }, { passive: true });
-
-        card.addEventListener('touchmove', function(e) {
-            const touchCurrentY = e.touches[0].clientY;
-            if (Math.abs(touchCurrentY - touchStartY) > 5) {
-                touchMoved = true;
-            }
-        }, { passive: true });
-
-        card.addEventListener('touchend', function(e) {
-            this.style.transform = 'scale(1)';
-            if (!touchMoved && !e.target.closest('.action-form')) {
-                e.preventDefault();
-                toggleCard(this);
-            }
-        });
-
-        // Обработчик для десктопа
+        // Обработчик клика (работает и на мобильных)
         card.addEventListener('click', function(e) {
-            if (!e.target.closest('.action-form')) {
-                e.preventDefault();
-                toggleCard(this);
+            console.log('Card clicked'); // Отладочный вывод
+            
+            // Если клик был по форме, игнорируем
+            if (e.target.closest('.action-form')) {
+                return;
             }
+
+            toggleCard(this);
         });
 
         // Предотвращаем всплытие событий из формы
         const form = card.querySelector('.action-form');
         if (form) {
-            ['touchstart', 'touchend', 'click'].forEach(eventType => {
-                form.addEventListener(eventType, (e) => {
+            form.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Добавляем обработчики для полей ввода
+            const inputs = form.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+                
+                input.addEventListener('focus', () => {
+                    setTimeout(() => {
+                        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 300);
+                });
+            });
+
+            // Добавляем обработчики для кнопок
+            const buttons = form.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.addEventListener('click', (e) => {
                     e.stopPropagation();
                 });
             });
