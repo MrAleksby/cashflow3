@@ -336,44 +336,45 @@
 /* Мобильные стили */
 @media (max-width: 480px) {
     .modal-content {
-        margin: 5px;
-        padding: 8px;
-        width: calc(100% - 10px);
+        margin: 2px;
+        padding: 6px;
+        width: calc(100% - 4px);
         max-width: none;
-        border-radius: 12px;
+        border-radius: 8px;
     }
 
     .modal-content h2 {
-        font-size: 1.1em;
-        margin: 5px 0;
+        font-size: 1em;
+        margin: 4px 0;
     }
 
     .wallet-balance {
-        margin: 5px 0;
-        padding: 6px;
-        font-size: 0.9em;
+        margin: 4px 0;
+        padding: 4px;
+        font-size: 0.85em;
     }
 
     .asset-categories {
         display: grid;
         grid-template-columns: 1fr;
-        gap: 4px;
+        gap: 3px;
         padding: 0;
     }
 
     .category-card {
-        min-height: 44px;
-        padding: 6px 8px;
+        min-height: 32px;
+        padding: 4px 6px;
         flex-direction: row;
         justify-content: flex-start;
         text-align: left;
-        gap: 8px;
+        gap: 6px;
+        border-radius: 6px;
     }
 
     .category-card i {
-        font-size: 1.2em;
+        font-size: 1em;
         margin: 0;
-        min-width: 20px;
+        min-width: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -381,15 +382,15 @@
 
     .category-card .text-content {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0;
+        flex-direction: row;
+        align-items: center;
+        gap: 4px;
     }
 
     .category-card h3 {
-        font-size: 0.9em;
+        font-size: 0.85em;
         margin: 0;
-        line-height: 1.2;
+        line-height: 1;
     }
 
     .category-card p {
@@ -401,23 +402,22 @@
     }
 
     .category-card .action-form {
-        padding: 8px 0 0 0;
-        margin-top: 8px;
-        width: 100%;
+        padding: 6px 0 0 0;
+        margin-top: 6px;
     }
 
     .category-card input {
-        padding: 6px;
+        padding: 4px;
         margin: 2px 0;
-        font-size: 16px;
-        height: 36px;
+        font-size: 14px;
+        height: 32px;
     }
 
     .category-card button {
-        padding: 8px;
+        padding: 6px;
         margin: 2px 0;
-        font-size: 0.9em;
-        height: 36px;
+        font-size: 0.85em;
+        height: 32px;
     }
 }
 
