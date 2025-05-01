@@ -260,6 +260,11 @@
     transition: all 0.2s ease;
     min-height: 140px;
     color: white;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    user-select: none;
+    position: relative;
+    z-index: 1;
 }
 
 .category-card i,
@@ -1022,6 +1027,8 @@
     padding-top: 15px;
     border-top: 1px solid #444;
     width: 100%;
+    position: relative;
+    z-index: 2;
 }
 
 .category-card .input-group {
@@ -1038,6 +1045,8 @@
     padding: 8px 12px;
     border-radius: 6px;
     font-size: 0.95em;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .category-card input::placeholder {
@@ -1054,6 +1063,8 @@
     font-size: 1em;
     cursor: pointer;
     transition: all 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .category-card button:hover {
@@ -1143,4 +1154,51 @@
 .wallet-balance span {
     color: #4CAF50;
     font-weight: bold;
+}
+
+/* Улучшаем отзывчивость на мобильных */
+@media (hover: none) {
+    .category-card:active {
+        transform: scale(0.98);
+    }
+
+    .category-card button:active {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    .category-card input {
+        font-size: 16px; /* Предотвращает масштабирование на iOS */
+    }
+}
+
+/* Оптимизация для маленьких экранов */
+@media (max-width: 480px) {
+    .modal-content {
+        margin: 10px;
+        padding: 15px;
+        width: calc(100% - 20px);
+        max-height: calc(100vh - 20px);
+        overflow-y: auto;
+    }
+
+    .category-card {
+        padding: 12px;
+        min-height: 110px;
+    }
+
+    .category-card .action-form {
+        margin-top: 12px;
+        padding-top: 12px;
+    }
+
+    .category-card input {
+        padding: 10px;
+        margin-bottom: 8px;
+    }
+
+    .category-card button {
+        padding: 12px;
+        font-size: 1.1em;
+    }
 } 

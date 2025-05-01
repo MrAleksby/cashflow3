@@ -40,6 +40,9 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
 
+    const actionCards = actionModal.querySelectorAll('.category-card');
+    let activeCard = null;
+
     // Получаем элементы для работы с детьми
     const childNameInput = actionModal.querySelector('.child-name');
     const childExpenseInput = actionModal.querySelector('.child-expense');
@@ -519,15 +522,88 @@ document.addEventListener('DOMContentLoaded', function() {
         setJob();
     });
 
+    // Функция для обработки клика/касания по карточке
+    function handleCardInteraction(card, event) {
+        // Предотвращаем всплытие события только если клик был не по форме
+        if (!event.target.closest('.action-form')) {
+            event.preventDefault();
+            event.stopPropagation();
+
+            // Если карточка уже активна, скрываем форму
+            if (card === activeCard) {
+                const form = card.querySelector('.action-form');
+                form.style.display = 'none';
+                card.classList.remove('active');
+                activeCard = null;
+            } else {
+                // Скрываем форму в предыдущей активной карточке
+                if (activeCard) {
+                    const prevForm = activeCard.querySelector('.action-form');
+                    prevForm.style.display = 'none';
+                    activeCard.classList.remove('active');
+                }
+
+                // Показываем форму в текущей карточке
+                const form = card.querySelector('.action-form');
+                form.style.display = 'block';
+                card.classList.add('active');
+                activeCard = card;
+
+                // Прокручиваем к активной карточке
+                setTimeout(() => {
+                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            }
+
+            // Обновляем отображение баланса
+            updateModalWalletAmount();
+        }
+    }
+
+    // Добавляем обработчики для каждой карточки
+    actionCards.forEach(card => {
+        // Обработка клика
+        card.addEventListener('click', (e) => handleCardInteraction(card, e));
+
+        // Обработка касания
+        card.addEventListener('touchstart', (e) => {
+            card.style.transform = 'scale(0.98)';
+        }, { passive: true });
+
+        card.addEventListener('touchend', (e) => {
+            card.style.transform = 'scale(1)';
+            handleCardInteraction(card, e);
+        });
+
+        // Отменяем стандартное поведение при касании форм
+        const form = card.querySelector('.action-form');
+        if (form) {
+            form.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+
+            form.addEventListener('touchend', (e) => {
+                e.stopPropagation();
+            }, { passive: true });
+        }
+    });
+
     // Улучшаем отзывчивость кнопок на мобильных
     const allButtons = actionModal.querySelectorAll('button');
     allButtons.forEach(button => {
         button.style.cursor = 'pointer';
         button.style.touchAction = 'manipulation';
+        
+        // Добавляем эффект при касании
         button.addEventListener('touchstart', function(e) {
-            this.style.opacity = '0.7';
+            e.preventDefault();
+            this.style.transform = 'scale(0.98)';
+            this.style.opacity = '0.8';
         });
+
         button.addEventListener('touchend', function(e) {
+            e.preventDefault();
+            this.style.transform = 'scale(1)';
             this.style.opacity = '1';
         });
     });
