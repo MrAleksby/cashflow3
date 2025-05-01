@@ -296,20 +296,11 @@ document.addEventListener('DOMContentLoaded', function() {
     function setupNumericInput(input) {
         if (!input) return;
         
-        // Устанавливаем тип клавиатуры для числовых полей
-        input.setAttribute('inputmode', 'numeric');
-        input.setAttribute('pattern', '[0-9]*');
+        // Меняем тип поля на tel - он лучше работает с цифровым вводом на мобильных
+        input.type = 'tel';
         
-        // Добавляем обработчик события keyup для обновления значения
-        input.addEventListener('keyup', function(e) {
-            // Удаляем все нецифровые символы
-            let value = e.target.value.replace(/[^0-9]/g, '');
-            e.target.value = value;
-        });
-
-        // Добавляем обработчик события input
-        input.addEventListener('input', function(e) {
-            // Удаляем все нецифровые символы
+        // Только базовая валидация при потере фокуса
+        input.addEventListener('blur', function(e) {
             let value = e.target.value.replace(/[^0-9]/g, '');
             e.target.value = value;
         });
