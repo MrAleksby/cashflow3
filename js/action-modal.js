@@ -522,123 +522,54 @@ document.addEventListener('DOMContentLoaded', function() {
         setJob();
     });
 
-    // Простая функция для переключения карточки
-    function toggleCard(card) {
-        console.log('Toggle card called'); // Отладочный вывод
-
-        // Если есть активная карточка, скрываем её форму
-        if (activeCard) {
-            const prevForm = activeCard.querySelector('.action-form');
-            prevForm.style.display = 'none';
-            activeCard.classList.remove('active');
-        }
-
-        // Если нажали на ту же карточку, просто деактивируем
-        if (card === activeCard) {
-            activeCard = null;
-            return;
-        }
-
-        // Активируем новую карточку
-        const form = card.querySelector('.action-form');
-        form.style.display = 'block';
-        card.classList.add('active');
-        activeCard = card;
-
-        // Прокручиваем к форме
-        setTimeout(() => {
-            form.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-    }
-
-    // Добавляем обработчики для каждой карточки
+    // Обработка кликов по карточкам
     actionCards.forEach(card => {
-        // Обработчик клика (работает и на мобильных)
         card.addEventListener('click', function(e) {
-            console.log('Card clicked'); // Отладочный вывод
-            
-            // Если клик был по форме, игнорируем
+            // Игнорируем клик, если он произошел на форме или её элементах
             if (e.target.closest('.action-form')) {
                 return;
             }
 
-            toggleCard(this);
-        });
-
-        // Предотвращаем всплытие событий из формы
-        const form = card.querySelector('.action-form');
-        if (form) {
-            form.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-
-            // Добавляем обработчики для полей ввода
-            const inputs = form.querySelectorAll('input');
-            inputs.forEach(input => {
-                input.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-                
-                input.addEventListener('focus', () => {
-                    setTimeout(() => {
-                        input.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
-                });
-            });
-
-            // Добавляем обработчики для кнопок
-            const buttons = form.querySelectorAll('button');
-            buttons.forEach(button => {
-                button.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                });
-            });
-        }
-    });
-
-    // Улучшаем работу кнопок на мобильных
-    const allButtons = actionModal.querySelectorAll('button');
-    allButtons.forEach(button => {
-        button.addEventListener('touchstart', function(e) {
-            e.stopPropagation();
-            this.style.transform = 'scale(0.95)';
-            this.style.opacity = '0.8';
-        }, { passive: true });
-
-        button.addEventListener('touchend', function(e) {
-            e.stopPropagation();
-            this.style.transform = 'scale(1)';
-            this.style.opacity = '1';
+            console.log('Card clicked:', card.dataset.category);
             
-            // Имитируем клик для кнопок действий
-            if (this.classList.contains('take-money-btn') ||
-                this.classList.contains('give-money-btn') ||
-                this.classList.contains('add-child-btn') ||
-                this.classList.contains('take-loan-btn') ||
-                this.classList.contains('set-job-btn')) {
-                this.click();
+            // Сначала деактивируем все карточки
+            actionCards.forEach(c => {
+                if (c !== card) {
+                    c.classList.remove('active');
+                    const form = c.querySelector('.action-form');
+                    if (form) {
+                        form.style.display = 'none';
+                    }
+                }
+            });
+
+            // Переключаем состояние текущей карточки
+            const form = card.querySelector('.action-form');
+            if (form) {
+                const isActive = card.classList.toggle('active');
+                form.style.display = isActive ? 'block' : 'none';
+                
+                if (isActive) {
+                    // Фокусируемся на первом поле ввода
+                    const firstInput = form.querySelector('input');
+                    if (firstInput) {
+                        setTimeout(() => {
+                            firstInput.focus();
+                        }, 100);
+                    }
+                }
             }
         });
     });
 
-    // Улучшаем работу с полями ввода
-    const allInputs = actionModal.querySelectorAll('input');
-    allInputs.forEach(input => {
-        input.addEventListener('touchstart', (e) => {
-            e.stopPropagation();
-        }, { passive: true });
-
-        input.addEventListener('focus', function() {
-            // Прокручиваем к активному полю ввода на мобильных
-            setTimeout(() => {
-                this.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
-        });
+    // Предотвращаем закрытие модального окна при клике на его содержимое
+    actionModal.querySelector('.modal-content').addEventListener('click', function(e) {
+        e.stopPropagation();
     });
 
-    // Закрытие по клику вне модального окна
-    window.addEventListener('click', function(event) {
-        if (event.target === actionModal) {
+    // Закрываем модальное окно при клике вне его содержимого
+    actionModal.addEventListener('click', function(e) {
+        if (e.target === actionModal) {
             closeActionModal();
         }
     });
