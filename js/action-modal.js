@@ -478,12 +478,6 @@ document.addEventListener('DOMContentLoaded', function() {
             salary: salary
         };
 
-        // Обновляем отображение
-        const salaryValue = document.getElementById('salary-value');
-        if (salaryValue) {
-            salaryValue.textContent = salary;
-        }
-
         // Добавляем в историю
         window.data.history.push({
             type: 'job',
@@ -492,6 +486,8 @@ document.addEventListener('DOMContentLoaded', function() {
             date: new Date().toISOString()
         });
 
+        // Обновляем отображение
+        window.renderSummary(); // Обновляем финансовую формулу
         window.renderHistory();
         autoSave();
 

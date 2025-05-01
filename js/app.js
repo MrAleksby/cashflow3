@@ -905,20 +905,16 @@ const originalRenderSummary = function() {
     var cashFlowElement = document.getElementById('cashflow');
 
     // Инициализируем значения
-    let salary = 0;
+    let salary = window.data.job ? window.data.job.salary : 0;
     let passiveIncome = 0;
     let totalExpense = 0;
     
-    // Считаем зарплату и пассивный доход
+    // Считаем пассивный доход
     if (window.data && Array.isArray(window.data.income)) {
         window.data.income.forEach(function(inc) {
             const value = Number(inc.value) || 0;
             if (inc.type === 'passive') {
-                // Добавляем в пассивный доход
                 passiveIncome += value;
-            } else {
-                // Добавляем в зарплату
-                salary += value;
             }
         });
     }
@@ -928,18 +924,15 @@ const originalRenderSummary = function() {
 
     // Рассчитываем налог (25% от положительных доходов)
     const taxRate = 0.25;
-    const taxableIncome = Math.max(0, totalIncome); // Берем только положительные доходы
+    const taxableIncome = Math.max(0, totalIncome);
     const tax = Math.round(taxableIncome * taxRate);
 
     // Обновляем или создаем запись о налогах в расходах
     if (window.data && Array.isArray(window.data.expense)) {
-        // Ищем существующую запись о налогах
         const taxExpenseIndex = window.data.expense.findIndex(exp => exp.name === 'Налоги (25%)');
         if (taxExpenseIndex !== -1) {
-            // Обновляем существующую запись
             window.data.expense[taxExpenseIndex].value = tax;
         } else {
-            // Создаем новую запись
             window.data.expense.push({
                 name: 'Налоги (25%)',
                 value: tax,
