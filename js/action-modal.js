@@ -606,4 +606,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
     });
+
+    // Обработчик ввода суммы кредита
+    if (loanAmountInput) {
+        loanAmountInput.addEventListener('input', function(e) {
+            // Удаляем все нецифровые символы
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            
+            // Ограничиваем длину до 10 цифр
+            if (value.length > 10) {
+                value = value.slice(0, 10);
+            }
+            
+            // Обновляем значение поля
+            e.target.value = value;
+        });
+    }
 }); 
