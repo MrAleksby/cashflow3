@@ -336,22 +336,26 @@
 /* Мобильные стили */
 @media (max-width: 480px) {
     #action-modal .modal-content {
-        margin: 2px;
+        margin: 2px auto;
         padding: 6px;
-        width: calc(100% - 4px);
-        max-width: none;
+        width: 85%;
+        max-width: 320px;
         border-radius: 8px;
     }
 
     #action-modal .modal-content h2 {
         font-size: 1em;
         margin: 4px 0;
+        text-align: center;
     }
 
     #action-modal .wallet-balance {
         margin: 4px 0;
         padding: 4px;
         font-size: 0.85em;
+        text-align: center;
+        background: #333;
+        border-radius: 6px;
     }
 
     #action-modal .asset-categories {
@@ -359,6 +363,8 @@
         grid-template-columns: 1fr;
         gap: 3px;
         padding: 0;
+        margin: 0 auto;
+        width: 100%;
     }
 
     #action-modal .category-card {
@@ -369,6 +375,16 @@
         text-align: left;
         gap: 6px;
         border-radius: 6px;
+        margin: 0;
+    }
+
+    #action-modal .close-btn {
+        top: 4px;
+        right: 4px;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        font-size: 18px;
     }
 
     #action-modal .category-card i {
