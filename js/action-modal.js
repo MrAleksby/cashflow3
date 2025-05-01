@@ -292,21 +292,44 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(`Кредит успешно получен!\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}`);
     }
 
-    // Функция для настройки числового поля ввода
+    function forceReflow(element) {
+        // Принудительное обновление отображения
+        element.style.display = 'none';
+        element.offsetHeight; // Принудительный reflow
+        element.style.display = '';
+        
+        // Дополнительное обновление через RAF для iOS
+        requestAnimationFrame(() => {
+            element.style.transform = 'translateZ(0)';
+            setTimeout(() => {
+                element.style.transform = '';
+            }, 0);
+        });
+    }
+
     function setupNumericInput(input) {
         if (!input) return;
-        
+
+        // Используем обычное текстовое поле вместо tel
+        input.setAttribute('type', 'text');
         input.setAttribute('inputmode', 'numeric');
-        input.setAttribute('pattern', '[0-9]*');
         
-        // Добавляем обработчики
-        input.addEventListener('input', handleInput);
-        input.addEventListener('focus', handleFocus);
-        
-        // Добавляем валидацию при потере фокуса
-        input.addEventListener('blur', function(e) {
+        const updateValue = (e) => {
             let value = e.target.value.replace(/[^0-9]/g, '');
-            e.target.value = value;
+            if (value !== e.target.value) {
+                e.target.value = value;
+            }
+        };
+
+        // Упрощаем обработчики событий
+        input.addEventListener('input', updateValue);
+        input.addEventListener('change', updateValue);
+
+        // Обработка фокуса для прокрутки
+        input.addEventListener('focus', (e) => {
+            setTimeout(() => {
+                e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 100);
         });
     }
 
@@ -582,16 +605,32 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = card.querySelector('.action-form');
             if (form) {
                 const isActive = card.classList.toggle('active');
+                
+                // Сначала показываем форму
                 form.style.display = isActive ? 'block' : 'none';
                 
                 if (isActive) {
-                    // Фокусируемся на первом поле ввода
-                    const firstInput = form.querySelector('input');
-                    if (firstInput) {
-                        setTimeout(() => {
-                            firstInput.focus();
-                        }, 100);
-                    }
+                    // Принудительный reflow для корректного отображения формы
+                    form.offsetHeight;
+                    
+                    // Инициализируем все поля ввода в форме
+                    const inputs = form.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        // Сбрасываем стили и состояние
+                        input.style.display = 'none';
+                        input.offsetHeight;
+                        input.style.display = '';
+                        
+                        // Устанавливаем обработчики для обновления отображения
+                        input.addEventListener('input', () => {
+                            input.style.display = 'none';
+                            input.offsetHeight;
+                            input.style.display = '';
+                        });
+                    });
+                    
+                    // Не устанавливаем автоматический фокус на первое поле
+                    // Пользователь сам выберет нужное поле
                 }
             }
         });
@@ -646,45 +685,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Добавляем обработку для всех полей ввода в модальном окне
     const modal = document.getElementById('action-modal');
     
-    // Функция для исправления ввода на мобильных устройствах
-    function fixMobileInput() {
+    // Функция для принудительного обновления всех полей в модальном окне
+    function forceUpdateInputs() {
         const inputs = modal.querySelectorAll('input');
         inputs.forEach(input => {
-            // Удаляем старые обработчики, если они были
-            const newInput = input.cloneNode(true);
-            input.parentNode.replaceChild(newInput, input);
-            
-            // Добавляем новые обработчики
-            newInput.addEventListener('input', handleInput);
-            newInput.addEventListener('focus', handleFocus);
+            // Принудительно обновляем отображение каждого поля
+            input.style.display = 'none';
+            input.offsetHeight; // Принудительный reflow
+            input.style.display = '';
         });
-    }
-
-    // Обработчик события input
-    function handleInput(e) {
-        // Сохраняем текущую позицию курсора
-        const start = e.target.selectionStart;
-        const end = e.target.selectionEnd;
-        const value = e.target.value;
-
-        // Используем setTimeout вместо requestAnimationFrame
-        setTimeout(() => {
-            e.target.value = value;
-            if (document.activeElement === e.target) {
-                e.target.setSelectionRange(start, end);
-            }
-        }, 0);
-    }
-
-    // Обработчик события focus
-    function handleFocus(e) {
-        setTimeout(() => {
-            const viewHeight = window.innerHeight;
-            const inputRect = e.target.getBoundingClientRect();
-            if (inputRect.bottom > viewHeight) {
-                e.target.scrollIntoView(false);
-            }
-        }, 300);
     }
 
     // Добавляем обработчик на открытие модального окна
@@ -692,8 +701,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (actionBtn) {
         actionBtn.addEventListener('click', function() {
             modal.classList.add('active');
-            // Вызываем функцию исправления ввода при открытии окна
-            setTimeout(fixMobileInput, 100);
+            // Обновляем отображение полей после открытия окна
+            setTimeout(forceUpdateInputs, 100);
         });
     } else {
         console.error('Не найдена кнопка main-action-btn');
