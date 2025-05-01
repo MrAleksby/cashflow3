@@ -176,6 +176,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Показываем сообщение об успехе
         alert(`Ребенок ${name} успешно добавлен с ежемесячным расходом $${expense}`);
+
+        // Закрываем модальное окно
+        closeActionModal();
     }
 
     // Функция удаления ребенка
@@ -290,6 +293,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Показываем сообщение об успехе
         alert(`Кредит успешно получен!\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}`);
+
+        // Закрываем модальное окно
+        closeActionModal();
     }
 
     function forceReflow(element) {
@@ -423,6 +429,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof window.autoSave === 'function') {
             window.autoSave();
         }
+
+        // Закрываем модальное окно
+        closeActionModal();
     }
 
     // Отдать деньги
@@ -470,6 +479,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof window.autoSave === 'function') {
             window.autoSave();
         }
+
+        // Закрываем модальное окно
+        closeActionModal();
     }
 
     // Функция установки работы
@@ -514,6 +526,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateQuitJobButton();
 
         alert(`Устроились на работу: ${title}\nЗарплата: $${salary}`);
+
+        // Закрываем модальное окно
+        closeActionModal();
     }
 
     function quitJob() {
