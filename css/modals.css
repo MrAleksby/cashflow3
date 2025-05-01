@@ -335,7 +335,7 @@
 
 /* Мобильные стили */
 @media (max-width: 480px) {
-    .modal-content {
+    #action-modal .modal-content {
         margin: 2px;
         padding: 6px;
         width: calc(100% - 4px);
@@ -343,25 +343,25 @@
         border-radius: 8px;
     }
 
-    .modal-content h2 {
+    #action-modal .modal-content h2 {
         font-size: 1em;
         margin: 4px 0;
     }
 
-    .wallet-balance {
+    #action-modal .wallet-balance {
         margin: 4px 0;
         padding: 4px;
         font-size: 0.85em;
     }
 
-    .asset-categories {
+    #action-modal .asset-categories {
         display: grid;
         grid-template-columns: 1fr;
         gap: 3px;
         padding: 0;
     }
 
-    .category-card {
+    #action-modal .category-card {
         min-height: 32px;
         padding: 4px 6px;
         flex-direction: row;
@@ -371,7 +371,7 @@
         border-radius: 6px;
     }
 
-    .category-card i {
+    #action-modal .category-card i {
         font-size: 1em;
         margin: 0;
         min-width: 16px;
@@ -380,40 +380,40 @@
         justify-content: center;
     }
 
-    .category-card .text-content {
+    #action-modal .category-card .text-content {
         display: flex;
         flex-direction: row;
         align-items: center;
         gap: 4px;
     }
 
-    .category-card h3 {
+    #action-modal .category-card h3 {
         font-size: 0.85em;
         margin: 0;
         line-height: 1;
     }
 
-    .category-card p {
+    #action-modal .category-card p {
         display: none;
     }
 
-    .category-card.active {
+    #action-modal .category-card.active {
         min-height: auto;
     }
 
-    .category-card .action-form {
+    #action-modal .category-card .action-form {
         padding: 6px 0 0 0;
         margin-top: 6px;
     }
 
-    .category-card input {
+    #action-modal .category-card input {
         padding: 4px;
         margin: 2px 0;
         font-size: 14px;
         height: 32px;
     }
 
-    .category-card button {
+    #action-modal .category-card button {
         padding: 6px;
         margin: 2px 0;
         font-size: 0.85em;
