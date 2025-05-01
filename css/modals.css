@@ -335,112 +335,8 @@
 
 /* Мобильные стили */
 @media (max-width: 480px) {
-    #action-modal .modal-content {
-        margin: 0;
-        padding: 6px;
-        width: 94%;
-        max-width: 280px;
-        border-radius: 8px;
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-    }
-
-    #action-modal .modal-content h2 {
-        font-size: 1em;
-        margin: 4px 0;
-        text-align: center;
-    }
-
-    #action-modal .wallet-balance {
-        margin: 4px 0;
-        padding: 4px;
-        font-size: 0.85em;
-        text-align: center;
-        background: #333;
-        border-radius: 6px;
-    }
-
-    #action-modal .asset-categories {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 3px;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-    }
-
-    #action-modal .category-card {
-        min-height: 32px;
-        padding: 4px 6px;
-        flex-direction: row;
-        justify-content: flex-start;
-        text-align: left;
-        gap: 6px;
-        border-radius: 6px;
-        margin: 0;
-    }
-
-    #action-modal .close-btn {
-        top: 2px;
-        right: 2px;
-        width: 20px;
-        height: 20px;
-        line-height: 20px;
-        font-size: 16px;
-    }
-
-    #action-modal .category-card i {
-        font-size: 1em;
-        margin: 0;
-        min-width: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #action-modal .category-card .text-content {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 4px;
-    }
-
-    #action-modal .category-card h3 {
-        font-size: 0.85em;
-        margin: 0;
-        line-height: 1;
-    }
-
-    #action-modal .category-card p {
-        display: none;
-    }
-
-    #action-modal .category-card.active {
-        min-height: auto;
-    }
-
-    #action-modal .category-card .action-form {
-        padding: 6px 0 0 0;
-        margin-top: 6px;
-    }
-
-    #action-modal .category-card input {
-        padding: 4px;
-        margin: 2px 0;
-        font-size: 14px;
-        height: 32px;
-    }
-
-    #action-modal .category-card button {
-        padding: 6px;
-        margin: 2px 0;
-        font-size: 0.85em;
-        height: 32px;
-    }
-
-    /* Стили для модального окна Продать */
+    /* Общие стили для модальных окон */
+    #action-modal .modal-content,
     #sell-modal .modal-content {
         margin: 0;
         padding: 6px;
@@ -453,50 +349,14 @@
         transform: translate(-50%, -50%);
     }
 
+    #action-modal .modal-content h2,
     #sell-modal .modal-content h2 {
         font-size: 1em;
         margin: 4px 0;
         text-align: center;
     }
 
-    #sell-modal .asset-type-selector {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 3px;
-        padding: 0;
-        margin: 0;
-    }
-
-    #sell-modal .asset-type-btn {
-        min-height: 32px;
-        padding: 4px 6px;
-        flex-direction: row;
-        justify-content: flex-start;
-        text-align: left;
-        gap: 6px;
-        border-radius: 6px;
-        margin: 0;
-    }
-
-    #sell-modal .asset-type-btn i {
-        font-size: 1em;
-        margin: 0;
-        min-width: 16px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    #sell-modal .asset-type-btn h3 {
-        font-size: 0.85em;
-        margin: 0;
-        line-height: 1;
-    }
-
-    #sell-modal .asset-type-btn p {
-        display: none;
-    }
-
+    #action-modal .close-btn,
     #sell-modal .close-btn {
         top: 2px;
         right: 2px;
@@ -506,19 +366,99 @@
         font-size: 16px;
     }
 
+    /* Стили для карточек */
+    #action-modal .category-card,
+    #sell-modal .asset-type-btn {
+        min-height: 32px;
+        padding: 4px 6px;
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 6px;
+        border-radius: 6px;
+        margin: 0;
+        background: #333;
+        border: 1px solid #444;
+        color: white;
+        transition: transform 0.2s ease, background-color 0.2s ease;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    #action-modal .category-card i,
+    #sell-modal .asset-type-btn i {
+        font-size: 1em;
+        margin: 0;
+        min-width: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4CAF50;
+    }
+
+    #action-modal .category-card h3,
+    #sell-modal .asset-type-btn h3 {
+        font-size: 0.85em;
+        margin: 0;
+        line-height: 1;
+        color: white;
+        font-weight: 500;
+    }
+
+    #action-modal .category-card p,
+    #sell-modal .asset-type-btn p {
+        display: none;
+    }
+
+    #action-modal .category-card:active,
+    #sell-modal .asset-type-btn:active {
+        transform: scale(0.98);
+        background: #444;
+    }
+
+    #action-modal .category-card.active,
+    #sell-modal .asset-type-btn.active {
+        background: #444;
+        border-color: #4CAF50;
+    }
+
+    /* Контейнеры для списков */
+    #action-modal .asset-categories,
+    #sell-modal .asset-type-selector {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3px;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    /* Дополнительные стили для окна продажи */
     #sell-modal .asset-list {
         margin: 4px 0;
         max-height: 150px;
+        border-radius: 6px;
+        background: #333;
+        border: 1px solid #444;
     }
 
     #sell-modal .asset-item {
         padding: 4px 6px;
         font-size: 0.85em;
+        color: white;
+        border-bottom: 1px solid #444;
+    }
+
+    #sell-modal .asset-item:last-child {
+        border-bottom: none;
     }
 
     #sell-modal .selected-asset-info {
         margin-top: 4px;
         font-size: 0.85em;
+        padding: 6px;
+        background: #333;
+        border-radius: 6px;
+        color: white;
     }
 
     #sell-modal .input-group {
@@ -528,12 +468,18 @@
     #sell-modal .input-group label {
         font-size: 0.85em;
         margin-bottom: 2px;
+        color: #aaa;
     }
 
     #sell-modal .input-group input {
         height: 32px;
-        padding: 4px;
+        padding: 4px 6px;
         font-size: 14px;
+        background: #222;
+        border: 1px solid #444;
+        color: white;
+        border-radius: 4px;
+        width: 100%;
     }
 
     #sell-modal .modal-buttons {
@@ -547,6 +493,20 @@
         height: 32px;
         font-size: 0.85em;
         padding: 0;
+        border: none;
+        border-radius: 4px;
+        background: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+    #sell-modal .modal-buttons button:disabled {
+        background: #666;
+        cursor: not-allowed;
+    }
+
+    #sell-modal .modal-buttons #cancel-sell-btn {
+        background: #666;
     }
 }
 
