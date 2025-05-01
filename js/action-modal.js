@@ -300,17 +300,16 @@ document.addEventListener('DOMContentLoaded', function() {
         input.setAttribute('inputmode', 'numeric');
         input.setAttribute('pattern', '[0-9]*');
         
-        // Добавляем обработчик события input для мгновенного обновления значения
-        input.addEventListener('input', function(e) {
+        // Добавляем обработчик события keyup для обновления значения
+        input.addEventListener('keyup', function(e) {
             // Удаляем все нецифровые символы
             let value = e.target.value.replace(/[^0-9]/g, '');
-            
-            // Просто обновляем значение без принудительного blur/focus
             e.target.value = value;
         });
-        
-        // Добавляем обработчик для финальной валидации при завершении ввода
-        input.addEventListener('change', function(e) {
+
+        // Добавляем обработчик события input
+        input.addEventListener('input', function(e) {
+            // Удаляем все нецифровые символы
             let value = e.target.value.replace(/[^0-9]/g, '');
             e.target.value = value;
         });
