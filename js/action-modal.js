@@ -365,10 +365,26 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Закрытие модального окна
-    function closeActionModal() {
-        actionModal.style.display = 'none';
-        clearInputs();
-    }
+    window.closeActionModal = function() {
+        const actionModal = document.getElementById('action-modal');
+        if (actionModal) {
+            actionModal.style.display = 'none';
+            // Очищаем поля ввода
+            const inputs = actionModal.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = '';
+            });
+            // Деактивируем все карточки
+            const cards = actionModal.querySelectorAll('.category-card');
+            cards.forEach(card => {
+                card.classList.remove('active');
+                const form = card.querySelector('.action-form');
+                if (form) {
+                    form.style.display = 'none';
+                }
+            });
+        }
+    };
 
     // Обновление отображения суммы в кошельке
     function updateModalWalletAmount() {
