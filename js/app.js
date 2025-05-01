@@ -737,8 +737,66 @@ function updateDisplay() {
     closeSellStockModal();
 }
 
+// Функция для настройки числового поля ввода
+function setupNumericInput(input) {
+    if (!input) return;
+    
+    // Устанавливаем тип клавиатуры для числовых полей
+    input.setAttribute('inputmode', 'numeric');
+    input.setAttribute('pattern', '[0-9]*');
+    
+    // Добавляем обработчик события input для мгновенного обновления значения
+    input.addEventListener('input', function(e) {
+        // Удаляем все нецифровые символы
+        let value = e.target.value.replace(/[^0-9]/g, '');
+        
+        // Обновляем значение поля
+        e.target.value = value;
+        
+        // Принудительно обновляем отображение
+        input.blur();
+        input.focus();
+        
+        // Вызываем соответствующую функцию обновления расчетов
+        if (currentAssetType === 'stocks') {
+            updateSellCalculations();
+        } else if (currentAssetType === 'realestate') {
+            updateRealEstateSellCalculations();
+        } else if (currentAssetType === 'business') {
+            updateBusinessSellCalculations();
+        } else if (currentAssetType === 'preciousmetals') {
+            updatePreciousMetalsSellCalculations();
+        } else if (currentAssetType === 'misc') {
+            updateMiscSellCalculations();
+        }
+    });
+    
+    // Автоматически скрываем клавиатуру при нажатии Enter
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            input.blur();
+        }
+    });
+}
+
+// Функция для настройки всех числовых полей в форме
+function setupAllNumericInputs() {
+    // Настраиваем поле количества акций
+    setupNumericInput(document.querySelector('.sell-quantity'));
+    
+    // Настраиваем поля цен для разных типов активов
+    setupNumericInput(sellPriceInput);
+    setupNumericInput(sellRealEstatePriceInput);
+    setupNumericInput(sellBusinessPriceInput);
+    setupNumericInput(sellPreciousMetalsPriceInput);
+    setupNumericInput(sellMiscPriceInput);
+}
+
 // Инициализация интерфейса продажи с улучшенной поддержкой мобильных устройств
 function initializeSellInterface() {
+    // Настраиваем все числовые поля
+    setupAllNumericInputs();
+    
     // Добавляем обработчики для полей ввода акций
     const quantityInput = document.querySelector('.sell-quantity');
     if (quantityInput) {
@@ -978,8 +1036,17 @@ let monthsCounter = document.getElementById('months-counter');
 
 // Функция обработки PayDay
 function handlePayDay() {
-    // Получаем текущий денежный поток
-    const cashFlow = parseInt(document.getElementById('cashflow').textContent) || 0;
+    // Получаем зарплату
+    const salary = window.data.job ? window.data.job.salary : 0;
+    
+    // Получаем пассивный доход
+    const passiveIncome = window.data.income ? window.data.income.reduce((sum, inc) => sum + (parseFloat(inc.value) || 0), 0) : 0;
+    
+    // Получаем общий расход
+    const totalExpenses = window.data.expense ? window.data.expense.reduce((sum, exp) => sum + (parseFloat(exp.value) || 0), 0) : 0;
+    
+    // Вычисляем денежный поток
+    const cashFlow = salary + passiveIncome - totalExpenses;
     
     // Создаем запись для истории
     const historyEntry = {
@@ -1000,8 +1067,14 @@ function handlePayDay() {
     window.data.history.push(historyEntry);
     
     // Обновляем отображение
-    monthsCounter.textContent = window.data.monthsCount;
+    const monthsCounter = document.getElementById('months-counter');
+    if (monthsCounter) {
+        monthsCounter.textContent = window.data.monthsCount;
+    }
+    
     window.renderCash();
+    window.renderSummary();
+    window.renderHistory();
     
     // Показываем уведомление
     const sign = cashFlow >= 0 ? '+' : '';
