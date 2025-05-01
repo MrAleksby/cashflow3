@@ -1138,26 +1138,42 @@
 }
 
 .asset-type-btn.active {
-    background: #1b5e20;
+    background: #444;
     border-color: #4CAF50;
 }
 
 @media (max-width: 480px) {
     .asset-type-selector {
         grid-template-columns: 1fr;
-        gap: 9px;
-        padding: 9px;
+        gap: 3px;
+        padding: 0;
     }
 
     .asset-type-btn {
-        padding: 9px;
-        min-height: 90px;
-        font-size: 0.95em;
+        min-height: 32px;
+        padding: 4px 6px;
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 6px;
+        border-radius: 6px;
+        margin: 0;
     }
 
     .asset-type-btn i {
-        font-size: 1.95em;
-        margin-bottom: 9px;
+        font-size: 1em;
+        margin: 0;
+        min-width: 16px;
+    }
+
+    .asset-type-btn h3 {
+        font-size: 0.85em;
+        margin: 0;
+        line-height: 1;
+    }
+
+    .asset-type-btn p {
+        display: none;
     }
 }
 
