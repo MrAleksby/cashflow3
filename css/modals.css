@@ -439,6 +439,115 @@
         font-size: 0.85em;
         height: 32px;
     }
+
+    /* Стили для модального окна Продать */
+    #sell-modal .modal-content {
+        margin: 0;
+        padding: 6px;
+        width: 94%;
+        max-width: 280px;
+        border-radius: 8px;
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    #sell-modal .modal-content h2 {
+        font-size: 1em;
+        margin: 4px 0;
+        text-align: center;
+    }
+
+    #sell-modal .asset-type-selector {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 3px;
+        padding: 0;
+        margin: 0;
+    }
+
+    #sell-modal .asset-type-btn {
+        min-height: 32px;
+        padding: 4px 6px;
+        flex-direction: row;
+        justify-content: flex-start;
+        text-align: left;
+        gap: 6px;
+        border-radius: 6px;
+        margin: 0;
+    }
+
+    #sell-modal .asset-type-btn i {
+        font-size: 1em;
+        margin: 0;
+        min-width: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #sell-modal .asset-type-btn h3 {
+        font-size: 0.85em;
+        margin: 0;
+        line-height: 1;
+    }
+
+    #sell-modal .asset-type-btn p {
+        display: none;
+    }
+
+    #sell-modal .close-btn {
+        top: 2px;
+        right: 2px;
+        width: 20px;
+        height: 20px;
+        line-height: 20px;
+        font-size: 16px;
+    }
+
+    #sell-modal .asset-list {
+        margin: 4px 0;
+        max-height: 150px;
+    }
+
+    #sell-modal .asset-item {
+        padding: 4px 6px;
+        font-size: 0.85em;
+    }
+
+    #sell-modal .selected-asset-info {
+        margin-top: 4px;
+        font-size: 0.85em;
+    }
+
+    #sell-modal .input-group {
+        margin-bottom: 4px;
+    }
+
+    #sell-modal .input-group label {
+        font-size: 0.85em;
+        margin-bottom: 2px;
+    }
+
+    #sell-modal .input-group input {
+        height: 32px;
+        padding: 4px;
+        font-size: 14px;
+    }
+
+    #sell-modal .modal-buttons {
+        margin-top: 8px;
+        display: flex;
+        gap: 6px;
+    }
+
+    #sell-modal .modal-buttons button {
+        flex: 1;
+        height: 32px;
+        font-size: 0.85em;
+        padding: 0;
+    }
 }
 
 /* Стили для списка активов */
