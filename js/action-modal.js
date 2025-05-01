@@ -120,62 +120,25 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Создаем уникальный ID для расхода
-        const expenseId = 'child_' + Date.now();
+        // Подтверждение
+        if (!confirm(`Подтвердите добавление ребенка:\nИмя: ${name}\nРасходы: $${expense}`)) {
+            return;
+        }
 
-        // Добавляем ребенка в список
+        // Добавляем ребенка
         window.data.children.push({
             name: name,
-            expense: expense,
-            expenseId: expenseId
-        });
-
-        // Добавляем расход
-        if (!window.data.expense) window.data.expense = [];
-        window.data.expense.push({
-            id: expenseId,
-            name: `Расходы на ребенка: ${name}`,
-            value: expense
-        });
-
-        // Добавляем запись в историю
-        if (!window.data.history) window.data.history = [];
-        window.data.history.push({
-            type: 'expense',
-            description: `Добавлен ребенок: ${name}`,
-            amount: expense,
-            date: new Date().toISOString()
+            expense: expense
         });
 
         // Обновляем отображение
         updateChildrenList();
-        
-        // Обновляем все отображения расходов
-        if (typeof window.renderExpense === 'function') {
-            window.renderExpense();
-        }
-        
-        // Обновляем сумму расходов в финансовой формуле
-        if (typeof window.renderSummary === 'function') {
-            window.renderSummary();
-        }
+        window.renderChildren();
+        autoSave();
 
-        // Обновляем историю
-        if (typeof window.renderHistory === 'function') {
-            window.renderHistory();
-        }
-
-        // Сохраняем изменения
-        if (typeof window.autoSave === 'function') {
-            window.autoSave();
-        }
-
-        // Очищаем поля ввода
+        // Очищаем поля
         childNameInput.value = '';
         childExpenseInput.value = '';
-
-        // Показываем сообщение об успехе
-        alert(`Ребенок ${name} успешно добавлен с ежемесячным расходом $${expense}`);
 
         // Закрываем модальное окно
         closeActionModal();
@@ -186,14 +149,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const child = window.data.children[index];
         if (!confirm(`Вы уверены, что хотите удалить ребенка ${child.name}?`)) {
             return;
-        }
-
-        // Удаляем связанный расход
-        if (window.data.expense) {
-            const expenseIndex = window.data.expense.findIndex(exp => exp.id === child.expenseId);
-            if (expenseIndex !== -1) {
-                window.data.expense.splice(expenseIndex, 1);
-            }
         }
 
         // Удаляем ребенка из списка
@@ -223,9 +178,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const amount = parseFloat(loanAmountInput.value);
         const description = loanDescriptionInput.value.trim();
 
-        // Валидация
         if (!amount || amount <= 0) {
-            alert('Введите корректную сумму кредита!');
+            alert('Введите корректную сумму!');
             return;
         }
 
@@ -291,9 +245,6 @@ document.addEventListener('DOMContentLoaded', function() {
         loanAmountInput.value = '';
         loanDescriptionInput.value = '';
 
-        // Показываем сообщение об успехе
-        alert(`Кредит успешно получен!\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}`);
-
         // Закрываем модальное окно
         closeActionModal();
     }
@@ -357,18 +308,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Открытие модального окна
     window.openActionModal = function() {
-        actionModal.style.display = 'block';
-        updateModalWalletAmount();
-        updateChildrenList();
-        clearInputs();
-        setupAllNumericInputs(); // Настраиваем числовые поля при открытии окна
+        const actionModal = document.getElementById('action-modal');
+        if (actionModal) {
+            actionModal.classList.add('active');
+            updateModalWalletAmount();
+            updateChildrenList();
+            clearInputs();
+            setupAllNumericInputs();
+        }
     };
 
     // Закрытие модального окна
     window.closeActionModal = function() {
         const actionModal = document.getElementById('action-modal');
         if (actionModal) {
-            actionModal.style.display = 'none';
+            actionModal.classList.remove('active');
             // Очищаем поля ввода
             const inputs = actionModal.querySelectorAll('input');
             inputs.forEach(input => {
@@ -438,13 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Обновляем отображение
         window.renderCash();
-        updateModalWalletAmount();
-        clearInputs();
+        window.renderHistory();
+        autoSave();
 
-        // Сохраняем изменения
-        if (typeof window.autoSave === 'function') {
-            window.autoSave();
-        }
+        // Очищаем поля
+        takeMoneyAmount.value = '';
+        takeMoneyDescription.value = '';
 
         // Закрываем модальное окно
         closeActionModal();
@@ -488,13 +441,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Обновляем отображение
         window.renderCash();
-        updateModalWalletAmount();
-        clearInputs();
+        window.renderHistory();
+        autoSave();
 
-        // Сохраняем изменения
-        if (typeof window.autoSave === 'function') {
-            window.autoSave();
-        }
+        // Очищаем поля
+        giveMoneyAmount.value = '';
+        giveMoneyDescription.value = '';
 
         // Закрываем модальное окно
         closeActionModal();
@@ -503,45 +455,49 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция установки работы
     function setJob() {
         const title = jobTitleInput.value.trim();
-        const salary = parseInt(jobSalaryInput.value);
+        const salary = parseFloat(jobSalaryInput.value);
 
-        if (!title || !salary) {
-            alert('Заполните все поля!');
+        if (!title) {
+            alert('Введите название работы!');
             return;
         }
 
-        // Удаляем старую работу из доходов
-        window.data.income = window.data.income.filter(inc => inc.type !== 'job');
+        if (!salary || salary <= 0) {
+            alert('Введите корректную сумму зарплаты!');
+            return;
+        }
 
-        // Добавляем новую работу в доходы
-        window.data.income.push({
-            name: title,
-            value: salary,
-            type: 'job'
-        });
+        // Подтверждение
+        if (!confirm(`Подтвердите устройство на работу:\nДолжность: ${title}\nЗарплата: $${salary}`)) {
+            return;
+        }
 
-        // Добавляем запись в историю
-        if (!window.data.history) window.data.history = [];
+        // Обновляем данные о работе
+        window.data.job = {
+            title: title,
+            salary: salary
+        };
+
+        // Обновляем отображение
+        const salaryValue = document.getElementById('salary-value');
+        if (salaryValue) {
+            salaryValue.textContent = salary;
+        }
+
+        // Добавляем в историю
         window.data.history.push({
             type: 'job',
-            amount: salary,
+            title: title,
+            salary: salary,
             date: new Date().toISOString()
         });
 
-        // Очищаем поля ввода
-        jobTitleInput.value = '';
-        jobSalaryInput.value = '';
-
-        // Обновляем отображение
-        window.renderIncome();
-        window.renderSummary();
         window.renderHistory();
         autoSave();
 
-        // Обновляем состояние кнопки "Уволиться"
-        updateQuitJobButton();
-
-        alert(`Устроились на работу: ${title}\nЗарплата: $${salary}`);
+        // Очищаем поля
+        jobTitleInput.value = '';
+        jobSalaryInput.value = '';
 
         // Закрываем модальное окно
         closeActionModal();
@@ -636,8 +592,6 @@ document.addEventListener('DOMContentLoaded', function() {
             const form = card.querySelector('.action-form');
             if (form) {
                 const isActive = card.classList.toggle('active');
-                
-                // Сначала показываем форму
                 form.style.display = isActive ? 'block' : 'none';
                 
                 if (isActive) {
@@ -659,9 +613,6 @@ document.addEventListener('DOMContentLoaded', function() {
                             input.style.display = '';
                         });
                     });
-                    
-                    // Не устанавливаем автоматический фокус на первое поле
-                    // Пользователь сам выберет нужное поле
                 }
             }
         });
@@ -741,13 +692,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Обработчик закрытия модального окна
     closeBtn.addEventListener('click', function() {
-        modal.classList.remove('active');
+        closeActionModal();
     });
 
     // Закрытие по клику вне модального окна
-    modal.addEventListener('click', function(e) {
-        if (e.target === modal) {
-            modal.classList.remove('active');
+    actionModal.addEventListener('click', function(e) {
+        if (e.target === actionModal) {
+            closeActionModal();
         }
     });
 }); 
