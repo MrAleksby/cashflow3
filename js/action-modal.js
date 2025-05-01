@@ -299,7 +299,11 @@ document.addEventListener('DOMContentLoaded', function() {
         input.setAttribute('inputmode', 'numeric');
         input.setAttribute('pattern', '[0-9]*');
         
-        // Добавляем только валидацию при потере фокуса
+        // Добавляем обработчики
+        input.addEventListener('input', handleInput);
+        input.addEventListener('focus', handleFocus);
+        
+        // Добавляем валидацию при потере фокуса
         input.addEventListener('blur', function(e) {
             let value = e.target.value.replace(/[^0-9]/g, '');
             e.target.value = value;
@@ -642,43 +646,68 @@ document.addEventListener('DOMContentLoaded', function() {
     // Добавляем обработку для всех полей ввода в модальном окне
     const modal = document.getElementById('action-modal');
     
+    // Функция для исправления ввода на мобильных устройствах
     function fixMobileInput() {
         const inputs = modal.querySelectorAll('input');
         inputs.forEach(input => {
-            // Предотвращаем скрытие полей при открытой клавиатуре
-            input.addEventListener('focus', function() {
-                // Устанавливаем таймаут, чтобы дать время клавиатуре появиться
-                setTimeout(() => {
-                    // Прокручиваем к активному полю
-                    input.scrollIntoView(false);
-                    
-                    // Принудительно обновляем отображение
-                    window.scrollTo(0, window.scrollY);
-                }, 300);
-            });
+            // Удаляем старые обработчики, если они были
+            const newInput = input.cloneNode(true);
+            input.parentNode.replaceChild(newInput, input);
             
-            // Обработка ввода для всех типов полей
-            input.addEventListener('input', function(e) {
-                // Сохраняем текущую позицию курсора
-                const start = e.target.selectionStart;
-                const end = e.target.selectionEnd;
-                
-                // Обновляем значение
-                const value = e.target.value;
-                
-                // Используем requestAnimationFrame для синхронизации с отрисовкой
-                requestAnimationFrame(() => {
-                    e.target.value = value;
-                    
-                    // Восстанавливаем позицию курсора
-                    if (document.activeElement === e.target) {
-                        e.target.setSelectionRange(start, end);
-                    }
-                });
-            });
+            // Добавляем новые обработчики
+            newInput.addEventListener('input', handleInput);
+            newInput.addEventListener('focus', handleFocus);
         });
     }
 
-    // Вызываем функцию при открытии модального окна
-    modal.addEventListener('show', fixMobileInput);
+    // Обработчик события input
+    function handleInput(e) {
+        // Сохраняем текущую позицию курсора
+        const start = e.target.selectionStart;
+        const end = e.target.selectionEnd;
+        const value = e.target.value;
+
+        // Используем setTimeout вместо requestAnimationFrame
+        setTimeout(() => {
+            e.target.value = value;
+            if (document.activeElement === e.target) {
+                e.target.setSelectionRange(start, end);
+            }
+        }, 0);
+    }
+
+    // Обработчик события focus
+    function handleFocus(e) {
+        setTimeout(() => {
+            const viewHeight = window.innerHeight;
+            const inputRect = e.target.getBoundingClientRect();
+            if (inputRect.bottom > viewHeight) {
+                e.target.scrollIntoView(false);
+            }
+        }, 300);
+    }
+
+    // Добавляем обработчик на открытие модального окна
+    const actionBtn = document.getElementById('main-action-btn');
+    if (actionBtn) {
+        actionBtn.addEventListener('click', function() {
+            modal.classList.add('active');
+            // Вызываем функцию исправления ввода при открытии окна
+            setTimeout(fixMobileInput, 100);
+        });
+    } else {
+        console.error('Не найдена кнопка main-action-btn');
+    }
+
+    // Обработчик закрытия модального окна
+    closeBtn.addEventListener('click', function() {
+        modal.classList.remove('active');
+    });
+
+    // Закрытие по клику вне модального окна
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.classList.remove('active');
+        }
+    });
 }); 
