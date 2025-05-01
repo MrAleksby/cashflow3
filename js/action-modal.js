@@ -292,12 +292,53 @@ document.addEventListener('DOMContentLoaded', function() {
         alert(`Кредит успешно получен!\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}`);
     }
 
+    // Функция для настройки числового поля ввода
+    function setupNumericInput(input) {
+        if (!input) return;
+        
+        // Устанавливаем тип клавиатуры для числовых полей
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('pattern', '[0-9]*');
+        
+        // Добавляем обработчик события input для мгновенного обновления значения
+        input.addEventListener('input', function(e) {
+            // Удаляем все нецифровые символы
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            
+            // Просто обновляем значение без принудительного blur/focus
+            e.target.value = value;
+        });
+        
+        // Добавляем обработчик для финальной валидации при завершении ввода
+        input.addEventListener('change', function(e) {
+            let value = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = value;
+        });
+    }
+
+    // Настраиваем все числовые поля в модальном окне
+    function setupAllNumericInputs() {
+        // Поля для взятия/отдачи денег
+        setupNumericInput(takeMoneyAmount);
+        setupNumericInput(giveMoneyAmount);
+        
+        // Поля для детей
+        setupNumericInput(childExpenseInput);
+        
+        // Поля для кредита
+        setupNumericInput(loanAmountInput);
+        
+        // Поля для работы
+        setupNumericInput(jobSalaryInput);
+    }
+
     // Открытие модального окна
     window.openActionModal = function() {
         actionModal.style.display = 'block';
         updateModalWalletAmount();
         updateChildrenList();
         clearInputs();
+        setupAllNumericInputs(); // Настраиваем числовые поля при открытии окна
     };
 
     // Закрытие модального окна
@@ -581,21 +622,6 @@ document.addEventListener('DOMContentLoaded', function() {
     } else {
         console.error('Не найдена кнопка main-action-btn');
     }
-
-    // Добавляем обработчики для улучшения работы с клавиатурой на мобильных
-    const numericInputs = document.querySelectorAll('input[type="number"]');
-    numericInputs.forEach(input => {
-        // Устанавливаем тип клавиатуры для числовых полей
-        input.setAttribute('inputmode', 'numeric');
-        input.setAttribute('pattern', '[0-9]*');
-        
-        // Автоматически скрываем клавиатуру при нажатии Enter
-        input.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') {
-                input.blur();
-            }
-        });
-    });
 
     // Автоматическая прокрутка при открытии клавиатуры
     const inputs = document.querySelectorAll('input');
