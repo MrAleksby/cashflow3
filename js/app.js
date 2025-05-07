@@ -97,8 +97,7 @@ function loadStockList() {
         const stockItem = document.createElement('div');
         stockItem.className = 'asset-item';
         stockItem.innerHTML = `
-            <span>${stock.name} (${stock.quantity} шт.)</span>
-            <span>$${stock.price}/шт</span>
+            <span>${stock.name} (${stock.quantity} шт. по $${stock.price})</span>
         `;
         
         stockItem.addEventListener('click', () => selectAsset(stock, 'stocks'));
@@ -446,32 +445,45 @@ function sellStocks() {
     
     // Обновляем количество акций или удаляем их полностью
     if (quantity === selectedAsset.quantity) {
-        // Удаляем акции из списка активов
+        // Удаляем только конкретную позицию по id
         window.data.asset = window.data.asset.filter(asset => 
-            asset.name !== selectedAsset.name
+            asset.id !== selectedAsset.id
         );
         
         // Если это дивидендная акция, удаляем соответствующий пассивный доход
         if (['2BIGPOWER', 'CD'].includes(selectedAsset.name)) {
-            window.data.income = window.data.income.filter(income => 
-                !(income.name.startsWith('Денежный поток') && 
-                  income.source === selectedAsset.name)
-            );
+            // Проверяем, остались ли еще акции этого типа
+            const remainingShares = window.data.asset.filter(asset => 
+                asset.name === selectedAsset.name
+            ).reduce((total, asset) => total + asset.quantity, 0);
+            
+            if (remainingShares === 0) {
+                // Удаляем доход только если не осталось акций данного типа
+                window.data.income = window.data.income.filter(income => 
+                    !(income.name.startsWith('Денежный поток') && 
+                      income.source === selectedAsset.name)
+                );
+            }
         }
     } else {
-        // Уменьшаем количество акций
-        const asset = window.data.asset.find(a => a.name === selectedAsset.name);
+        // Уменьшаем количество акций в конкретной позиции
+        const asset = window.data.asset.find(a => a.id === selectedAsset.id);
         if (asset) {
             asset.quantity -= quantity;
             
             // Если это дивидендная акция, обновляем пассивный доход
             if (['2BIGPOWER', 'CD'].includes(selectedAsset.name)) {
+                // Считаем общее количество акций данного типа
+                const totalShares = window.data.asset.filter(a => 
+                    a.name === selectedAsset.name
+                ).reduce((total, a) => total + a.quantity, 0);
+                
                 const income = window.data.income.find(inc => 
                     inc.name.startsWith('Денежный поток') && 
                     inc.source === selectedAsset.name
                 );
                 if (income) {
-                    income.value = calculateDividends(selectedAsset.name, asset.quantity);
+                    income.value = calculateDividends(selectedAsset.name, totalShares);
                 }
             }
         }
@@ -1065,8 +1077,12 @@ function handlePayDay() {
         monthsCounter.textContent = window.data.monthsCount;
     }
     
-    window.renderCash();
+    // Сначала обновляем все компоненты формулы
     window.renderSummary();
+    window.renderExpenses();
+    
+    // Затем обновляем остальное
+    window.renderCash();
     window.renderHistory();
     
     // Показываем уведомление

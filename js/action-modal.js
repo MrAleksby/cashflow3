@@ -131,9 +131,33 @@ document.addEventListener('DOMContentLoaded', function() {
             expense: expense
         });
 
+        // Добавляем расход в общие расходы
+        if (!window.data.expense) {
+            window.data.expense = [];
+        }
+        window.data.expense.push({
+            id: `child-expense-${Date.now()}`,
+            name: `Расходы на ребенка: ${name}`,
+            type: 'child',
+            value: expense
+        });
+
+        // Добавляем запись в историю
+        if (!window.data.history) {
+            window.data.history = [];
+        }
+        window.data.history.push({
+            type: 'add_child',
+            childName: name,
+            expense: expense,
+            date: new Date().toISOString()
+        });
+
         // Обновляем отображение
         updateChildrenList();
-        window.renderChildren();
+        window.renderExpense(); // Обновляем отображение расходов
+        window.renderSummary(); // Обновляем общую сумму
+        window.renderHistory(); // Обновляем историю
         autoSave();
 
         // Очищаем поля
@@ -154,23 +178,32 @@ document.addEventListener('DOMContentLoaded', function() {
         // Удаляем ребенка из списка
         window.data.children.splice(index, 1);
 
-        // Обновляем отображение
-        updateChildrenList();
-        
-        // Обновляем все отображения расходов
-        if (typeof window.renderExpense === 'function') {
-            window.renderExpense();
-        }
-        
-        // Обновляем сумму расходов в финансовой формуле
-        if (typeof window.renderSummary === 'function') {
-            window.renderSummary();
+        // Удаляем расход, связанный с ребенком
+        if (window.data.expense) {
+            const expenseIndex = window.data.expense.findIndex(exp => 
+                exp.type === 'child' && exp.name === `Расходы на ребенка: ${child.name}`
+            );
+            if (expenseIndex !== -1) {
+                window.data.expense.splice(expenseIndex, 1);
+            }
         }
 
-        // Сохраняем изменения
-        if (typeof window.autoSave === 'function') {
-            window.autoSave();
+        // Добавляем запись в историю об удалении
+        if (!window.data.history) {
+            window.data.history = [];
         }
+        window.data.history.push({
+            type: 'remove_child',
+            childName: child.name,
+            date: new Date().toISOString()
+        });
+
+        // Обновляем отображение
+        updateChildrenList();
+        window.renderExpense(); // Обновляем отображение расходов
+        window.renderSummary(); // Обновляем общую сумму
+        window.renderHistory(); // Обновляем историю
+        autoSave();
     }
 
     // Функция взятия кредита
@@ -231,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Обновляем отображение
         window.renderCash();
         window.renderLiability();
-        window.renderExpenses();
+        window.renderExpense();
         window.renderSummary();
         window.renderHistory();
         updateModalWalletAmount();

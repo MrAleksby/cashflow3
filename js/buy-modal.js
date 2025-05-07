@@ -497,7 +497,7 @@ const ASSET_CATEGORIES = {
             // Добавляем в активы
             if (!window.data.asset) window.data.asset = [];
             window.data.asset.push({
-                id: `${item.id}-${Date.now()}`,
+                id: `${item.name}-${Date.now()}`,
                 name: item.name,
                 type: 'preciousmetals',
                 value: price,
@@ -1097,6 +1097,7 @@ const ASSET_CATEGORIES = {
 
             if (!window.data.asset) window.data.asset = [];
             window.data.asset.push({
+                id: `${item.name}-${Date.now()}`,
                 name: item.name,
                 quantity: shares,
                 price: pricePerShare,
