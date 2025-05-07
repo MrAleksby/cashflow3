@@ -1121,6 +1121,7 @@ const ASSET_CATEGORIES = {
                 type: 'buy',
                 assetName: item.name,
                 amount: totalPrice,
+                quantity: shares,
                 date: new Date().toISOString()
             });
 

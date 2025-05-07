@@ -440,6 +440,7 @@ function sellStocks() {
         type: 'sell',
         assetName: selectedAsset.name,
         amount: totalSale,
+        quantity: quantity,
         date: new Date().toISOString()
     });
     
@@ -1193,6 +1194,7 @@ window.renderHistory = function() {
         let typeText = '';
         let amountText = '';
         let colorClass = '';
+        let quantityText = entry.quantity ? ` (${entry.quantity} шт.)` : '';
 
         switch (entry.type) {
             case 'payday':
@@ -1201,12 +1203,12 @@ window.renderHistory = function() {
                 amountText = `${entry.amount >= 0 ? '+' : ''}$${entry.amount}`;
                 break;
             case 'buy':
-                typeText = `Покупка: ${entry.assetName}`;
+                typeText = `Покупка: ${entry.assetName}${quantityText}`;
                 colorClass = 'negative';
                 amountText = `-$${entry.amount}`;
                 break;
             case 'sell':
-                typeText = `Продажа: ${entry.assetName}`;
+                typeText = `Продажа: ${entry.assetName}${quantityText}`;
                 colorClass = 'positive';
                 amountText = `+$${entry.amount}`;
                 break;
