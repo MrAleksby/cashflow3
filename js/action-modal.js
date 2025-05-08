@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.data.history.push({
             type: 'take',
             amount: amount,
-            description: `Получение денег: ${description}`,
+            description: description,
             date: new Date().toISOString()
         });
 
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.data.history.push({
             type: 'give',
             amount: amount,
-            description: `Передача денег: ${description}`,
+            description: description,
             date: new Date().toISOString()
         });
 
