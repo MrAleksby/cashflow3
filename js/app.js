@@ -1273,8 +1273,8 @@ window.renderHistory = function() {
                 amountText = '';
                 break;
             default:
-                typeText = entry.description || 'Операция';
-                amountText = entry.amount ? `$${entry.amount}` : '';
+                typeText = 'Операция';
+                amountText = `$${entry.amount}`;
         }
 
         return `
@@ -1285,7 +1285,7 @@ window.renderHistory = function() {
                     <div class="history-amount">${amountText}</div>
                 </div>
             </div>
-        `;
+        `.trim();
     }).join('');
 
     historyContainer.innerHTML = historyHTML;
