@@ -270,6 +270,11 @@
     color: #f44336;
 }
 
+.history-item.neutral .history-amount,
+.history-item.neutral .history-type {
+    color: #666;
+}
+
 .history-empty {
     padding: 20px;
     text-align: center;

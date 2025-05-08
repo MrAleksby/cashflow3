@@ -1262,6 +1262,16 @@ window.renderHistory = function() {
                 colorClass = 'negative';
                 amountText = `-$${entry.amount}`;
                 break;
+            case 'add_child':
+                typeText = `Добавлен ребенок: ${entry.childName}`;
+                colorClass = 'negative';
+                amountText = `-$${entry.expense}/мес`;
+                break;
+            case 'remove_child':
+                typeText = `Удален ребенок: ${entry.childName}`;
+                colorClass = 'neutral';
+                amountText = '';
+                break;
             default:
                 typeText = 'Операция';
                 amountText = `$${entry.amount}`;
