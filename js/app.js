@@ -1273,8 +1273,8 @@ window.renderHistory = function() {
                 amountText = '';
                 break;
             default:
-                typeText = 'Операция';
-                amountText = `$${entry.amount}`;
+                typeText = entry.description || 'Операция';
+                amountText = entry.amount ? `$${entry.amount}` : '';
         }
 
         return `
