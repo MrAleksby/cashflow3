@@ -1175,7 +1175,7 @@ window.renderHistory = function() {
     const historyContainer = document.getElementById('history-container');
     if (!historyContainer) return;
 
-    // Принудительно очищаем контейнер
+    // Очищаем контейнер
     historyContainer.innerHTML = '';
 
     // Проверяем наличие истории
@@ -1190,75 +1190,93 @@ window.renderHistory = function() {
     );
 
     // Создаем HTML для каждой операции
-    const historyHTML = history.map(entry => {
-        let typeText = '';
-        let amountText = '';
+    history.forEach(entry => {
+        const historyItem = document.createElement('div');
+        const date = formatDate(entry.date);
+        let description = '';
+        let amount = '';
         let colorClass = '';
-        let quantityText = entry.quantity ? ` (${entry.quantity} шт.)` : '';
 
         switch (entry.type) {
+            case 'take':
+                description = entry.description || 'Получение денег';
+                amount = `+$${entry.amount}`;
+                colorClass = 'positive';
+                break;
+            case 'give':
+                description = entry.description || 'Передача денег';
+                amount = `-$${entry.amount}`;
+                colorClass = 'negative';
+                break;
             case 'payday':
-                typeText = `PayDay (Месяц ${entry.monthNumber})`;
+                description = `PayDay (Месяц ${entry.monthNumber})`;
+                amount = `${entry.amount >= 0 ? '+' : ''}$${entry.amount}`;
                 colorClass = entry.amount >= 0 ? 'positive' : 'negative';
-                amountText = `${entry.amount >= 0 ? '+' : ''}$${entry.amount}`;
                 break;
             case 'buy':
-                typeText = `Покупка: ${entry.assetName}${quantityText}`;
+                description = `Покупка: ${entry.assetName}${entry.quantity ? ` (${entry.quantity} шт.)` : ''}`;
+                amount = `-$${entry.amount}`;
                 colorClass = 'negative';
-                amountText = `-$${entry.amount}`;
                 break;
             case 'sell':
-                typeText = `Продажа: ${entry.assetName}${quantityText}`;
+                description = `Продажа: ${entry.assetName}${entry.quantity ? ` (${entry.quantity} шт.)` : ''}`;
+                amount = `+$${entry.amount}`;
                 colorClass = 'positive';
-                amountText = `+$${entry.amount}`;
                 break;
             case 'loan':
-                typeText = `Получение кредита`;
+                description = 'Получение кредита';
+                amount = `+$${entry.amount}`;
                 colorClass = 'positive';
-                amountText = `+$${entry.amount}`;
                 break;
             case 'loan_repayment':
-                typeText = `Погашение кредита`;
+                description = 'Погашение кредита';
+                amount = `-$${entry.amount}`;
                 colorClass = 'negative';
-                amountText = `-$${entry.amount}`;
                 break;
-            case 'tax':
-                typeText = 'Налоги';
-                colorClass = 'negative';
-                amountText = `-$${entry.amount}`;
-                break;
-            case 'income':
-                typeText = `Доход: ${entry.description || 'Без описания'}`;
+            case 'new_job':
+                description = `Устроился на работу: ${entry.title}`;
+                amount = `$${entry.salary}/мес`;
                 colorClass = 'positive';
-                amountText = `+$${entry.amount}`;
                 break;
-            case 'expense':
-                typeText = `Расход: ${entry.description || 'Без описания'}`;
+            case 'quit_job':
+                description = `Уволился с работы: ${entry.jobTitle}`;
+                amount = `-$${entry.salary}/мес`;
                 colorClass = 'negative';
-                amountText = `-$${entry.amount}`;
-                break;
-            case 'job':
-                typeText = 'ПРОШЕЛ собеседование';
-                colorClass = 'positive';
-                amountText = `$${entry.amount}`;
                 break;
             default:
-                typeText = 'Операция';
-                amountText = `$${entry.amount}`;
+                description = entry.description || 'Операция';
+                if (entry.amount) {
+                    amount = `${entry.amount >= 0 ? '+' : ''}$${Math.abs(entry.amount)}`;
+                    colorClass = entry.amount >= 0 ? 'positive' : 'negative';
+                }
+                break;
         }
 
-        return `
-            <div class="history-item ${colorClass}">
-                <div class="history-date">${formatDate(entry.date)}</div>
-                <div class="history-info">
-                    <div class="history-type">${typeText}</div>
-                    <div class="history-amount">${amountText}</div>
-                </div>
-            </div>
-        `;
-    }).join('');
-
-    historyContainer.innerHTML = historyHTML;
+        historyItem.className = `history-item ${colorClass}`;
+        
+        // Создаем структуру элемента через DOM для лучшей совместимости
+        const dateDiv = document.createElement('div');
+        dateDiv.className = 'history-date';
+        dateDiv.textContent = date;
+        
+        const infoDiv = document.createElement('div');
+        infoDiv.className = 'history-info';
+        
+        const typeDiv = document.createElement('div');
+        typeDiv.className = 'history-type';
+        typeDiv.textContent = description;
+        
+        const amountDiv = document.createElement('div');
+        amountDiv.className = 'history-amount';
+        amountDiv.textContent = amount;
+        
+        infoDiv.appendChild(typeDiv);
+        infoDiv.appendChild(amountDiv);
+        historyItem.appendChild(dateDiv);
+        historyItem.appendChild(infoDiv);
+        
+        historyContainer.appendChild(historyItem);
+    });
 };
 
 // Функция погашения кредита

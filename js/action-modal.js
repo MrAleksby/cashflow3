@@ -419,7 +419,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.data.history.push({
             type: 'take',
             amount: amount,
-            description: description,
+            description: `Получение денег: ${description}`,
             date: new Date().toISOString()
         });
 
@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.data.history.push({
             type: 'give',
             amount: amount,
-            description: description,
+            description: `Передача денег: ${description}`,
             date: new Date().toISOString()
         });
 
@@ -511,17 +511,47 @@ document.addEventListener('DOMContentLoaded', function() {
             salary: salary
         };
 
+        // Добавляем зарплату в доходы
+        if (!window.data.income) {
+            window.data.income = [];
+        }
+        
+        // Удаляем старый доход от работы, если есть
+        window.data.income = window.data.income.filter(inc => inc.type !== 'job');
+        
+        // Добавляем новый доход от работы
+        window.data.income.push({
+            id: `job-${Date.now()}`,
+            name: `Зарплата: ${title}`,
+            value: salary,
+            type: 'job'
+        });
+
         // Добавляем в историю
+        if (!window.data.history) {
+            window.data.history = [];
+        }
         window.data.history.push({
-            type: 'job',
+            type: 'new_job',
             title: title,
             salary: salary,
             date: new Date().toISOString()
         });
 
         // Обновляем отображение
+        window.renderIncome(); // Обновляем список доходов
         window.renderSummary(); // Обновляем финансовую формулу
-        window.renderHistory();
+        window.renderHistory(); // Обновляем историю
+        
+        // Обновляем отображение зарплаты в основном интерфейсе
+        const salaryValue = document.getElementById('salary-value');
+        if (salaryValue) {
+            salaryValue.textContent = salary;
+        }
+
+        // Обновляем состояние кнопки "Уволиться"
+        updateQuitJobButton();
+        
         autoSave();
 
         // Очищаем поля
@@ -530,50 +560,101 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Закрываем модальное окно
         closeActionModal();
+
+        alert('Вы устроились на новую работу!');
     }
 
     function quitJob() {
-        if (!confirm('Вы уверены, что хотите уволиться с работы?')) {
+        // Проверяем, есть ли активная работа
+        if (!window.data.job || !window.data.job.title || !window.data.job.salary) {
+            alert('У вас нет активной работы!');
             return;
         }
 
+        if (!confirm(`Вы уверены, что хотите уволиться с работы "${window.data.job.title}" с зарплатой $${window.data.job.salary}?`)) {
+            return;
+        }
+
+        // Сохраняем информацию о работе для истории
+        const oldJob = {
+            title: window.data.job.title,
+            salary: window.data.job.salary
+        };
+
+        // Очищаем данные о работе
+        window.data.job = {
+            title: '',
+            salary: 0
+        };
+
         // Удаляем работу из доходов
-        window.data.income = window.data.income.filter(inc => inc.type !== 'job');
+        if (window.data.income) {
+            window.data.income = window.data.income.filter(inc => inc.type !== 'job');
+        }
+
+        // Добавляем запись в историю
+        if (!window.data.history) {
+            window.data.history = [];
+        }
+        window.data.history.push({
+            type: 'quit_job',
+            jobTitle: oldJob.title,
+            salary: oldJob.salary,
+            date: new Date().toISOString()
+        });
 
         // Обновляем отображение
-        window.renderIncome();
-        window.renderSummary();
+        window.renderIncome(); // Обновляем список доходов
+        window.renderSummary(); // Обновляем финансовую формулу
+        window.renderHistory(); // Обновляем историю
+        
+        // Обновляем отображение зарплаты в основном интерфейсе
+        const salaryValue = document.getElementById('salary-value');
+        if (salaryValue) {
+            salaryValue.textContent = '0';
+        }
+
+        // Сохраняем изменения
         autoSave();
 
         // Обновляем состояние кнопки "Уволиться"
         updateQuitJobButton();
 
-        alert('Вы уволились с работы');
+        // Закрываем модальное окно
+        closeActionModal();
+
+        alert(`Вы уволились с работы "${oldJob.title}"`);
     }
 
     function updateQuitJobButton() {
         const quitBtn = document.getElementById('quit-job-btn');
-        const hasJob = window.data.income && window.data.income.some(inc => inc.type === 'job');
+        if (!quitBtn) return;
+
+        // Проверяем наличие активной работы
+        const hasActiveJob = window.data.job && 
+                           window.data.job.title && 
+                           window.data.job.salary > 0;
         
-        if (quitBtn) {
-            quitBtn.disabled = !hasJob;
-        }
+        // Проверяем наличие дохода от работы
+        const hasJobIncome = window.data.income && 
+                           window.data.income.some(inc => inc.type === 'job' && 
+                                                        inc.value === window.data.job.salary);
+        
+        // Кнопка активна только если есть и работа, и соответствующий доход
+        const isActive = hasActiveJob && hasJobIncome;
+        
+        // Обновляем состояние кнопки
+        quitBtn.disabled = !isActive;
+        quitBtn.style.display = isActive ? 'block' : 'none';
+        
+        // Добавляем красный цвет для кнопки
+        quitBtn.classList.toggle('btn-danger', isActive);
     }
 
     // Инициализация кнопки "Уволиться"
-    const jobSection = document.querySelector('.action-card[data-action="job"] .action-info');
-    if (jobSection) {
-        // Создаем кнопку "Уволиться"
-        const quitBtn = document.createElement('button');
-        quitBtn.id = 'quit-job-btn';
-        quitBtn.className = 'btn btn-danger quit-job-btn';
-        quitBtn.textContent = 'Уволиться';
+    const quitBtn = document.getElementById('quit-job-btn');
+    if (quitBtn) {
         quitBtn.onclick = quitJob;
-        quitBtn.disabled = true; // По умолчанию кнопка неактивна
-
-        // Добавляем кнопку после существующих элементов
-        jobSection.appendChild(quitBtn);
-
         // Инициализируем состояние кнопки
         updateQuitJobButton();
     }
