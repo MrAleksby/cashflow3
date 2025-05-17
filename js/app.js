@@ -1042,17 +1042,14 @@ let monthsCounter = document.getElementById('months-counter');
 
 // Функция обработки PayDay
 function handlePayDay() {
-    // Получаем зарплату
-    const salary = window.data.job ? window.data.job.salary : 0;
+    // Сначала обновляем все компоненты формулы и получаем актуальные значения
+    window.renderSummary();
     
-    // Получаем пассивный доход
-    const passiveIncome = window.data.income ? window.data.income.reduce((sum, inc) => sum + (parseFloat(inc.value) || 0), 0) : 0;
-    
-    // Получаем общий расход
-    const totalExpenses = window.data.expense ? window.data.expense.reduce((sum, exp) => sum + (parseFloat(exp.value) || 0), 0) : 0;
-    
-    // Вычисляем денежный поток
-    const cashFlow = salary + passiveIncome - totalExpenses;
+    // Получаем уже рассчитанные значения из элементов интерфейса
+    const salary = parseInt(document.getElementById('salary-value').textContent) || 0;
+    const passiveIncome = parseInt(document.getElementById('passive-value').textContent) || 0;
+    const totalExpenses = parseInt(document.getElementById('expense-sum').textContent) || 0;
+    const cashFlow = parseInt(document.getElementById('cashflow').textContent) || 0;
     
     // Создаем запись для истории
     const historyEntry = {
@@ -1062,7 +1059,7 @@ function handlePayDay() {
         monthNumber: (window.data.monthsCount || 0) + 1
     };
     
-    // Обновляем баланс
+    // Обновляем баланс, используя уже рассчитанный cashFlow
     window.cash = (parseFloat(window.cash) || 0) + cashFlow;
     
     // Увеличиваем счетчик месяцев
@@ -1072,17 +1069,13 @@ function handlePayDay() {
     if (!window.data.history) window.data.history = [];
     window.data.history.push(historyEntry);
     
-    // Обновляем отображение
+    // Обновляем отображение счетчика месяцев
     const monthsCounter = document.getElementById('months-counter');
     if (monthsCounter) {
         monthsCounter.textContent = window.data.monthsCount;
     }
     
-    // Сначала обновляем все компоненты формулы
-    window.renderSummary();
-    window.renderExpenses();
-    
-    // Затем обновляем остальное
+    // Обновляем отображение
     window.renderCash();
     window.renderHistory();
     
