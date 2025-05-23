@@ -856,7 +856,10 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1" inputmode="decimal">
+                                    <div style="display: flex; gap: 5px; align-items: center;">
+                                        <button class="toggle-sign-btn" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px;">+/-</button>
+                                        <input type="number" class="property-cashflow" step="1" inputmode="numeric">
+                                    </div>
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -885,7 +888,10 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1" inputmode="decimal">
+                                    <div style="display: flex; gap: 5px; align-items: center;">
+                                        <button class="toggle-sign-btn" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px;">+/-</button>
+                                        <input type="number" class="property-cashflow" step="1" inputmode="numeric">
+                                    </div>
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -910,7 +916,10 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1" inputmode="decimal">
+                                    <div style="display: flex; gap: 5px; align-items: center;">
+                                        <button class="toggle-sign-btn" style="padding: 5px 10px; background: #4CAF50; color: white; border: none; border-radius: 4px;">+/-</button>
+                                        <input type="number" class="property-cashflow" step="1" inputmode="numeric">
+                                    </div>
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -1007,6 +1016,16 @@ const ASSET_CATEGORIES = {
             const mortgageInput = inputGroup.querySelector('.property-mortgage');
             const cashflowInput = inputGroup.querySelector('.property-cashflow');
             const buyButton = inputGroup.querySelector('.buy-property-btn');
+            const toggleSignBtn = inputGroup.querySelector('.toggle-sign-btn');
+            
+            // Добавляем обработчик для кнопки смены знака
+            if (toggleSignBtn && cashflowInput) {
+                toggleSignBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const currentValue = parseFloat(cashflowInput.value) || 0;
+                    cashflowInput.value = -currentValue;
+                });
+            }
             
             // Добавляем обработчик для кнопки покупки
             if (buyButton) {
