@@ -856,7 +856,7 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1" inputmode="numeric">
+                                    <input type="number" class="property-cashflow" step="1" inputmode="decimal">
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -885,7 +885,7 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1" inputmode="numeric">
+                                    <input type="number" class="property-cashflow" step="1" inputmode="decimal">
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
@@ -910,7 +910,7 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
-                                    <input type="number" class="property-cashflow" step="1" inputmode="numeric">
+                                    <input type="number" class="property-cashflow" step="1" inputmode="decimal">
                                 </div>
                                 <button class="buy-property-btn">Купить</button>
                             </div>
