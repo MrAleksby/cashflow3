@@ -395,24 +395,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Взять деньги
     function takeMoney() {
         const amount = parseFloat(takeMoneyAmount.value);
-        const description = takeMoneyDescription.value.trim();
+        let description = takeMoneyDescription.value.trim();
 
         if (!amount || amount <= 0) {
             alert('Введите корректную сумму!');
             return;
         }
 
+        // Если описание не введено, используем значение по умолчанию
         if (!description) {
-            alert('Введите описание!');
-            return;
+            description = 'Внешний доход';
         }
 
         // Подтверждение
-        if (!confirm(`Подтвердите получение:\n$${amount}\nОписание: ${description}`)) {
+        if (!confirm(`Подтвердите получение $${amount} (${description})?`)) {
             return;
         }
 
-        // Добавляем деньги в кошелек
+        // Добавляем деньги
         window.cash += amount;
 
         // Добавляем в историю
@@ -439,29 +439,29 @@ document.addEventListener('DOMContentLoaded', function() {
     // Отдать деньги
     function giveMoney() {
         const amount = parseFloat(giveMoneyAmount.value);
-        const description = giveMoneyDescription.value.trim();
+        let description = giveMoneyDescription.value.trim();
 
         if (!amount || amount <= 0) {
             alert('Введите корректную сумму!');
             return;
         }
-
-        if (!description) {
-            alert('Введите описание!');
+        
+        if (amount > window.cash) {
+            alert('Недостаточно средств!');
             return;
         }
 
-        if (amount > window.cash) {
-            alert('Недостаточно денег в кошельке!');
-            return;
+        // Если описание не введено, используем значение по умолчанию
+        if (!description) {
+            description = 'Внешний расход';
         }
 
         // Подтверждение
-        if (!confirm(`Подтвердите передачу:\n$${amount}\nОписание: ${description}`)) {
+        if (!confirm(`Подтвердите расход $${amount} (${description})?`)) {
             return;
         }
 
-        // Вычитаем деньги из кошелька
+        // Вычитаем деньги
         window.cash -= amount;
 
         // Добавляем в историю
