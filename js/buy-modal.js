@@ -1125,13 +1125,23 @@ const ASSET_CATEGORIES = {
 
             if (monthlyIncome > 0) {
                 if (!window.data.income) window.data.income = [];
-                window.data.income.push({
-                    id: `${item.id}-income-${Date.now()}`,
-                    name: `Денежный поток: ${item.name}`,
-                    value: Math.floor(monthlyIncome),
-                    type: 'passive',
-                    source: item.name
-                });
+                
+                // Ищем существующую запись о доходе для этого типа акций
+                let incomeSource = window.data.income.find(inc => inc.source === item.name && inc.type === 'passive');
+
+                if (incomeSource) {
+                    // Если нашли, обновляем значение
+                    incomeSource.value += Math.floor(monthlyIncome);
+                } else {
+                    // Если не нашли, создаем новую запись
+                    window.data.income.push({
+                        id: `${item.id}-income-${Date.now()}`,
+                        name: `Денежный поток: ${item.name}`,
+                        value: Math.floor(monthlyIncome),
+                        type: 'passive',
+                        source: item.name
+                    });
+                }
             }
 
             // Добавляем запись в историю

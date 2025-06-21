@@ -451,19 +451,18 @@ function sellStocks() {
             asset.id !== selectedAsset.id
         );
         
-        // Если это дивидендная акция, удаляем соответствующий пассивный доход
+        // Если это дивидендная акция, обновляем пассивный доход
         if (['2BIGPOWER', 'CD'].includes(selectedAsset.name)) {
-            // Проверяем, остались ли еще акции этого типа
-            const remainingShares = window.data.asset.filter(asset => 
-                asset.name === selectedAsset.name
-            ).reduce((total, asset) => total + asset.quantity, 0);
-            
-            if (remainingShares === 0) {
-                // Удаляем доход только если не осталось акций данного типа
-                window.data.income = window.data.income.filter(income => 
-                    !(income.name.startsWith('Денежный поток') && 
-                      income.source === selectedAsset.name)
-                );
+            const income = window.data.income.find(inc => inc.source === selectedAsset.name && inc.type === 'passive');
+
+            if (income) {
+                const dividendPerShare = selectedAsset.name === '2BIGPOWER' ? 10 : (selectedAsset.name === 'CD' ? 20 : 0);
+                const incomeToRemove = quantity * dividendPerShare;
+                income.value -= incomeToRemove;
+
+                if (income.value <= 0) {
+                    window.data.income = window.data.income.filter(inc => inc.id !== income.id);
+                }
             }
         }
     } else {
@@ -474,17 +473,12 @@ function sellStocks() {
             
             // Если это дивидендная акция, обновляем пассивный доход
             if (['2BIGPOWER', 'CD'].includes(selectedAsset.name)) {
-                // Считаем общее количество акций данного типа
-                const totalShares = window.data.asset.filter(a => 
-                    a.name === selectedAsset.name
-                ).reduce((total, a) => total + a.quantity, 0);
-                
-                const income = window.data.income.find(inc => 
-                    inc.name.startsWith('Денежный поток') && 
-                    inc.source === selectedAsset.name
-                );
+                const income = window.data.income.find(inc => inc.source === selectedAsset.name && inc.type === 'passive');
+
                 if (income) {
-                    income.value = calculateDividends(selectedAsset.name, totalShares);
+                    const dividendPerShare = selectedAsset.name === '2BIGPOWER' ? 10 : (selectedAsset.name === 'CD' ? 20 : 0);
+                    const incomeToRemove = quantity * dividendPerShare;
+                    income.value -= incomeToRemove;
                 }
             }
         }
