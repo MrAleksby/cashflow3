@@ -101,7 +101,8 @@ class DOMManager {
         if (element) {
             this.elements.set(id, element);
         } else {
-            console.warn(`Element with id '${id}' not found`);
+            // Убираем предупреждение для элементов, которые могут появиться позже
+            // console.warn(`Element with id '${id}' not found`);
         }
     }
 
@@ -111,6 +112,13 @@ class DOMManager {
      * @returns {HTMLElement|null} - DOM элемент или null
      */
     get(id) {
+        // Если элемент не в кэше, попробуем найти его и кэшировать
+        if (!this.elements.has(id)) {
+            const element = document.getElementById(id);
+            if (element) {
+                this.elements.set(id, element);
+            }
+        }
         return this.elements.get(id) || null;
     }
 
