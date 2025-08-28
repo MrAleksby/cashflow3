@@ -1480,9 +1480,14 @@ const ASSET_CATEGORIES = {
     }
 
     // Открытие модального окна
-    buyBtn.addEventListener('click', () => {
+    buyBtn.addEventListener('click', (e) => {
+        console.log('Кнопка "Купить" нажата');
+        e.preventDefault();
+        e.stopPropagation();
         modal.classList.add('active');
+        console.log('Класс "active" добавлен к модальному окну');
         showCategories();
+        console.log('showCategories() вызвана');
     });
 
     // Закрытие модального окна
