@@ -43,6 +43,14 @@ class GameState {
             newValue: this._cash
         });
         
+        // Отправляем событие через EventBus
+        if (window.eventBus) {
+            window.eventBus.emit(window.AppEvents.CASH_CHANGED, {
+                oldValue,
+                newValue: this._cash
+            });
+        }
+        
         // Автосохранение
         if (this._autoSave) {
             this.save();
@@ -78,6 +86,16 @@ class GameState {
             operation: 'add',
             amount: amount
         });
+        
+        // Отправляем событие через EventBus
+        if (window.eventBus) {
+            window.eventBus.emit(window.AppEvents.CASH_ADDED, {
+                oldValue: oldCash,
+                newValue: this._cash,
+                amount: amount,
+                description: description
+            });
+        }
         
         if (this._autoSave) this.save();
     }
