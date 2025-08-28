@@ -687,7 +687,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Находим карточку, на которую кликнули (может быть дочерний элемент)
             const clickedCard = e.target.closest('.category-card');
-            console.log('Card clicked:', clickedCard ? clickedCard.dataset.action : 'no card found');
+            console.log('Event target:', e.target);
+            console.log('Clicked card:', clickedCard);
+            console.log('Card action:', clickedCard ? clickedCard.dataset.action : 'no card found');
             
             // Сначала деактивируем все карточки
             actionCards.forEach(c => {
