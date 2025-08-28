@@ -900,7 +900,12 @@ function initializeSellInterface() {
 document.addEventListener('DOMContentLoaded', initializeSellInterface);
 
 // Добавляем обработчик для кнопки "Продать" в основном интерфейсе
-document.getElementById('main-sell-btn').addEventListener('click', openSellStockModal);
+document.addEventListener('DOMContentLoaded', function() {
+    const sellBtn = document.getElementById('main-sell-btn');
+    if (sellBtn) {
+        sellBtn.addEventListener('click', openSellStockModal);
+    }
+});
 
 // === ОТРИСОВКА ФИНАНСОВОЙ ФОРМУЛЫ ===
 const originalRenderSummary = function() {

@@ -45,7 +45,7 @@ class AssetManager {
     _initEventHandlers() {
         // Обработчики для кнопок покупки/продажи
         if (window.DOM) {
-            // Временно отключаем обработчики, чтобы не конфликтовать со старым кодом
+            // Не добавляем обработчики, так как они уже есть в старом коде
             // window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
             // window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
         }
