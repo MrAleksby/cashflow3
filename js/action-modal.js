@@ -685,7 +685,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            console.log('Card clicked:', card.dataset.category);
+            console.log('Card clicked:', card.dataset.action);
             
             // Сначала деактивируем все карточки
             actionCards.forEach(c => {
