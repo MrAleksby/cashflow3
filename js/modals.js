@@ -19,7 +19,6 @@
   // Закрытие модального окна при клике вне его области
   document.addEventListener('click', function(event) {
     if (event.target.classList.contains('modal') && event.target.classList.contains('active')) {
-      console.log('Глобальный обработчик: закрываю модальное окно', event.target.id);
       event.target.classList.remove('active');
     }
   });

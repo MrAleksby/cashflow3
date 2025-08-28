@@ -1440,7 +1440,6 @@ const ASSET_CATEGORIES = {
 
     // Возврат к выбору категорий
     function showCategories() {
-        console.log('showCategories() - начало выполнения');
         modal.querySelector('h2').textContent = 'Выберите тип актива';
         const content = modal.querySelector('.asset-categories');
         content.innerHTML = `
@@ -1478,37 +1477,12 @@ const ASSET_CATEGORIES = {
                 showCategoryItems(category);
             });
         });
-        
-        console.log('showCategories() - завершено, модальное окно должно быть видимым');
-        console.log('Состояние модального окна:', {
-            id: modal.id,
-            classList: modal.classList.toString(),
-            display: getComputedStyle(modal).display,
-            visibility: getComputedStyle(modal).visibility,
-            opacity: getComputedStyle(modal).opacity
-        });
     }
 
     // Открытие модального окна
-    buyBtn.addEventListener('click', (e) => {
-        console.log('Кнопка "Купить" нажата');
-        e.preventDefault();
-        e.stopPropagation();
+    buyBtn.addEventListener('click', () => {
         modal.classList.add('active');
-        console.log('Класс "active" добавлен к модальному окну');
         showCategories();
-        console.log('showCategories() вызвана');
-        
-        // Проверяем состояние модального окна через небольшую задержку
-        setTimeout(() => {
-            console.log('Проверка через 100мс - состояние модального окна:', {
-                id: modal.id,
-                classList: modal.classList.toString(),
-                display: getComputedStyle(modal).display,
-                visibility: getComputedStyle(modal).visibility,
-                opacity: getComputedStyle(modal).opacity
-            });
-        }, 100);
     });
 
     // Закрытие модального окна
