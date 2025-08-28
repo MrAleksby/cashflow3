@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('❌ AnimationManager недоступен');
     }
     
+    // Временно убираем панель тестирования, чтобы не мешать основному функционалу
+    /*
     // Создаем панель для тестирования анимаций
     const testPanel = document.createElement('div');
     testPanel.style.cssText = `
@@ -44,7 +46,10 @@ document.addEventListener('DOMContentLoaded', function() {
     `;
     
     document.body.appendChild(testPanel);
+    */
     
+    // Временно убираем обработчики кнопок тестирования
+    /*
     // Обработчики для кнопок тестирования
     document.getElementById('test-notification').addEventListener('click', () => {
         const types = ['success', 'error', 'warning', 'info'];
@@ -113,6 +118,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(modal);
         window.animationManager.showModal(modal);
     });
+    */
     
     // Интеграция с существующими модулями
     if (window.gameState && window.animationManager) {

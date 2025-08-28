@@ -45,8 +45,9 @@ class AssetManager {
     _initEventHandlers() {
         // Обработчики для кнопок покупки/продажи
         if (window.DOM) {
-            window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
-            window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
+            // Временно отключаем обработчики, чтобы не конфликтовать со старым кодом
+            // window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
+            // window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
         }
     }
 
@@ -60,9 +61,9 @@ class AssetManager {
         
         const modal = window.DOM.get('buy-modal');
         if (modal) {
-            modal.style.display = 'block';
+            // Используем старый способ открытия для совместимости
+            modal.classList.add('active');
             this._updateBuyModalWallet();
-            this._initBuyModalHandlers();
         }
     }
 
@@ -74,7 +75,8 @@ class AssetManager {
         
         const modal = window.DOM.get('buy-modal');
         if (modal) {
-            modal.style.display = 'none';
+            // Используем старый способ закрытия для совместимости
+            modal.classList.remove('active');
         }
     }
 
