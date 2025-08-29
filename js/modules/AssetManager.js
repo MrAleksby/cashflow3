@@ -1100,16 +1100,6 @@ class AssetManager {
             <div class="sell-form">
                 <div class="input-group">
                     <label>Цена продажи ($):</label>
-                    <div class="quick-sell-price-buttons">
-                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
-                        <button class="quick-sell-price-btn" data-price="5000">$5K</button>
-                        <button class="quick-sell-price-btn" data-price="10000">$10K</button>
-                        <button class="quick-sell-price-btn" data-price="25000">$25K</button>
-                        <button class="quick-sell-price-btn" data-price="50000">$50K</button>
-                        <button class="quick-sell-price-btn" data-price="100000">$100K</button>
-                        <button class="quick-sell-price-btn" data-price="250000">$250K</button>
-                        <button class="quick-sell-price-btn" data-price="500000">$500K</button>
-                    </div>
                     <div class="custom-sell-price-input">
                         <input type="number" class="sell-price" min="0" value="${asset.value}" step="1000">
                     </div>
@@ -1120,9 +1110,6 @@ class AssetManager {
                 </div>
             </div>
         `;
-
-        // Инициализируем кнопки быстрых цен
-        this._initializeSellPriceButtons(asset.name);
         
         // Добавляем обработчики событий
         this._addSellModalEventHandlers();
@@ -1153,16 +1140,6 @@ class AssetManager {
             <div class="sell-form">
                 <div class="input-group">
                     <label>Цена продажи ($):</label>
-                    <div class="quick-sell-price-buttons">
-                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
-                        <button class="quick-sell-price-btn" data-price="5000">$5K</button>
-                        <button class="quick-sell-price-btn" data-price="10000">$10K</button>
-                        <button class="quick-sell-price-btn" data-price="25000">$25K</button>
-                        <button class="quick-sell-price-btn" data-price="50000">$50K</button>
-                        <button class="quick-sell-price-btn" data-price="100000">$100K</button>
-                        <button class="quick-sell-price-btn" data-price="250000">$250K</button>
-                        <button class="quick-sell-price-btn" data-price="500000">$500K</button>
-                    </div>
                     <div class="custom-sell-price-input">
                         <input type="number" class="sell-price" min="0" value="${asset.value}" step="1000">
                     </div>
@@ -1173,9 +1150,6 @@ class AssetManager {
                 </div>
             </div>
         `;
-
-        // Инициализируем кнопки быстрых цен
-        this._initializeSellPriceButtons(asset.name);
         
         // Добавляем обработчики событий
         this._addSellModalEventHandlers();
@@ -1212,16 +1186,6 @@ class AssetManager {
                 
                 <div class="input-group">
                     <label>Цена продажи за единицу ($):</label>
-                    <div class="quick-sell-price-buttons">
-                        <button class="quick-sell-price-btn" data-price="10">$10</button>
-                        <button class="quick-sell-price-btn" data-price="25">$25</button>
-                        <button class="quick-sell-price-btn" data-price="50">$50</button>
-                        <button class="quick-sell-price-btn" data-price="100">$100</button>
-                        <button class="quick-sell-price-btn" data-price="250">$250</button>
-                        <button class="quick-sell-price-btn" data-price="500">$500</button>
-                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
-                        <button class="quick-sell-price-btn" data-price="2000">$2K</button>
-                    </div>
                     <div class="custom-sell-price-input">
                         <input type="number" class="sell-price" min="0" value="${asset.price}" step="10">
                     </div>
@@ -1265,16 +1229,6 @@ class AssetManager {
             <div class="sell-form">
                 <div class="input-group">
                     <label>Цена продажи ($):</label>
-                    <div class="quick-sell-price-buttons">
-                        <button class="quick-sell-price-btn" data-price="100">$100</button>
-                        <button class="quick-sell-price-btn" data-price="500">$500</button>
-                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
-                        <button class="quick-sell-price-btn" data-price="5000">$5K</button>
-                        <button class="quick-sell-price-btn" data-price="10000">$10K</button>
-                        <button class="quick-sell-price-btn" data-price="25000">$25K</button>
-                        <button class="quick-sell-price-btn" data-price="50000">$50K</button>
-                        <button class="quick-sell-price-btn" data-price="100000">$100K</button>
-                    </div>
                     <div class="custom-sell-price-input">
                         <input type="number" class="sell-price" min="0" value="${asset.value}" step="100">
                     </div>
@@ -1285,9 +1239,6 @@ class AssetManager {
                 </div>
             </div>
         `;
-
-        // Инициализируем кнопки быстрых цен
-        this._initializeSellPriceButtons(asset.name);
         
         // Добавляем обработчики событий
         this._addSellModalEventHandlers();
