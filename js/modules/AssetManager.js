@@ -1102,7 +1102,15 @@ class AssetManager {
         }
         
         // Определяем доход из различных возможных свойств
-        const income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
+        let income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
+        
+        // Если доход не найден в свойствах актива, ищем в массиве доходов
+        if (income === 0 && window.data && window.data.income) {
+            const incomeRecord = window.data.income.find(inc => inc.source === asset.name);
+            if (incomeRecord) {
+                income = incomeRecord.amount || 0;
+            }
+        }
         
         // Информация о недвижимости
         infoElement.innerHTML = `
@@ -1145,7 +1153,15 @@ class AssetManager {
         }
         
         // Определяем доход из различных возможных свойств
-        const income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
+        let income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
+        
+        // Если доход не найден в свойствах актива, ищем в массиве доходов
+        if (income === 0 && window.data && window.data.income) {
+            const incomeRecord = window.data.income.find(inc => inc.source === asset.name);
+            if (incomeRecord) {
+                income = incomeRecord.amount || 0;
+            }
+        }
         
         // Информация о бизнесе
         infoElement.innerHTML = `
