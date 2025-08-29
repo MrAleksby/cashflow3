@@ -803,13 +803,11 @@ const ASSET_CATEGORIES = {
                                     <label>Цена за акцию ($):</label>
                                     <div class="quick-price-buttons">
                                         <button class="quick-price-btn" data-price="1">$1</button>
-                                        <button class="quick-price-btn" data-price="4">$4</button>
                                         <button class="quick-price-btn" data-price="5">$5</button>
                                         <button class="quick-price-btn" data-price="10">$10</button>
                                         <button class="quick-price-btn" data-price="20">$20</button>
                                         <button class="quick-price-btn" data-price="30">$30</button>
                                         <button class="quick-price-btn" data-price="40">$40</button>
-                                        <button class="quick-price-btn" data-price="50">$50</button>
                                     </div>
                                     <div class="custom-price-input">
                                         <input type="number" class="price-per-share" min="0" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="Или введите свою цену">
