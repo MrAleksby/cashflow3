@@ -876,9 +876,6 @@ window.resetGame = function() {
         sessionStorage.clear();
     }
     
-    // Показываем сообщение
-    alert('Игра успешно сброшена. Страница будет перезагружена.');
-    
     // Принудительно перезагружаем страницу без использования кэша
     window.location.href = window.location.href + '?nocache=' + new Date().getTime();
 };
