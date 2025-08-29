@@ -524,4 +524,261 @@ button:hover {
     .history-amount {
         align-self: flex-start;
     }
+}
+
+/* Стили для новых модальных окон продажи */
+#sell-asset-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+#sell-asset-modal .modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 500px;
+    margin: 50px auto;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+#sell-asset-modal h2 {
+    margin: 0 0 20px 0;
+    color: #333;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+#sell-asset-modal .asset-info {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#sell-asset-modal .asset-info h3 {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 1.3em;
+}
+
+#sell-asset-modal .asset-info p {
+    margin: 5px 0;
+    color: #666;
+}
+
+#sell-asset-modal .sell-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#sell-asset-modal .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#sell-asset-modal .input-group label {
+    font-weight: bold;
+    color: #333;
+    font-size: 0.9em;
+}
+
+#sell-asset-modal .input-group input {
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+#sell-asset-modal .input-group input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+#sell-asset-modal .quick-sell-price-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+#sell-asset-modal .quick-sell-price-btn {
+    padding: 10px 8px;
+    background: #f8f9fa;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-height: 44px;
+}
+
+#sell-asset-modal .quick-sell-price-btn:hover {
+    background: #e9ecef;
+    border-color: #007bff;
+}
+
+#sell-asset-modal .quick-sell-price-btn.active {
+    background: #007bff;
+    color: white;
+    border-color: #007bff;
+}
+
+#sell-asset-modal .custom-sell-price-input {
+    margin-top: 5px;
+}
+
+#sell-asset-modal .total-info {
+    background: #e8f5e8;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    margin-top: 15px;
+}
+
+#sell-asset-modal .total-info p {
+    margin: 0;
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #28a745;
+}
+
+#sell-asset-modal .sell-total {
+    color: #28a745;
+    font-size: 1.2em;
+}
+
+#sell-asset-modal .modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+#sell-asset-modal .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    min-height: 44px;
+    min-width: 100px;
+}
+
+#sell-asset-modal .btn-primary {
+    background: #007bff;
+    color: white;
+}
+
+#sell-asset-modal .btn-primary:hover {
+    background: #0056b3;
+}
+
+#sell-asset-modal .btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+#sell-asset-modal .btn-secondary:hover {
+    background: #545b62;
+}
+
+#sell-asset-modal .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 5px;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s;
+}
+
+#sell-asset-modal .close-btn:hover {
+    background: #f0f0f0;
+}
+
+/* Мобильная адаптация для новых модальных окон */
+@media (max-width: 480px) {
+    #sell-asset-modal {
+        padding: 10px;
+    }
+    
+    #sell-asset-modal .modal-content {
+        margin: 20px auto;
+        padding: 15px;
+        max-height: 95vh;
+    }
+    
+    #sell-asset-modal h2 {
+        font-size: 1.3em;
+        margin-bottom: 15px;
+    }
+    
+    #sell-asset-modal .asset-info {
+        padding: 12px;
+        margin-bottom: 15px;
+    }
+    
+    #sell-asset-modal .asset-info h3 {
+        font-size: 1.2em;
+    }
+    
+    #sell-asset-modal .input-group input {
+        padding: 14px;
+        font-size: 16px; /* Предотвращает зум на iOS */
+    }
+    
+    #sell-asset-modal .quick-sell-price-buttons {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+    
+    #sell-asset-modal .quick-sell-price-btn {
+        padding: 12px 6px;
+        font-size: 0.85em;
+        min-height: 48px;
+    }
+    
+    #sell-asset-modal .btn {
+        padding: 14px 20px;
+        font-size: 16px;
+        min-height: 48px;
+    }
+    
+    #sell-asset-modal .modal-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #sell-asset-modal .close-btn {
+        top: 10px;
+        right: 10px;
+        font-size: 20px;
+        width: 30px;
+        height: 30px;
+    }
 } 

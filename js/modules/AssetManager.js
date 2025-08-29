@@ -635,6 +635,12 @@ class AssetManager {
      * Заполнить модальное окно продажи акций
      */
     _fillSellStockModal(asset, infoElement, formElement) {
+        // Проверяем, что актив существует и имеет необходимые свойства
+        if (!asset || !asset.name || typeof asset.quantity === 'undefined' || typeof asset.price === 'undefined') {
+            console.log('❌ Некорректные данные актива:', asset);
+            return;
+        }
+        
         // Информация об акции
         infoElement.innerHTML = `
             <div class="asset-info">
@@ -787,12 +793,15 @@ class AssetManager {
         // Закрываем модальное окно продажи актива
         this.closeSellAssetModal();
         
+        // Очищаем выбранный актив
+        this._selectedAsset = null;
+        
         // Обновляем список активов в основном модальном окне продажи
         this._loadAssetList();
         
         // Показываем уведомление
         if (window.animationManager) {
-            window.animationManager.showNotification(`✅ Продано: ${this._selectedAsset.name} ${quantity} шт. за $${sellPrice}`, 'success');
+            window.animationManager.showNotification(`✅ Продано: ${assetName} ${quantity} шт. за $${sellPrice}`, 'success');
         }
     }
 
