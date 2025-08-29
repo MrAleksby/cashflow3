@@ -1331,8 +1331,16 @@ class AssetManager {
     _addSellModalEventHandlers() {
         // Обработчик для кнопки подтверждения продажи
         const confirmBtn = document.getElementById('confirm-sell-btn');
+        console.log('🔍 Ищем кнопку подтверждения продажи:', confirmBtn);
+        
         if (confirmBtn) {
-            confirmBtn.onclick = () => this._executeSellFromModal();
+            confirmBtn.onclick = () => {
+                console.log('🚀 Кнопка "Продать" нажата!');
+                this._executeSellFromModal();
+            };
+            console.log('✅ Обработчик для кнопки "Продать" добавлен');
+        } else {
+            console.log('❌ Кнопка "Продать" не найдена!');
         }
 
         // Обработчики для полей ввода
@@ -1376,7 +1384,13 @@ class AssetManager {
      * Выполнить продажу из модального окна
      */
     _executeSellFromModal() {
-        if (!this._selectedAsset) return;
+        console.log('🎯 _executeSellFromModal вызвана');
+        console.log('📦 Выбранный актив:', this._selectedAsset);
+        
+        if (!this._selectedAsset) {
+            console.log('❌ Нет выбранного актива');
+            return;
+        }
         
         const priceInput = document.querySelector('#sell-asset-modal .sell-price');
         
