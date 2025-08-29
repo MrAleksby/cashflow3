@@ -1107,13 +1107,19 @@ class AssetManager {
             return;
         }
         
+        // Логируем структуру данных недвижимости для отладки
+        console.log('🔍 Данные недвижимости:', asset);
+        
+        // Определяем доход из различных возможных свойств
+        const income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
+        
         // Информация о недвижимости
         infoElement.innerHTML = `
             <div class="asset-info">
                 <h3>${asset.name}</h3>
                 <p><strong>Тип:</strong> Недвижимость</p>
                 <p><strong>Стоимость:</strong> $${asset.value.toFixed(0)}</p>
-                <p><strong>Доход:</strong> $${asset.income || 0}/мес</p>
+                <p><strong>Доход:</strong> $${income}/мес</p>
             </div>
         `;
 
@@ -1147,13 +1153,19 @@ class AssetManager {
             return;
         }
         
+        // Логируем структуру данных бизнеса для отладки
+        console.log('🔍 Данные бизнеса:', asset);
+        
+        // Определяем доход из различных возможных свойств
+        const income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
+        
         // Информация о бизнесе
         infoElement.innerHTML = `
             <div class="asset-info">
                 <h3>${asset.name}</h3>
                 <p><strong>Тип:</strong> Бизнес</p>
                 <p><strong>Стоимость:</strong> $${asset.value.toFixed(0)}</p>
-                <p><strong>Доход:</strong> $${asset.income || 0}/мес</p>
+                <p><strong>Доход:</strong> $${income}/мес</p>
             </div>
         `;
 
