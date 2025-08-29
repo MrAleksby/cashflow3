@@ -103,7 +103,12 @@ class AssetManager {
         // Обработчик для кнопки продажи
         document.addEventListener('click', (e) => {
             if (e.target.matches('#sell-asset-btn')) {
-                this._sellAsset();
+                // Используем новую систему продажи для всех типов активов
+                if (this._selectedAsset) {
+                    this._openSellAssetModal(this._selectedAsset);
+                } else {
+                    console.log('❌ Нет выбранного актива для продажи');
+                }
             }
         });
     }
