@@ -67,7 +67,14 @@ class AssetManager {
                 const btn = e.target.closest('.asset-type-btn');
                 const assetType = btn.dataset.type;
                 console.log('🎯 Клик по кнопке типа актива:', assetType, btn);
-                this._switchAssetType(assetType);
+                
+                if (assetType === 'stocks') {
+                    // Для акций открываем новое модальное окно со списком акций
+                    this._openSellStocksListModal();
+                } else {
+                    // Для других типов используем старую логику
+                    this._switchAssetType(assetType);
+                }
             }
         });
         
@@ -203,8 +210,6 @@ class AssetManager {
             console.log('📊 GameState доступен:', !!window.gameState);
             console.log('📊 Данные GameState:', window.gameState?.data);
             
-            this._loadAssetList();
-            
             // Показываем уведомление о новой логике
             if (window.animationManager) {
                 window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика продажи активов', 'info');
@@ -212,6 +217,102 @@ class AssetManager {
         } else {
             console.error('❌ Модальное окно продажи не найдено');
         }
+    }
+
+    /**
+     * Открыть модальное окно списка акций для продажи
+     */
+    _openSellStocksListModal() {
+        const modal = document.getElementById('sell-stocks-list-modal');
+        if (!modal) {
+            console.log('❌ Модальное окно списка акций не найдено');
+            return;
+        }
+
+        // Закрываем основное модальное окно продажи
+        this.closeSellModal();
+        
+        // Загружаем список акций
+        this._loadStocksList();
+        
+        // Показываем новое модальное окно
+        modal.style.display = 'block';
+        
+        console.log('🎯 Открыто модальное окно списка акций для продажи');
+    }
+
+    /**
+     * Закрыть модальное окно списка акций
+     */
+    closeSellStocksListModal() {
+        const modal = document.getElementById('sell-stocks-list-modal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    /**
+     * Вернуться к выбору типов активов
+     */
+    backToAssetTypes() {
+        // Закрываем модальное окно списка акций
+        this.closeSellStocksListModal();
+        
+        // Открываем основное модальное окно продажи
+        this.openSellModal();
+    }
+
+    /**
+     * Загрузить список акций для продажи
+     */
+    _loadStocksList() {
+        const listElement = document.getElementById('sell-stocks-list');
+        if (!listElement) {
+            console.log('❌ Элемент списка акций не найден');
+            return;
+        }
+
+        // Получаем данные об акциях
+        let assets = [];
+        if (window.data && window.data.asset) {
+            assets = window.data.asset || [];
+        } else if (window.gameState && window.gameState.data) {
+            assets = window.gameState.data.asset || [];
+        }
+
+        // Фильтруем только акции
+        const stocks = assets.filter(asset => 
+            asset.type === 'stocks' || 
+            ['MYT4U', 'ON2U', 'OK4U', 'GRO4US', '2BIGPOWER', 'CD'].includes(asset.name)
+        );
+
+        console.log('📊 Загружено акций для продажи:', stocks.length);
+
+        if (stocks.length === 0) {
+            listElement.innerHTML = '<div class="asset-item">Нет доступных акций для продажи</div>';
+            return;
+        }
+
+        // Создаем HTML для списка акций
+        const html = stocks.map(stock => {
+            const totalValue = stock.quantity * stock.price;
+            return `
+                <div class="asset-item" data-asset-id="${stock.id}">
+                    <span>${stock.name} (${stock.quantity} шт. × $${stock.price.toFixed(1)} = $${totalValue})</span>
+                </div>
+            `;
+        }).join('');
+
+        listElement.innerHTML = html;
+
+        // Добавляем обработчики клика на акции
+        const stockItems = listElement.querySelectorAll('.asset-item');
+        stockItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const assetId = item.dataset.assetId;
+                this._selectAsset(assetId);
+            });
+        });
     }
 
     /**

@@ -495,6 +495,26 @@
         </div>
     </div>
 
+    <!-- Модальное окно списка доступных акций для продажи -->
+    <div id="sell-stocks-list-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Доступные акции для продажи</h2>
+                <button class="close-btn" onclick="window.assetManager?.closeSellStocksListModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="sell-stocks-list">
+                    <!-- Список акций будет загружен динамически -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="back-to-asset-types-btn" class="btn btn-secondary" onclick="window.assetManager?.backToAssetTypes()">Назад</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно продажи конкретного актива -->
     <div id="sell-asset-modal" class="modal">
         <div class="modal-content">

@@ -1,4 +1,4 @@
-// Обработка навигации
+// Обработка если я выбрал навигации
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
         e.preventDefault();
