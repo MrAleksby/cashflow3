@@ -48,6 +48,17 @@ class AssetManager {
             // Добавляем обработчики для новой логики
             window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
             window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
+        } else {
+            // Альтернативный способ, если DOM еще не инициализирован
+            const sellBtn = document.getElementById('main-sell-btn');
+            const buyBtn = document.getElementById('main-buy-btn');
+            
+            if (sellBtn) {
+                sellBtn.addEventListener('click', () => this.openSellModal());
+            }
+            if (buyBtn) {
+                buyBtn.addEventListener('click', () => this.openBuyModal());
+            }
         }
         
         // Обработчики для кнопок типов активов в модальном окне продажи
@@ -61,7 +72,7 @@ class AssetManager {
         
         // Обработчик закрытия модального окна продажи
         document.addEventListener('click', (e) => {
-            if (e.target.closest('#sell-modal .close-btn')) {
+            if (e.target.closest('#sell-modal .close-btn') || e.target.closest('#cancel-sell-btn')) {
                 this.closeSellModal();
             }
         });
@@ -172,9 +183,14 @@ class AssetManager {
      * Открыть модальное окно продажи
      */
     openSellModal() {
-        if (!window.DOM) return;
+        let modal = null;
         
-        const modal = window.DOM.get('sell-modal');
+        if (window.DOM) {
+            modal = window.DOM.get('sell-modal');
+        } else {
+            modal = document.getElementById('sell-modal');
+        }
+        
         if (modal) {
             modal.style.display = 'block';
             this._currentAssetType = 'stocks';
@@ -186,6 +202,8 @@ class AssetManager {
                 window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика продажи активов', 'info');
             }
             console.log('🎯 AssetManager: Открыто модальное окно продажи');
+        } else {
+            console.error('❌ Модальное окно продажи не найдено');
         }
     }
 
@@ -193,9 +211,14 @@ class AssetManager {
      * Закрыть модальное окно продажи
      */
     closeSellModal() {
-        if (!window.DOM) return;
+        let modal = null;
         
-        const modal = window.DOM.get('sell-modal');
+        if (window.DOM) {
+            modal = window.DOM.get('sell-modal');
+        } else {
+            modal = document.getElementById('sell-modal');
+        }
+        
         if (modal) {
             modal.style.display = 'none';
         }
@@ -218,7 +241,12 @@ class AssetManager {
         ];
         
         infoElements.forEach(id => {
-            const element = window.DOM?.get(id);
+            let element = null;
+            if (window.DOM) {
+                element = window.DOM.get(id);
+            } else {
+                element = document.getElementById(id);
+            }
             if (element) {
                 element.style.display = 'none';
             }
@@ -511,7 +539,15 @@ class AssetManager {
         };
         
         const listId = listMap[this._currentAssetType];
-        return listId ? window.DOM?.get(listId) : null;
+        if (!listId) return null;
+        
+        let element = null;
+        if (window.DOM) {
+            element = window.DOM.get(listId);
+        } else {
+            element = document.getElementById(listId);
+        }
+        return element;
     }
 
     /**
@@ -674,7 +710,15 @@ class AssetManager {
         };
         
         const infoId = infoMap[this._currentAssetType];
-        return infoId ? window.DOM?.get(infoId) : null;
+        if (!infoId) return null;
+        
+        let element = null;
+        if (window.DOM) {
+            element = window.DOM.get(infoId);
+        } else {
+            element = document.getElementById(infoId);
+        }
+        return element;
     }
 
     // === ОБРАБОТЧИКИ СОБЫТИЙ ===
@@ -858,3 +902,10 @@ class AssetManager {
 
 // Создаем глобальный экземпляр AssetManager
 window.assetManager = new AssetManager();
+
+// Инициализируем AssetManager после загрузки DOM
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.assetManager) {
+        window.assetManager.init();
+    }
+});
