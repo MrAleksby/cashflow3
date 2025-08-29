@@ -120,10 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Подтверждение
-        if (!confirm(`Подтвердите добавление ребенка:\nИмя: ${name}\nРасходы: $${expense}`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Добавляем ребенка
         window.data.children.push({
@@ -171,9 +168,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Функция удаления ребенка
     function removeChild(index) {
         const child = window.data.children[index];
-        if (!confirm(`Вы уверены, что хотите удалить ребенка ${child.name}?`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Удаляем ребенка из списка
         window.data.children.splice(index, 1);
@@ -228,9 +223,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Подтверждение
         const monthlyPayment = amount * 0.1;
-        if (!confirm(`Подтвердите получение кредита:\nСумма: $${amount}\nЕжемесячный платеж: $${monthlyPayment}\nЦель: ${description}`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Добавляем деньги в кошелек
         window.cash += amount;
@@ -407,10 +400,7 @@ document.addEventListener('DOMContentLoaded', function() {
             description = 'Внешний доход';
         }
 
-        // Подтверждение
-        if (!confirm(`Подтвердите получение $${amount} (${description})?`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Добавляем деньги
         window.cash += amount;
@@ -456,10 +446,7 @@ document.addEventListener('DOMContentLoaded', function() {
             description = 'Внешний расход';
         }
 
-        // Подтверждение
-        if (!confirm(`Подтвердите расход $${amount} (${description})?`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Вычитаем деньги
         window.cash -= amount;
@@ -500,10 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Подтверждение
-        if (!confirm(`Подтвердите устройство на работу:\nДолжность: ${title}\nЗарплата: $${salary}`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Обновляем данные о работе
         window.data.job = {
@@ -571,9 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        if (!confirm(`Вы уверены, что хотите уволиться с работы "${window.data.job.title}" с зарплатой $${window.data.job.salary}?`)) {
-            return;
-        }
+        // Убираем подтверждение для быстрого UX
 
         // Сохраняем информацию о работе для истории
         const oldJob = {
