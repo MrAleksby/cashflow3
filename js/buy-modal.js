@@ -1116,10 +1116,16 @@ const ASSET_CATEGORIES = {
 
             if (!window.data.asset) window.data.asset = [];
             
+            // Debug logs
+            console.log('🎯 Debug: Текущие активы в window.data.asset:', window.data.asset);
+            console.log('🎯 Debug: Покупаемый актив item.name:', item.name);
+
             // Ищем существующие акции с таким же названием
             let existingStock = window.data.asset.find(asset => 
                 asset.type === 'stocks' && asset.name === item.name
             );
+            
+            console.log('🎯 Debug: Найденная существующая акция:', existingStock);
             
             if (existingStock) {
                 // Если акции уже есть, обновляем количество и среднюю цену
