@@ -66,6 +66,7 @@ class AssetManager {
             if (e.target.closest('.asset-type-btn')) {
                 const btn = e.target.closest('.asset-type-btn');
                 const assetType = btn.dataset.type;
+                console.log('🎯 Клик по кнопке типа актива:', assetType, btn);
                 this._switchAssetType(assetType);
             }
         });
@@ -195,13 +196,17 @@ class AssetManager {
             modal.style.display = 'block';
             this._currentAssetType = 'stocks';
             this._updateAssetTypeButtons();
+            
+            console.log('🎯 AssetManager: Открыто модальное окно продажи');
+            console.log('📊 GameState доступен:', !!window.gameState);
+            console.log('📊 Данные GameState:', window.gameState?.data);
+            
             this._loadAssetList();
             
             // Показываем уведомление о новой логике
             if (window.animationManager) {
                 window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика продажи активов', 'info');
             }
-            console.log('🎯 AssetManager: Открыто модальное окно продажи');
         } else {
             console.error('❌ Модальное окно продажи не найдено');
         }
@@ -329,6 +334,7 @@ class AssetManager {
      * Переключить тип актива
      */
     _switchAssetType(assetType) {
+        console.log(`🔄 Переключение типа актива: ${this._currentAssetType} → ${assetType}`);
         this._currentAssetType = assetType;
         this._updateAssetTypeButtons();
         this._loadAssetList();
@@ -339,18 +345,35 @@ class AssetManager {
      * Загрузить список активов для продажи
      */
     _loadAssetList() {
-        if (!window.gameState) return;
+        // Используем правильную структуру данных
+        let assets = [];
         
-        const assets = window.gameState.data.asset;
+        if (window.gameState && window.gameState.data) {
+            assets = window.gameState.data.asset || [];
+            console.log('📊 Используем GameState данные');
+        } else if (window.data) {
+            assets = window.data.asset || [];
+            console.log('📊 Используем window.data');
+        } else {
+            console.log('❌ Данные не найдены');
+            return;
+        }
+        
+        console.log('📊 Все активы:', assets);
         
         // Фильтруем активы по типу
         const filteredAssets = assets.filter(asset => {
             if (this._currentAssetType === 'stocks') {
-                return ['MYT4U', 'ON2U', 'OK4U', 'GRO4US', '2BIGPOWER', 'CD'].includes(asset.name);
+                // Проверяем, что это акции (по типу или по названию)
+                const isStock = asset.type === 'stocks' || 
+                               ['MYT4U', 'ON2U', 'OK4U', 'GRO4US', '2BIGPOWER', 'CD'].includes(asset.name);
+                console.log(`🔍 Проверка акции ${asset.name}:`, isStock);
+                return isStock;
             }
             return asset.type === this._currentAssetType;
         });
         
+        console.log(`📋 Отфильтрованные активы (${this._currentAssetType}):`, filteredAssets);
         this._renderAssetList(filteredAssets);
     }
 
@@ -359,10 +382,16 @@ class AssetManager {
      */
     _renderAssetList(assets) {
         const listElement = this._getAssetListElement();
-        if (!listElement) return;
+        if (!listElement) {
+            console.log('❌ Элемент списка не найден для типа:', this._currentAssetType);
+            return;
+        }
+        
+        console.log(`🎨 Отрисовка ${assets.length} активов в элемент:`, listElement);
         
         if (assets.length === 0) {
             listElement.innerHTML = '<div class="asset-item">Нет доступных активов для продажи</div>';
+            console.log('📝 Отображено сообщение "Нет активов"');
             return;
         }
         
@@ -396,11 +425,25 @@ class AssetManager {
      * Выбрать актив для продажи
      */
     _selectAsset(assetId) {
-        if (!window.gameState) return;
+        // Используем правильную структуру данных
+        let assets = [];
         
-        const asset = window.gameState.data.asset.find(a => a.id === assetId);
-        if (!asset) return;
+        if (window.gameState && window.gameState.data) {
+            assets = window.gameState.data.asset || [];
+        } else if (window.data) {
+            assets = window.data.asset || [];
+        } else {
+            console.log('❌ Данные не найдены для выбора актива');
+            return;
+        }
         
+        const asset = assets.find(a => a.id === assetId);
+        if (!asset) {
+            console.log('❌ Актив не найден:', assetId);
+            return;
+        }
+        
+        console.log('✅ Выбран актив:', asset);
         this._selectedAsset = asset;
         this._showAssetInfo(asset);
         this._enableSellButton();
@@ -415,31 +458,20 @@ class AssetManager {
         const infoElement = this._getAssetInfoElement();
         if (!infoElement) return;
         
-        let infoHtml = '';
-        if (asset.type === 'stocks') {
-            infoHtml = `
-                <h3>${asset.name}</h3>
-                <p>Количество: ${asset.quantity} шт.</p>
-                <p>Цена за акцию: $${asset.price}</p>
-                <p>Общая стоимость: $${asset.quantity * asset.price}</p>
-                <div class="sell-price-input">
-                    <label>Цена продажи за акцию:</label>
-                    <input type="number" class="sell-price" value="${asset.price}">
-                </div>
-            `;
-        } else {
-            infoHtml = `
-                <h3>${asset.name}</h3>
-                <p>Стоимость: $${asset.value}</p>
-                <div class="sell-price-input">
-                    <label>Цена продажи:</label>
-                    <input type="number" class="sell-price" value="${asset.value}">
-                </div>
-            `;
-        }
-        
-        infoElement.innerHTML = infoHtml;
         infoElement.style.display = 'block';
+        
+        // Заполняем информацию в зависимости от типа актива
+        if (this._currentAssetType === 'stocks') {
+            this._fillStockInfo(asset);
+        } else if (this._currentAssetType === 'realestate') {
+            this._fillRealEstateInfo(asset);
+        } else if (this._currentAssetType === 'business') {
+            this._fillBusinessInfo(asset);
+        } else if (this._currentAssetType === 'preciousmetals') {
+            this._fillPreciousMetalsInfo(asset);
+        } else if (this._currentAssetType === 'misc') {
+            this._fillMiscInfo(asset);
+        }
     }
 
     /**
@@ -539,7 +571,10 @@ class AssetManager {
         };
         
         const listId = listMap[this._currentAssetType];
-        if (!listId) return null;
+        if (!listId) {
+            console.log('❌ Неизвестный тип актива:', this._currentAssetType);
+            return null;
+        }
         
         let element = null;
         if (window.DOM) {
@@ -547,47 +582,12 @@ class AssetManager {
         } else {
             element = document.getElementById(listId);
         }
+        
+        console.log(`🔍 Поиск элемента списка: ${listId} =`, element);
         return element;
     }
 
-    /**
-     * Выбрать актив для продажи
-     */
-    _selectAsset(assetId) {
-        if (!window.gameState) return;
-        
-        const asset = window.gameState.data.asset.find(a => a.id === assetId);
-        if (!asset) return;
-        
-        this._selectedAsset = asset;
-        this._showAssetInfo(asset);
-        this._enableSellButton();
-    }
-    
-    /**
-     * Показать информацию об активе
-     */
-    _showAssetInfo(asset) {
-        this._hideAllAssetInfo();
-        
-        const infoElement = this._getAssetInfoElement();
-        if (!infoElement) return;
-        
-        infoElement.style.display = 'block';
-        
-        // Заполняем информацию в зависимости от типа актива
-        if (this._currentAssetType === 'stocks') {
-            this._fillStockInfo(asset);
-        } else if (this._currentAssetType === 'realestate') {
-            this._fillRealEstateInfo(asset);
-        } else if (this._currentAssetType === 'business') {
-            this._fillBusinessInfo(asset);
-        } else if (this._currentAssetType === 'preciousmetals') {
-            this._fillPreciousMetalsInfo(asset);
-        } else if (this._currentAssetType === 'misc') {
-            this._fillMiscInfo(asset);
-        }
-    }
+
     
     /**
      * Заполнить информацию об акции
@@ -868,8 +868,6 @@ class AssetManager {
      * Выполнить продажу актива
      */
     _executeSellAsset(asset, sellPrice) {
-        if (!window.gameState) return;
-        
         // Рассчитываем выручку
         let revenue = 0;
         if (this._currentAssetType === 'stocks') {
@@ -880,11 +878,32 @@ class AssetManager {
             revenue = sellPrice;
         }
         
-        // Добавляем деньги
-        window.gameState.addCash(revenue, `Продажа ${asset.name}`);
+        console.log(`💰 Продажа актива: ${asset.name} за $${sellPrice}, выручка: $${revenue}`);
         
-        // Удаляем актив
-        window.gameState.removeAsset(asset.id);
+        // Добавляем деньги (используем старую логику, если GameState недоступен)
+        if (window.gameState) {
+            window.gameState.addCash(revenue, `Продажа ${asset.name}`);
+            window.gameState.removeAsset(asset.id);
+        } else if (window.data) {
+            // Используем старую логику
+            window.cash += revenue;
+            
+            // Удаляем актив из массива
+            const assetIndex = window.data.asset.findIndex(a => a.id === asset.id);
+            if (assetIndex !== -1) {
+                window.data.asset.splice(assetIndex, 1);
+            }
+            
+            // Сохраняем данные
+            if (window.saveData) {
+                window.saveData();
+            }
+            
+            // Обновляем отображение
+            if (window.renderAll) {
+                window.renderAll();
+            }
+        }
         
         // Закрываем модальное окно
         this.closeSellModal();
@@ -896,6 +915,11 @@ class AssetManager {
                 revenue: revenue,
                 sellPrice: sellPrice
             });
+        }
+        
+        // Показываем уведомление
+        if (window.animationManager) {
+            window.animationManager.showNotification(`✅ Продано: ${asset.name} за $${sellPrice}`, 'success');
         }
     }
 }
