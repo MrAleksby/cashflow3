@@ -1119,6 +1119,8 @@ const ASSET_CATEGORIES = {
             // Debug logs
             console.log('🎯 Debug: Текущие активы в window.data.asset:', window.data.asset);
             console.log('🎯 Debug: Покупаемый актив item.name:', item.name);
+            console.log('🎯 Debug: window.data:', window.data);
+            console.log('🎯 Debug: localStorage appData:', localStorage.getItem('appData'));
 
             // Ищем существующие акции с таким же названием
             let existingStock = window.data.asset.find(asset => 
@@ -1126,6 +1128,9 @@ const ASSET_CATEGORIES = {
             );
             
             console.log('🎯 Debug: Найденная существующая акция:', existingStock);
+            console.log('🎯 Debug: pricePerShare:', pricePerShare);
+            console.log('🎯 Debug: shares:', shares);
+            console.log('🎯 Debug: totalPrice:', totalPrice);
             
             if (existingStock) {
                 // Если акции уже есть, обновляем количество и среднюю цену
