@@ -351,8 +351,6 @@ function selectAsset(asset, type) {
         updateMiscSellCalculations();
     }
     
-    sellAssetBtn.disabled = false;
-    */
 }
 
 // Обновление расчетов при продаже акций
