@@ -1,4 +1,4 @@
-// Обработка навигации
+в// Обработка навигации
 document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', (e) => {
         e.preventDefault();
@@ -98,7 +98,7 @@ function loadStockList() {
         stockItem.className = 'asset-item';
         const totalValue = stock.quantity * stock.price;
         stockItem.innerHTML = `
-            <span>${stock.name} (${stock.quantity} шт. × $${stock.price} = $${totalValue})</span>
+            <span>${stock.name} (${stock.quantity} шт. × $${stock.price.toFixed(1)} = $${totalValue})</span>
         `;
         
         stockItem.addEventListener('click', () => selectAsset(stock, 'stocks'));

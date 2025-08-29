@@ -1129,14 +1129,12 @@ const ASSET_CATEGORIES = {
                 const totalQuantity = oldQuantity + shares;
                 const averagePrice = (oldTotalValue + newTotalValue) / totalQuantity;
                 
-                console.log(`🔍 Debug расчеты: oldQuantity=${oldQuantity}, oldPrice=${existingStock.price}, oldTotalValue=${oldTotalValue}`);
-                console.log(`🔍 Debug расчеты: shares=${shares}, pricePerShare=${pricePerShare}, newTotalValue=${newTotalValue}`);
-                console.log(`🔍 Debug расчеты: totalQuantity=${totalQuantity}, averagePrice=${averagePrice}`);
+
                 
                 existingStock.quantity = totalQuantity;
-                existingStock.price = Math.round(averagePrice);
+                existingStock.price = Math.round(averagePrice * 10) / 10;
                 
-                console.log(`📈 Обновлены акции ${item.name}: ${oldQuantity} + ${shares} = ${totalQuantity} шт. (средняя цена: $${Math.round(averagePrice)})`);
+                console.log(`📈 Обновлены акции ${item.name}: ${oldQuantity} + ${shares} = ${totalQuantity} шт. (средняя цена: $${(Math.round(averagePrice * 10) / 10).toFixed(1)})`);
             } else {
                 // Если акций нет, создаем новую запись
                 window.data.asset.push({
