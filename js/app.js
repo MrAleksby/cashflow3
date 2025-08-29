@@ -343,14 +343,6 @@ function selectAsset(asset, type) {
         ) : null;
         document.querySelector('.selected-misc-expense').textContent = 
             relatedExpense ? `$${relatedExpense.value}` : '$0';
-    */
-        
-        // Устанавливаем цену продажи равной стоимости по умолчанию
-        sellMiscPriceInput.value = asset.value;
-        
-        updateMiscSellCalculations();
-    }
-    
 }
 
 // Обновление расчетов при продаже акций
