@@ -272,8 +272,12 @@ class AssetManager {
      * Вернуться к выбору типов активов
      */
     backToAssetTypes() {
-        // Закрываем модальное окно списка акций
+        // Закрываем все модальные окна списков активов
         this.closeSellStocksListModal();
+        this.closeSellRealEstateListModal();
+        this.closeSellBusinessListModal();
+        this.closeSellPreciousMetalsListModal();
+        this.closeSellMiscListModal();
         
         // Открываем основное модальное окно продажи
         this.openSellModal();
