@@ -13,9 +13,7 @@ window.saveData = function() {
 
 // Функция сброса игры
 window.resetGame = function() {
-    if (!confirm('Вы уверены, что хотите начать новую игру? Все текущие данные будут удалены!')) {
-        return;
-    }
+    // Убираем подтверждение для быстрого UX
     
     // Полностью очищаем все данные
     window.data = {
@@ -44,8 +42,7 @@ window.resetGame = function() {
         sessionStorage.clear();
     }
     
-    // Показываем сообщение
-    alert('Игра успешно сброшена. Страница будет перезагружена.');
+    // Убираем сообщение для быстрого UX
     
     // Принудительно перезагружаем страницу без использования кэша
     window.location.href = window.location.pathname + '?clear=' + new Date().getTime();
