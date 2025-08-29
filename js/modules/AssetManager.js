@@ -198,6 +198,8 @@ class AssetManager {
             this._updateAssetTypeButtons();
             
             console.log('🎯 AssetManager: Открыто модальное окно продажи');
+            console.log('📊 window.data доступен:', !!window.data);
+            console.log('📊 window.data.asset:', window.data?.asset);
             console.log('📊 GameState доступен:', !!window.gameState);
             console.log('📊 Данные GameState:', window.gameState?.data);
             
@@ -348,12 +350,13 @@ class AssetManager {
         // Используем правильную структуру данных
         let assets = [];
         
-        if (window.gameState && window.gameState.data) {
-            assets = window.gameState.data.asset || [];
-            console.log('📊 Используем GameState данные');
-        } else if (window.data) {
+        // Приоритет: сначала window.data (где реально сохраняются покупки), потом gameState
+        if (window.data && window.data.asset) {
             assets = window.data.asset || [];
-            console.log('📊 Используем window.data');
+            console.log('📊 Используем window.data (основной источник)');
+        } else if (window.gameState && window.gameState.data) {
+            assets = window.gameState.data.asset || [];
+            console.log('📊 Используем GameState данные (fallback)');
         } else {
             console.log('❌ Данные не найдены');
             return;
@@ -428,10 +431,11 @@ class AssetManager {
         // Используем правильную структуру данных
         let assets = [];
         
-        if (window.gameState && window.gameState.data) {
-            assets = window.gameState.data.asset || [];
-        } else if (window.data) {
+        // Приоритет: сначала window.data (где реально сохраняются покупки), потом gameState
+        if (window.data && window.data.asset) {
             assets = window.data.asset || [];
+        } else if (window.gameState && window.gameState.data) {
+            assets = window.gameState.data.asset || [];
         } else {
             console.log('❌ Данные не найдены для выбора актива');
             return;
@@ -880,12 +884,9 @@ class AssetManager {
         
         console.log(`💰 Продажа актива: ${asset.name} за $${sellPrice}, выручка: $${revenue}`);
         
-        // Добавляем деньги (используем старую логику, если GameState недоступен)
-        if (window.gameState) {
-            window.gameState.addCash(revenue, `Продажа ${asset.name}`);
-            window.gameState.removeAsset(asset.id);
-        } else if (window.data) {
-            // Используем старую логику
+        // Добавляем деньги (приоритет: window.data, потом gameState)
+        if (window.data) {
+            // Используем основную логику с window.data
             window.cash += revenue;
             
             // Удаляем актив из массива
@@ -903,6 +904,10 @@ class AssetManager {
             if (window.renderAll) {
                 window.renderAll();
             }
+        } else if (window.gameState) {
+            // Fallback на gameState
+            window.gameState.addCash(revenue, `Продажа ${asset.name}`);
+            window.gameState.removeAsset(asset.id);
         }
         
         // Закрываем модальное окно
