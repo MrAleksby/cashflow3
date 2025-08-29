@@ -515,6 +515,86 @@
         </div>
     </div>
 
+    <!-- Модальное окно списка доступной недвижимости для продажи -->
+    <div id="sell-realestate-list-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Доступная недвижимость для продажи</h2>
+                <button class="close-btn" onclick="window.assetManager?.closeSellRealEstateListModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="sell-realestate-list">
+                    <!-- Список недвижимости будет загружен динамически -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="back-to-asset-types-btn" class="btn btn-secondary" onclick="window.assetManager?.backToAssetTypes()">Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно списка доступного бизнеса для продажи -->
+    <div id="sell-business-list-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Доступный бизнес для продажи</h2>
+                <button class="close-btn" onclick="window.assetManager?.closeSellBusinessListModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="sell-business-list">
+                    <!-- Список бизнеса будет загружен динамически -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="back-to-asset-types-btn" class="btn btn-secondary" onclick="window.assetManager?.backToAssetTypes()">Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно списка доступных драгоценных металлов для продажи -->
+    <div id="sell-preciousmetals-list-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Доступные драгоценные металлы для продажи</h2>
+                <button class="close-btn" onclick="window.assetManager?.closeSellPreciousMetalsListModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="sell-preciousmetals-list">
+                    <!-- Список драгоценных металлов будет загружен динамически -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="back-to-asset-types-btn" class="btn btn-secondary" onclick="window.assetManager?.backToAssetTypes()">Назад</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно списка доступных прочих активов для продажи -->
+    <div id="sell-misc-list-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Доступные прочие активы для продажи</h2>
+                <button class="close-btn" onclick="window.assetManager?.closeSellMiscListModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="sell-misc-list">
+                    <!-- Список прочих активов будет загружен динамически -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="back-to-asset-types-btn" class="btn btn-secondary" onclick="window.assetManager?.backToAssetTypes()">Назад</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Модальное окно продажи конкретного актива -->
     <div id="sell-asset-modal" class="modal">
         <div class="modal-content">
