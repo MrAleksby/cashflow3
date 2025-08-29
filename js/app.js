@@ -237,8 +237,14 @@ function updateAssetDisplay() {
     }
 }
 
-// Выбор актива для продажи
+// Выбор актива для продажи - ОТКЛЮЧЕНО (используется новая логика AssetManager)
 function selectAsset(asset, type) {
+    // Старая логика отключена - теперь используется AssetManager
+    console.log('🔧 Старая логика selectAsset отключена, используется AssetManager');
+    return;
+    
+    // ЗАКОММЕНТИРОВАННЫЙ КОД:
+    /*
     selectedAsset = asset;
     document.querySelectorAll('.asset-item').forEach(item => item.classList.remove('selected'));
     event.currentTarget.classList.add('selected');
@@ -337,6 +343,7 @@ function selectAsset(asset, type) {
         ) : null;
         document.querySelector('.selected-misc-expense').textContent = 
             relatedExpense ? `$${relatedExpense.value}` : '$0';
+    */
         
         // Устанавливаем цену продажи равной стоимости по умолчанию
         sellMiscPriceInput.value = asset.value;
@@ -345,6 +352,7 @@ function selectAsset(asset, type) {
     }
     
     sellAssetBtn.disabled = false;
+    */
 }
 
 // Обновление расчетов при продаже акций
