@@ -1092,8 +1092,8 @@ const ASSET_CATEGORIES = {
                 alert('Введите количество акций!');
                 return;
             }
-            if (pricePerShare <= 0) {
-                alert('Введите цену за акцию!');
+            if (pricePerShare < 0) {
+                alert('Цена за акцию не может быть отрицательной!');
                 return;
             }
 
@@ -1128,6 +1128,10 @@ const ASSET_CATEGORIES = {
                 const newTotalValue = shares * pricePerShare;
                 const totalQuantity = oldQuantity + shares;
                 const averagePrice = (oldTotalValue + newTotalValue) / totalQuantity;
+                
+                console.log(`🔍 Debug расчеты: oldQuantity=${oldQuantity}, oldPrice=${existingStock.price}, oldTotalValue=${oldTotalValue}`);
+                console.log(`🔍 Debug расчеты: shares=${shares}, pricePerShare=${pricePerShare}, newTotalValue=${newTotalValue}`);
+                console.log(`🔍 Debug расчеты: totalQuantity=${totalQuantity}, averagePrice=${averagePrice}`);
                 
                 existingStock.quantity = totalQuantity;
                 existingStock.price = Math.round(averagePrice);
