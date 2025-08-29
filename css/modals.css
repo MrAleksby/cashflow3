@@ -703,6 +703,75 @@
     cursor: not-allowed;
 }
 
+/* Быстрые кнопки цен для мобильных устройств */
+.quick-price-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.quick-price-btn {
+    padding: 8px 12px;
+    background: #f5f5f5;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 50px;
+    text-align: center;
+}
+
+.quick-price-btn:hover {
+    background: #e3f2fd;
+    border-color: #2196f3;
+    color: #1976d2;
+}
+
+.quick-price-btn.active {
+    background: #2196f3;
+    border-color: #1976d2;
+    color: white;
+}
+
+.quick-price-btn:active {
+    transform: scale(0.95);
+}
+
+/* Поле для ручного ввода цены */
+.custom-price-input {
+    margin-top: 10px;
+}
+
+.custom-price-input input {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 16px;
+    text-align: center;
+}
+
+.custom-price-input input:focus {
+    border-color: #2196f3;
+    outline: none;
+}
+
+/* Результат покупки */
+.purchase-result {
+    background: #e8f5e9;
+    border: 1px solid #4caf50;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 15px 0;
+    text-align: center;
+    font-weight: 500;
+    color: #2e7d32;
+}
+
 .realestate-type-selector {
     padding: 20px;
     background: #fff;

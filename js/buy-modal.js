@@ -801,14 +801,28 @@ const ASSET_CATEGORIES = {
                             <div class="stock-inputs">
                                 <div class="input-group">
                                     <label>Цена за акцию ($):</label>
-                                    <input type="number" class="price-per-share" min="0" step="1" inputmode="numeric" pattern="[0-9]*">
+                                    <div class="quick-price-buttons">
+                                        <button class="quick-price-btn" data-price="1">$1</button>
+                                        <button class="quick-price-btn" data-price="4">$4</button>
+                                        <button class="quick-price-btn" data-price="5">$5</button>
+                                        <button class="quick-price-btn" data-price="10">$10</button>
+                                        <button class="quick-price-btn" data-price="20">$20</button>
+                                        <button class="quick-price-btn" data-price="30">$30</button>
+                                        <button class="quick-price-btn" data-price="40">$40</button>
+                                        <button class="quick-price-btn" data-price="50">$50</button>
+                                    </div>
+                                    <div class="custom-price-input">
+                                        <input type="number" class="price-per-share" min="0" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="Или введите свою цену">
+                                    </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Количество акций:</label>
                                     <input type="number" class="shares-amount" min="1" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
-                                <div class="total-price">Общая стоимость: $<span>0</span></div>
-                                <button class="buy-stock-btn">Купить</button>
+                                <div class="purchase-result" style="display: none;">
+                                    Купить <span class="result-shares">0</span> акций ${item.name} по $<span class="result-price">0</span> за $<span class="result-total">0</span>
+                                </div>
+                                <button class="buy-stock-btn">КУПИТЬ</button>
                             </div>
                         </div>
                     `;
@@ -959,6 +973,30 @@ const ASSET_CATEGORIES = {
             const totalSpan = inputGroup.querySelector('.total-price span');
             const dividendSpan = inputGroup.querySelector('.total-dividend span');
             const buyButton = inputGroup.querySelector('.buy-stock-btn');
+            const purchaseResult = inputGroup.querySelector('.purchase-result');
+            const resultShares = inputGroup.querySelector('.result-shares');
+            const resultPrice = inputGroup.querySelector('.result-price');
+            const resultTotal = inputGroup.querySelector('.result-total');
+            
+            // Быстрые кнопки цен
+            const quickPriceButtons = inputGroup.querySelectorAll('.quick-price-btn');
+            quickPriceButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const price = parseFloat(btn.dataset.price);
+                    
+                    // Убираем активный класс у всех кнопок
+                    quickPriceButtons.forEach(b => b.classList.remove('active'));
+                    // Добавляем активный класс к нажатой кнопке
+                    btn.classList.add('active');
+                    
+                    // Устанавливаем цену в поле ввода
+                    if (priceInput) {
+                        priceInput.value = price;
+                        priceInput.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
             
             function updateTotal() {
                 const price = priceSelect 
@@ -966,7 +1004,20 @@ const ASSET_CATEGORIES = {
                     : (priceInput ? parseFloat(priceInput.value) : 0);
                 const shares = parseInt(sharesInput.value) || 0;
                 const total = price * shares;
-                totalSpan.textContent = total.toFixed(0);
+                
+                if (totalSpan) totalSpan.textContent = total.toFixed(0);
+
+                // Обновляем результат покупки для спекулятивных акций
+                if (purchaseResult && resultShares && resultPrice && resultTotal) {
+                    if (price > 0 && shares > 0) {
+                        resultShares.textContent = shares;
+                        resultPrice.textContent = price.toFixed(1);
+                        resultTotal.textContent = total.toFixed(0);
+                        purchaseResult.style.display = 'block';
+                    } else {
+                        purchaseResult.style.display = 'none';
+                    }
+                }
 
                 // Расчет дивидендов если это акции с пассивным доходом
                 if (dividendSpan) {
