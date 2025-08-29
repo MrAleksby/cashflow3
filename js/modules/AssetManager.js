@@ -1219,9 +1219,9 @@ class AssetManager {
     // === ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ===
 
     /**
-     * Получить элемент списка активов
+     * Получить ID списка активов для текущего типа
      */
-    _getAssetListElement() {
+    _getAssetListId() {
         const listMap = {
             'stocks': 'stock-list',
             'realestate': 'realestate-list',
@@ -1233,6 +1233,18 @@ class AssetManager {
         const listId = listMap[this._currentAssetType];
         if (!listId) {
             console.log('❌ Неизвестный тип актива:', this._currentAssetType);
+            return null;
+        }
+        
+        return listId;
+    }
+
+    /**
+     * Получить элемент списка активов
+     */
+    _getAssetListElement() {
+        const listId = this._getAssetListId();
+        if (!listId) {
             return null;
         }
         
