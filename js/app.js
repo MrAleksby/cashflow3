@@ -242,108 +242,6 @@ function selectAsset(asset, type) {
     // Старая логика отключена - теперь используется AssetManager
     console.log('🔧 Старая логика selectAsset отключена, используется AssetManager');
     return;
-    
-    // ЗАКОММЕНТИРОВАННЫЙ КОД:
-    /*
-    selectedAsset = asset;
-    document.querySelectorAll('.asset-item').forEach(item => item.classList.remove('selected'));
-    event.currentTarget.classList.add('selected');
-    
-    selectedStockInfo.style.display = 'none';
-    selectedRealEstateInfo.style.display = 'none';
-    selectedBusinessInfo.style.display = 'none';
-    selectedPreciousMetalsInfo.style.display = 'none';
-    selectedMiscInfo.style.display = 'none';
-    
-    if (type === 'stocks') {
-        selectedStockInfo.style.display = 'block';
-        selectedRealEstateInfo.style.display = 'none';
-        
-        document.querySelector('.selected-stock-name').textContent = asset.name;
-        document.querySelector('.selected-stock-quantity').textContent = asset.quantity;
-        document.querySelector('.selected-stock-buy-price').textContent = `$${asset.price}`;
-        
-        // Показываем информацию о дивидендах если это дивидендная акция
-        const dividendInfo = document.querySelector('.dividend-info');
-        if (['2BIGPOWER', 'CD'].includes(asset.name)) {
-            dividendInfo.style.display = 'block';
-            document.querySelector('.current-dividend').textContent = 
-                `$${calculateDividends(asset.name, asset.quantity)}`;
-        } else {
-            dividendInfo.style.display = 'none';
-        }
-        
-        // Устанавливаем максимальное количество для продажи
-        const quantityInput = document.querySelector('.sell-quantity');
-        quantityInput.max = asset.quantity;
-        quantityInput.value = asset.quantity;
-        
-        // Устанавливаем цену продажи равной цене покупки по умолчанию
-        sellPriceInput.value = asset.price;
-        
-        // Инициализируем кнопки быстрых цен для продажи
-        initializeSellPriceButtons(asset.name);
-        
-        updateSellCalculations();
-    } else if (type === 'realestate') {
-        selectedStockInfo.style.display = 'none';
-        selectedRealEstateInfo.style.display = 'block';
-        
-        document.querySelector('.selected-realestate-name').textContent = asset.name;
-        document.querySelector('.selected-realestate-value').textContent = `$${asset.value}`;
-        
-        // Находим связанный доход
-        const relatedIncome = window.data.income.find(inc => 
-            inc.type === 'passive' && inc.source === asset.name
-        );
-        document.querySelector('.selected-realestate-income').textContent = 
-            relatedIncome ? `$${relatedIncome.value}` : '$0';
-        
-        // Устанавливаем цену продажи равной стоимости по умолчанию
-        sellRealEstatePriceInput.value = asset.value;
-        
-        updateRealEstateSellCalculations();
-    } else if (type === 'business') {
-        selectedBusinessInfo.style.display = 'block';
-        
-        document.querySelector('.selected-business-name').textContent = asset.name;
-        document.querySelector('.selected-business-value').textContent = `$${asset.value}`;
-        
-        // Находим связанный доход
-        const relatedIncome = window.data.income.find(inc => 
-            inc.type === 'passive' && 
-            inc.source === asset.name
-        );
-        document.querySelector('.selected-business-income').textContent = 
-            relatedIncome ? `$${relatedIncome.value}` : '$0';
-        
-        // Устанавливаем цену продажи равной стоимости по умолчанию
-        sellBusinessPriceInput.value = asset.value;
-        
-        updateBusinessSellCalculations();
-    } else if (type === 'preciousmetals') {
-        selectedPreciousMetalsInfo.style.display = 'block';
-        
-        document.querySelector('.selected-preciousmetals-name').textContent = asset.name;
-        document.querySelector('.selected-preciousmetals-value').textContent = `$${asset.value}`;
-        
-        // Устанавливаем цену продажи равной стоимости по умолчанию
-        sellPreciousMetalsPriceInput.value = asset.value;
-        
-        updatePreciousMetalsSellCalculations();
-    } else if (type === 'misc') {
-        selectedMiscInfo.style.display = 'block';
-        
-        document.querySelector('.selected-misc-name').textContent = asset.name;
-        document.querySelector('.selected-misc-value').textContent = `$${asset.value}`;
-        
-        // Находим связанный расход
-        const relatedExpense = window.data.expense ? window.data.expense.find(exp => 
-            exp.name === `Обслуживание: ${asset.name}`
-        ) : null;
-        document.querySelector('.selected-misc-expense').textContent = 
-            relatedExpense ? `$${relatedExpense.value}` : '$0';
-    */
 }
 
 // Обновление расчетов при продаже акций
@@ -489,7 +387,9 @@ function sellStocks() {
     window.renderAll();
     window.renderIncome();
     window.renderSummary();
-    window.renderHistory();
+    if (typeof window.renderHistory === 'function') {
+        window.renderHistory();
+    }
     autoSave();
     
     // Закрываем модальное окно
@@ -507,28 +407,9 @@ function sellRealEstate() {
     
     // Убираем подтверждение для быстрого UX
     
-    // Обновляем наличные только если цена больше 0
-    if (sellPrice > 0) {
-        window.cash = (parseFloat(window.cash) || 0) + sellPrice;
-    }
+    // Добавляем деньги от продажи
+    window.cash += sellPrice;
     
-    // Удаляем недвижимость из списка активов
-    window.data.asset = window.data.asset.filter(asset => 
-        asset.id !== selectedAsset.id
-    );
-    
-    // Удаляем связанный пассивный доход
-    window.data.income = window.data.income.filter(income => 
-        !(income.type === 'passive' && income.source === selectedAsset.name)
-    );
-    
-    // Удаляем связанные пассивы (ипотеку)
-    // Ищем ипотеку по части ID актива (до временной метки)
-    const assetBaseId = selectedAsset.id.split('-').slice(0, -1).join('-');
-    window.data.liability = window.data.liability.filter(liability => 
-        !(liability.type === 'mortgage' && liability.id.includes(assetBaseId))
-    );
-
     // Добавляем запись в историю
     if (!window.data.history) window.data.history = [];
     window.data.history.push({
@@ -538,13 +419,24 @@ function sellRealEstate() {
         date: new Date().toISOString()
     });
     
+    // Удаляем недвижимость из активов
+    window.data.asset = window.data.asset.filter(asset => 
+        !(asset.type === 'realestate' && asset.name === selectedAsset.name)
+    );
+    
+    // Удаляем связанный пассивный доход
+    window.data.income = window.data.income.filter(income => 
+        !(income.type === 'passive' && income.source === selectedAsset.name)
+    );
+    
     // Обновляем отображение
     window.renderCash();
     window.renderAll();
     window.renderIncome();
-    window.renderLiability();
     window.renderSummary();
-    window.renderHistory();
+    if (typeof window.renderHistory === 'function') {
+        window.renderHistory();
+    }
     autoSave();
     
     // Закрываем модальное окно
@@ -553,9 +445,8 @@ function sellRealEstate() {
 
 // Продажа бизнеса
 function sellBusiness() {
-    if (!selectedAsset || currentAssetType !== 'business') return;
-    
     const sellPrice = parseFloat(sellBusinessPriceInput.value) || 0;
+    
     if (sellPrice < 0) {
         alert('Цена продажи не может быть отрицательной!');
         return;
@@ -563,20 +454,8 @@ function sellBusiness() {
     
     // Убираем подтверждение для быстрого UX
     
-    // Обновляем наличные только если цена больше 0
-    if (sellPrice > 0) {
-        window.cash = (parseFloat(window.cash) || 0) + sellPrice;
-    }
-    
-    // Удаляем бизнес из списка активов
-    window.data.asset = window.data.asset.filter(asset => 
-        asset.id !== selectedAsset.id
-    );
-    
-    // Удаляем связанный пассивный доход
-    window.data.income = window.data.income.filter(income => 
-        !(income.type === 'passive' && income.source === selectedAsset.name)
-    );
+    // Добавляем деньги от продажи
+    window.cash += sellPrice;
     
     // Добавляем запись в историю
     if (!window.data.history) window.data.history = [];
@@ -587,12 +466,24 @@ function sellBusiness() {
         date: new Date().toISOString()
     });
     
+    // Удаляем бизнес из активов
+    window.data.asset = window.data.asset.filter(asset => 
+        !(asset.type === 'business' && asset.name === selectedAsset.name)
+    );
+    
+    // Удаляем связанный пассивный доход
+    window.data.income = window.data.income.filter(income => 
+        !(income.type === 'passive' && income.source === selectedAsset.name)
+    );
+    
     // Обновляем отображение
     window.renderCash();
     window.renderAll();
     window.renderIncome();
     window.renderSummary();
-    window.renderHistory();
+    if (typeof window.renderHistory === 'function') {
+        window.renderHistory();
+    }
     autoSave();
     
     // Закрываем модальное окно
@@ -601,22 +492,17 @@ function sellBusiness() {
 
 // Продажа драгметаллов
 function sellPreciousMetals() {
-    if (!selectedAsset || currentAssetType !== 'preciousmetals') return;
-    
     const sellPrice = parseFloat(sellPreciousMetalsPriceInput.value) || 0;
-    if (sellPrice < 0) return;
+    
+    if (sellPrice < 0) {
+        alert('Цена продажи не может быть отрицательной!');
+        return;
+    }
     
     // Убираем подтверждение для быстрого UX
     
-    // Удаляем металл из активов
-    window.data.asset = window.data.asset.filter(asset => 
-        asset.id !== selectedAsset.id
-    );
-    
-    // Добавляем деньги от продажи только если цена больше 0
-    if (sellPrice > 0) {
-        window.cash += sellPrice;
-    }
+    // Добавляем деньги от продажи
+    window.cash += sellPrice;
     
     // Добавляем запись в историю
     if (!window.data.history) window.data.history = [];
@@ -627,11 +513,18 @@ function sellPreciousMetals() {
         date: new Date().toISOString()
     });
     
+    // Удаляем драгметаллы из активов
+    window.data.asset = window.data.asset.filter(asset => 
+        !(asset.type === 'preciousmetals' && asset.name === selectedAsset.name)
+    );
+    
     // Обновляем отображение
-    window.renderAll();
     window.renderCash();
+    window.renderAll();
     window.renderSummary();
-    window.renderHistory();
+    if (typeof window.renderHistory === 'function') {
+        window.renderHistory();
+    }
     autoSave();
     
     // Закрываем модальное окно
@@ -640,42 +533,18 @@ function sellPreciousMetals() {
 
 // Продажа всякой всячины
 function sellMisc() {
-    if (!selectedAsset || currentAssetType !== 'misc') return;
-    
     const sellPrice = parseFloat(sellMiscPriceInput.value) || 0;
-    if (sellPrice < 0) return;
+    
+    if (sellPrice < 0) {
+        alert('Цена продажи не может быть отрицательной!');
+        return;
+    }
     
     // Убираем подтверждение для быстрого UX
     
-    // Находим связанный расход до удаления актива
-    const relatedExpense = window.data.expense ? window.data.expense.find(exp => 
-        exp.name === `Обслуживание: ${selectedAsset.name}`
-    ) : null;
+    // Добавляем деньги от продажи
+    window.cash += sellPrice;
     
-    // Удаляем предмет из активов
-    window.data.asset = window.data.asset.filter(asset => 
-        asset.id !== selectedAsset.id
-    );
-    
-    // Удаляем связанный пассив если есть
-    if (window.data.liability) {
-        window.data.liability = window.data.liability.filter(liability => 
-            liability.id !== `misc-debt-${selectedAsset.id}`
-        );
-    }
-    
-    // Удаляем связанный расход если есть
-    if (window.data.expense && relatedExpense) {
-        window.data.expense = window.data.expense.filter(expense => 
-            expense.name !== `Обслуживание: ${selectedAsset.name}`
-        );
-    }
-    
-    // Добавляем деньги от продажи только если цена больше 0
-    if (sellPrice > 0) {
-        window.cash += sellPrice;
-    }
-
     // Добавляем запись в историю
     if (!window.data.history) window.data.history = [];
     window.data.history.push({
@@ -685,32 +554,28 @@ function sellMisc() {
         date: new Date().toISOString()
     });
     
+    // Удаляем актив из активов
+    window.data.asset = window.data.asset.filter(asset => 
+        !(asset.type === 'misc' && asset.name === selectedAsset.name)
+    );
+    
+    // Удаляем связанный расход
+    window.data.expense = window.data.expense.filter(expense => 
+        expense.name !== `Обслуживание: ${selectedAsset.name}`
+    );
+    
+    // Обновляем отображение
+    window.renderCash();
+    window.renderAll();
+    window.renderExpense();
+    window.renderSummary();
+    if (typeof window.renderHistory === 'function') {
+        window.renderHistory();
+    }
+    autoSave();
+    
     // Закрываем модальное окно
     closeSellStockModal();
-    
-    // Обновляем все отображения в правильном порядке
-    window.renderAll(); // Обновляем список активов
-    window.renderExpenses(); // Обновляем список расходов
-    window.renderLiability(); // Обновляем список пассивов
-    window.renderCash(); // Обновляем отображение наличных
-    window.renderSummary(); // Обновляем финансовую формулу
-    window.renderHistory(); // Обновляем историю
-    autoSave(); // Сохраняем изменения
-    
-    // Принудительно обновляем отображение главного экрана и скрываем остальные
-    document.querySelectorAll('.screen').forEach(screen => {
-        screen.style.display = 'none';
-    });
-    const cashflowScreen = document.getElementById('screen-cashflow');
-    if (cashflowScreen) {
-        cashflowScreen.style.display = 'block';
-    }
-    
-    // Обновляем активную кнопку навигации
-    document.querySelectorAll('.nav-item').forEach(btn => {
-        btn.classList.remove('active');
-    });
-    document.querySelector('.nav-item[data-section="cashflow"]').classList.add('active');
 }
 
 // Обновление всех отображений
