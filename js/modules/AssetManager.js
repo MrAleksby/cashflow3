@@ -592,12 +592,30 @@ class AssetManager {
 
         // Создаем HTML для списка драгоценных металлов
         const html = preciousMetals.map(metal => {
-            const totalValue = metal.quantity * metal.price;
-            return `
-                <div class="asset-item" data-asset-id="${metal.id}">
-                    <span>${metal.name} (${metal.quantity} ${metal.unit || 'г'} × $${metal.price.toFixed(1)} = $${totalValue.toFixed(0)})</span>
-                </div>
-            `;
+            // Проверяем, есть ли у металла цена за единицу или общая стоимость
+            if (metal.price && metal.quantity) {
+                // Если есть цена за единицу и количество
+                const totalValue = metal.quantity * metal.price;
+                return `
+                    <div class="asset-item" data-asset-id="${metal.id}">
+                        <span>${metal.name} (${metal.quantity} ${metal.unit || 'г'} × $${metal.price.toFixed(1)} = $${totalValue.toFixed(0)})</span>
+                    </div>
+                `;
+            } else if (metal.value) {
+                // Если есть общая стоимость
+                return `
+                    <div class="asset-item" data-asset-id="${metal.id}">
+                        <span>${metal.name} - $${metal.value.toFixed(0)}</span>
+                    </div>
+                `;
+            } else {
+                // Если нет ни цены, ни стоимости
+                return `
+                    <div class="asset-item" data-asset-id="${metal.id}">
+                        <span>${metal.name}</span>
+                    </div>
+                `;
+            }
         }).join('');
 
         listElement.innerHTML = html;
@@ -1164,45 +1182,92 @@ class AssetManager {
      */
     _fillSellPreciousMetalsModal(asset, infoElement, formElement) {
         // Проверяем, что актив существует и имеет необходимые свойства
-        if (!asset || !asset.name || typeof asset.quantity === 'undefined' || typeof asset.price === 'undefined') {
+        if (!asset || !asset.name) {
             console.log('❌ Некорректные данные драгоценных металлов:', asset);
             return;
         }
         
-        // Информация о драгоценных металлах
-        infoElement.innerHTML = `
-            <div class="asset-info">
-                <h3>${asset.name}</h3>
-                <p><strong>Тип:</strong> Драгоценные металлы</p>
-                <p><strong>Количество:</strong> ${asset.quantity} ${asset.unit || 'г'}</p>
-                <p><strong>Цена за единицу:</strong> $${asset.price.toFixed(1)}</p>
-                <p><strong>Общая стоимость:</strong> $${(asset.quantity * asset.price).toFixed(0)}</p>
-            </div>
-        `;
-
-        // Форма продажи
-        formElement.innerHTML = `
-            <div class="sell-form">
-                <div class="input-group">
-                    <label>Количество для продажи:</label>
-                    <input type="number" class="sell-quantity" min="1" max="${asset.quantity}" value="${asset.quantity}" step="1">
+        // Определяем тип данных драгоценных металлов
+        if (asset.price && asset.quantity) {
+            // Если есть цена за единицу и количество
+            infoElement.innerHTML = `
+                <div class="asset-info">
+                    <h3>${asset.name}</h3>
+                    <p><strong>Тип:</strong> Драгоценные металлы</p>
+                    <p><strong>Количество:</strong> ${asset.quantity} ${asset.unit || 'г'}</p>
+                    <p><strong>Цена за единицу:</strong> $${asset.price.toFixed(1)}</p>
+                    <p><strong>Общая стоимость:</strong> $${(asset.quantity * asset.price).toFixed(0)}</p>
                 </div>
-                
-                <div class="input-group">
-                    <label>Цена продажи за единицу ($):</label>
-                    <div class="custom-sell-price-input">
-                        <input type="number" class="sell-price" min="0" value="${asset.price}" step="10">
+            `;
+
+            formElement.innerHTML = `
+                <div class="sell-form">
+                    <div class="input-group">
+                        <label>Количество для продажи:</label>
+                        <input type="number" class="sell-quantity" min="1" max="${asset.quantity}" value="${asset.quantity}" step="1">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label>Цена продажи за единицу ($):</label>
+                        <div class="custom-sell-price-input">
+                            <input type="number" class="sell-price" min="0" value="${asset.price}" step="10">
+                        </div>
+                    </div>
+                    
+                    <div class="total-info">
+                        <p><strong>Итого к получению:</strong> <span class="sell-total">$${(asset.quantity * asset.price).toFixed(0)}</span></p>
                     </div>
                 </div>
-                
-                <div class="total-info">
-                    <p><strong>Итого к получению:</strong> <span class="sell-total">$${(asset.quantity * asset.price).toFixed(0)}</span></p>
+            `;
+        } else if (asset.value) {
+            // Если есть общая стоимость
+            infoElement.innerHTML = `
+                <div class="asset-info">
+                    <h3>${asset.name}</h3>
+                    <p><strong>Тип:</strong> Драгоценные металлы</p>
+                    <p><strong>Стоимость:</strong> $${asset.value.toFixed(0)}</p>
                 </div>
-            </div>
-        `;
+            `;
 
-        // Инициализируем кнопки быстрых цен
-        this._initializeSellPriceButtons(asset.name);
+            formElement.innerHTML = `
+                <div class="sell-form">
+                    <div class="input-group">
+                        <label>Цена продажи ($):</label>
+                        <div class="custom-sell-price-input">
+                            <input type="number" class="sell-price" min="0" value="${asset.value}" step="100">
+                        </div>
+                    </div>
+                    
+                    <div class="total-info">
+                        <p><strong>Итого к получению:</strong> <span class="sell-total">$${asset.value.toFixed(0)}</span></p>
+                    </div>
+                </div>
+            `;
+        } else {
+            // Если нет ни цены, ни стоимости
+            infoElement.innerHTML = `
+                <div class="asset-info">
+                    <h3>${asset.name}</h3>
+                    <p><strong>Тип:</strong> Драгоценные металлы</p>
+                    <p><strong>Стоимость:</strong> Не указана</p>
+                </div>
+            `;
+
+            formElement.innerHTML = `
+                <div class="sell-form">
+                    <div class="input-group">
+                        <label>Цена продажи ($):</label>
+                        <div class="custom-sell-price-input">
+                            <input type="number" class="sell-price" min="0" value="0" step="100">
+                        </div>
+                    </div>
+                    
+                    <div class="total-info">
+                        <p><strong>Итого к получению:</strong> <span class="sell-total">$0</span></p>
+                    </div>
+                </div>
+            `;
+        }
         
         // Добавляем обработчики событий
         this._addSellModalEventHandlers();
