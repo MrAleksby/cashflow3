@@ -197,7 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
         updateChildrenList();
         window.renderExpense(); // Обновляем отображение расходов
         window.renderSummary(); // Обновляем общую сумму
-        window.renderHistory(); // Обновляем историю
+        if (typeof window.renderHistory === 'function') {
+            window.renderHistory(); // Обновляем историю
+        }
         autoSave();
     }
 
@@ -259,7 +261,9 @@ document.addEventListener('DOMContentLoaded', function() {
         window.renderLiability();
         window.renderExpense();
         window.renderSummary();
-        window.renderHistory();
+        if (typeof window.renderHistory === 'function') {
+            window.renderHistory();
+        }
         updateModalWalletAmount();
         
         // Сохраняем изменения
@@ -415,7 +419,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Обновляем отображение
         window.renderCash();
-        window.renderHistory();
+        if (typeof window.renderHistory === 'function') {
+            window.renderHistory();
+        }
         autoSave();
 
         // Очищаем поля
@@ -461,7 +467,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Обновляем отображение
         window.renderCash();
-        window.renderHistory();
+        if (typeof window.renderHistory === 'function') {
+            window.renderHistory();
+        }
         autoSave();
 
         // Очищаем поля
