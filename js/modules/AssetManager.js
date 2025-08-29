@@ -315,7 +315,8 @@ class AssetManager {
         document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 const price = this.dataset.price;
-                const sellPriceInput = document.querySelector('.sell-price');
+                // Ищем поле ввода в новом модальном окне
+                const sellPriceInput = document.querySelector('#sell-asset-modal .sell-price') || document.querySelector('.sell-price');
                 
                 console.log('🎯 Клик по кнопке быстрой цены продажи:', price);
                 
@@ -335,7 +336,7 @@ class AssetManager {
                 
                 // Запускаем расчет (используем правильный контекст)
                 if (window.assetManager) {
-                    window.assetManager._updateSellCalculations();
+                    window.assetManager._updateSellModalCalculations();
                 }
             });
         });
@@ -458,8 +459,224 @@ class AssetManager {
         
         console.log('✅ Выбран актив:', asset);
         this._selectedAsset = asset;
-        this._showAssetInfo(asset);
-        this._enableSellButton();
+        
+        // Открываем новое модальное окно для продажи актива
+        this._openSellAssetModal(asset);
+    }
+
+    /**
+     * Открыть модальное окно продажи конкретного актива
+     */
+    _openSellAssetModal(asset) {
+        const modal = document.getElementById('sell-asset-modal');
+        if (!modal) {
+            console.log('❌ Модальное окно продажи актива не найдено');
+            return;
+        }
+
+        // Заполняем информацию об активе
+        this._fillSellAssetModal(asset);
+        
+        // Показываем модальное окно
+        modal.style.display = 'block';
+        
+        console.log('🎯 Открыто модальное окно продажи актива:', asset.name);
+    }
+
+    /**
+     * Закрыть модальное окно продажи актива
+     */
+    closeSellAssetModal() {
+        const modal = document.getElementById('sell-asset-modal');
+        if (modal) {
+            modal.style.display = 'none';
+            this._selectedAsset = null;
+        }
+    }
+
+    /**
+     * Заполнить модальное окно продажи актива
+     */
+    _fillSellAssetModal(asset) {
+        const titleElement = document.getElementById('sell-asset-title');
+        const infoElement = document.getElementById('sell-asset-info');
+        const formElement = document.getElementById('sell-asset-form');
+        
+        if (!titleElement || !infoElement || !formElement) {
+            console.log('❌ Элементы модального окна продажи не найдены');
+            return;
+        }
+
+        // Заполняем заголовок
+        titleElement.textContent = `Продажа ${asset.name}`;
+
+        // Заполняем информацию об активе в зависимости от типа
+        if (asset.type === 'stocks') {
+            this._fillSellStockModal(asset, infoElement, formElement);
+        } else {
+            // Для других типов пока используем старую логику
+            this._showAssetInfo(asset);
+            this._enableSellButton();
+        }
+    }
+
+    /**
+     * Заполнить модальное окно продажи акций
+     */
+    _fillSellStockModal(asset, infoElement, formElement) {
+        // Информация об акции
+        infoElement.innerHTML = `
+            <div class="asset-info">
+                <h3>${asset.name}</h3>
+                <p><strong>Количество:</strong> ${asset.quantity} шт.</p>
+                <p><strong>Средняя цена покупки:</strong> $${asset.price.toFixed(1)}</p>
+                <p><strong>Общая стоимость:</strong> $${(asset.quantity * asset.price).toFixed(0)}</p>
+            </div>
+        `;
+
+        // Форма продажи
+        formElement.innerHTML = `
+            <div class="sell-form">
+                <div class="input-group">
+                    <label>Количество для продажи:</label>
+                    <input type="number" class="sell-quantity" min="1" max="${asset.quantity}" value="${asset.quantity}" step="1">
+                </div>
+                
+                <div class="input-group">
+                    <label>Цена продажи за акцию ($):</label>
+                    <div class="quick-sell-price-buttons">
+                        <button class="quick-sell-price-btn" data-price="1">$1</button>
+                        <button class="quick-sell-price-btn" data-price="4">$4</button>
+                        <button class="quick-sell-price-btn" data-price="5">$5</button>
+                        <button class="quick-sell-price-btn" data-price="10">$10</button>
+                        <button class="quick-sell-price-btn" data-price="20">$20</button>
+                        <button class="quick-sell-price-btn" data-price="30">$30</button>
+                        <button class="quick-sell-price-btn" data-price="40">$40</button>
+                        <button class="quick-sell-price-btn" data-price="50">$50</button>
+                    </div>
+                    <div class="custom-sell-price-input">
+                        <input type="number" class="sell-price" min="0" value="${asset.price}" step="1">
+                    </div>
+                </div>
+                
+                <div class="total-info">
+                    <p><strong>Итого к получению:</strong> <span class="sell-total">$${(asset.quantity * asset.price).toFixed(0)}</span></p>
+                </div>
+            </div>
+        `;
+
+        // Инициализируем кнопки быстрых цен
+        this._initializeSellPriceButtons(asset.name);
+        
+        // Добавляем обработчики событий
+        this._addSellModalEventHandlers();
+    }
+
+    /**
+     * Добавить обработчики событий для модального окна продажи
+     */
+    _addSellModalEventHandlers() {
+        // Обработчик для кнопки подтверждения продажи
+        const confirmBtn = document.getElementById('confirm-sell-btn');
+        if (confirmBtn) {
+            confirmBtn.onclick = () => this._executeSellFromModal();
+        }
+
+        // Обработчики для полей ввода
+        const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
+        const priceInput = document.querySelector('#sell-asset-modal .sell-price');
+        
+        if (quantityInput) {
+            quantityInput.addEventListener('input', () => this._updateSellModalCalculations());
+        }
+        if (priceInput) {
+            priceInput.addEventListener('input', () => this._updateSellModalCalculations());
+        }
+    }
+
+    /**
+     * Обновить расчеты в модальном окне продажи
+     */
+    _updateSellModalCalculations() {
+        const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
+        const priceInput = document.querySelector('#sell-asset-modal .sell-price');
+        const totalElement = document.querySelector('#sell-asset-modal .sell-total');
+        
+        if (!quantityInput || !priceInput || !totalElement) return;
+        
+        const quantity = parseInt(quantityInput.value) || 0;
+        const price = parseFloat(priceInput.value) || 0;
+        const total = quantity * price;
+        
+        totalElement.textContent = `$${total.toFixed(0)}`;
+    }
+
+    /**
+     * Выполнить продажу из модального окна
+     */
+    _executeSellFromModal() {
+        if (!this._selectedAsset) return;
+        
+        const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
+        const priceInput = document.querySelector('#sell-asset-modal .sell-price');
+        
+        if (!quantityInput || !priceInput) return;
+        
+        const quantity = parseInt(quantityInput.value) || 0;
+        const sellPrice = parseFloat(priceInput.value) || 0;
+        
+        if (sellPrice <= 0) {
+            alert('Цена продажи должна быть больше 0!');
+            return;
+        }
+        
+        if (quantity <= 0 || quantity > this._selectedAsset.quantity) {
+            alert('Некорректное количество для продажи!');
+            return;
+        }
+        
+        // Рассчитываем выручку
+        const revenue = quantity * sellPrice;
+        
+        console.log(`💰 Продажа актива из модального окна: ${this._selectedAsset.name} ${quantity} шт. за $${sellPrice}, выручка: $${revenue}`);
+        
+        // Добавляем деньги
+        if (window.data) {
+            window.cash += revenue;
+            
+            // Обновляем или удаляем актив
+            if (quantity === this._selectedAsset.quantity) {
+                // Продаем все - удаляем актив
+                const assetIndex = window.data.asset.findIndex(a => a.id === this._selectedAsset.id);
+                if (assetIndex !== -1) {
+                    window.data.asset.splice(assetIndex, 1);
+                }
+            } else {
+                // Продаем часть - уменьшаем количество
+                const asset = window.data.asset.find(a => a.id === this._selectedAsset.id);
+                if (asset) {
+                    asset.quantity -= quantity;
+                }
+            }
+            
+            // Сохраняем данные
+            if (window.saveData) {
+                window.saveData();
+            }
+            
+            // Обновляем отображение
+            if (window.renderAll) {
+                window.renderAll();
+            }
+        }
+        
+        // Закрываем модальное окно
+        this.closeSellAssetModal();
+        
+        // Показываем уведомление
+        if (window.animationManager) {
+            window.animationManager.showNotification(`✅ Продано: ${this._selectedAsset.name} ${quantity} шт. за $${sellPrice}`, 'success');
+        }
     }
 
     /**

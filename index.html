@@ -495,6 +495,31 @@
         </div>
     </div>
 
+    <!-- Модальное окно продажи конкретного актива -->
+    <div id="sell-asset-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="sell-asset-title">Продажа актива</h2>
+                <button class="close-btn" onclick="window.assetManager?.closeSellAssetModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="sell-asset-info">
+                    <!-- Информация об активе будет загружена динамически -->
+                </div>
+                
+                <div id="sell-asset-form">
+                    <!-- Форма продажи будет загружена динамически -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="confirm-sell-btn" class="btn btn-primary">Продать</button>
+                <button id="cancel-sell-asset-btn" class="btn btn-secondary" onclick="window.assetManager?.closeSellAssetModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Основные скрипты приложения -->
     <script src="js/storage.js"></script>
     <script src="js/assets.js"></script>
