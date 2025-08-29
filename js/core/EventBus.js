@@ -15,7 +15,7 @@ class EventBus {
      * @param {Function} callback - функция-обработчик
      * @param {Object} options - опции (once: true для однократного выполнения)
      * @returns {Function} - функция для отписки
-     */
+     */ачит в
     on(event, callback, options = {}) {
         if (!this._events.has(event)) {
             this._events.set(event, []);
