@@ -796,18 +796,39 @@ const ASSET_CATEGORIES = {
         switch(category) {
             case 'stocks':
                 if (item.type === 'speculative') {
+                    // Определяем цены для разных акций
+                    let priceButtons = '';
+                    if (item.id === 'gro4us' || item.id === 'on2u') {
+                        // Для GRO4US и ON2U - без цен $4 и $50
+                        priceButtons = `
+                            <button class="quick-price-btn" data-price="1">$1</button>
+                            <button class="quick-price-btn" data-price="5">$5</button>
+                            <button class="quick-price-btn" data-price="10">$10</button>
+                            <button class="quick-price-btn" data-price="20">$20</button>
+                            <button class="quick-price-btn" data-price="30">$30</button>
+                            <button class="quick-price-btn" data-price="40">$40</button>
+                        `;
+                    } else {
+                        // Для MYT4U и OK4U - все цены
+                        priceButtons = `
+                            <button class="quick-price-btn" data-price="1">$1</button>
+                            <button class="quick-price-btn" data-price="4">$4</button>
+                            <button class="quick-price-btn" data-price="5">$5</button>
+                            <button class="quick-price-btn" data-price="10">$10</button>
+                            <button class="quick-price-btn" data-price="20">$20</button>
+                            <button class="quick-price-btn" data-price="30">$30</button>
+                            <button class="quick-price-btn" data-price="40">$40</button>
+                            <button class="quick-price-btn" data-price="50">$50</button>
+                        `;
+                    }
+                    
                     details = `
                         <div class="asset-info">
                             <div class="stock-inputs">
                                 <div class="input-group">
                                     <label>Цена за акцию ($):</label>
                                     <div class="quick-price-buttons">
-                                        <button class="quick-price-btn" data-price="1">$1</button>
-                                        <button class="quick-price-btn" data-price="5">$5</button>
-                                        <button class="quick-price-btn" data-price="10">$10</button>
-                                        <button class="quick-price-btn" data-price="20">$20</button>
-                                        <button class="quick-price-btn" data-price="30">$30</button>
-                                        <button class="quick-price-btn" data-price="40">$40</button>
+                                        ${priceButtons}
                                     </div>
                                     <div class="custom-price-input">
                                         <input type="number" class="price-per-share" min="0" step="1" inputmode="numeric" pattern="[0-9]*" placeholder="Или введите свою цену">
