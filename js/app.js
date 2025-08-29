@@ -780,113 +780,11 @@ function setupAllNumericInputs() {
     setupNumericInput(sellMiscPriceInput);
 }
 
-// Инициализация интерфейса продажи с улучшенной поддержкой мобильных устройств
-function initializeSellInterface() {
-    // Настраиваем все числовые поля
-    setupAllNumericInputs();
-    
-    // Добавляем обработчики для полей ввода акций
-    const quantityInput = document.querySelector('.sell-quantity');
-    if (quantityInput) {
-        quantityInput.addEventListener('input', updateSellCalculations);
-    }
-    
-    if (sellPriceInput) {
-        sellPriceInput.addEventListener('input', updateSellCalculations);
-    }
-    
-    // Добавляем обработчик для поля цены недвижимости
-    if (sellRealEstatePriceInput) {
-        sellRealEstatePriceInput.addEventListener('input', updateRealEstateSellCalculations);
-    }
-    
-    // Добавляем обработчик для поля цены бизнеса
-    if (sellBusinessPriceInput) {
-        sellBusinessPriceInput.addEventListener('input', updateBusinessSellCalculations);
-    }
-    
-    // Улучшенные обработчики для кнопок с поддержкой мобильных устройств
-    const sellButtons = document.querySelectorAll('#sell-asset-btn, #cancel-sell-btn, .asset-type-btn');
-    sellButtons.forEach(button => {
-        // Добавляем обработчик для touchstart
-        button.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            this.style.opacity = '0.7';
-            
-            // Определяем действие в зависимости от кнопки
-            if (this.id === 'sell-asset-btn') {
-                sellAsset();
-            } else if (this.id === 'cancel-sell-btn') {
-                closeSellStockModal();
-            } else if (this.classList.contains('asset-type-btn')) {
-                currentAssetType = this.dataset.type;
-                document.querySelectorAll('.asset-type-btn').forEach(b => 
-                    b.classList.toggle('active', b === this)
-                );
-                updateAssetDisplay();
-            }
-        });
+// AssetManager теперь управляет всем интерфейсом продажи
+// Старые обработчики удалены - используется новый AssetManager
 
-        // Добавляем обработчик для touchend
-        button.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            this.style.opacity = '1';
-        });
-
-        // Улучшаем отзывчивость на мобильных
-        button.style.cursor = 'pointer';
-        button.style.touchAction = 'manipulation';
-    });
-    
-    // Добавляем стандартные обработчики click для совместимости
-    if (sellAssetBtn) {
-        sellAssetBtn.addEventListener('click', sellAsset);
-    }
-    
-    if (cancelSellBtn) {
-        cancelSellBtn.addEventListener('click', closeSellStockModal);
-    }
-    
-    // Добавляем обработчик для закрытия по клику на крестик
-    const closeBtn = document.querySelector('#sell-modal .close-btn');
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeSellStockModal);
-        
-        // Добавляем поддержку мобильных устройств для кнопки закрытия
-        closeBtn.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            this.style.opacity = '0.7';
-            closeSellStockModal();
-        });
-        
-        closeBtn.addEventListener('touchend', function(e) {
-            e.preventDefault();
-            this.style.opacity = '1';
-        });
-    }
-    
-    // Добавляем обработчики для кнопок выбора типа актива
-    document.querySelectorAll('.asset-type-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            currentAssetType = btn.dataset.type;
-            document.querySelectorAll('.asset-type-btn').forEach(b => 
-                b.classList.toggle('active', b === btn)
-            );
-            updateAssetDisplay();
-        });
-    });
-}
-
-// Вызываем инициализацию после загрузки страницы
-document.addEventListener('DOMContentLoaded', initializeSellInterface);
-
-// Добавляем обработчик для кнопки "Продать" в основном интерфейсе
-document.addEventListener('DOMContentLoaded', function() {
-    const sellBtn = document.getElementById('main-sell-btn');
-    if (sellBtn) {
-        sellBtn.addEventListener('click', openSellStockModal);
-    }
-});
+// AssetManager теперь управляет кнопкой "Продать"
+// Старый обработчик удален - используется новый в AssetManager.js
 
 // === ОТРИСОВКА ФИНАНСОВОЙ ФОРМУЛЫ ===
 const originalRenderSummary = function() {

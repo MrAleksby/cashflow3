@@ -49,6 +49,44 @@ class AssetManager {
             window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
             window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
         }
+        
+        // Обработчики для кнопок типов активов в модальном окне продажи
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('.asset-type-btn')) {
+                const btn = e.target.closest('.asset-type-btn');
+                const assetType = btn.dataset.type;
+                this._switchAssetType(assetType);
+            }
+        });
+        
+        // Обработчик закрытия модального окна продажи
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('#sell-modal .close-btn')) {
+                this.closeSellModal();
+            }
+        });
+        
+        // Обработчики для полей ввода в модальном окне продажи
+        document.addEventListener('input', (e) => {
+            if (e.target.matches('.sell-quantity, .sell-price')) {
+                this._updateSellCalculations();
+            } else if (e.target.matches('.sell-realestate-price')) {
+                this._updateRealEstateSellCalculations();
+            } else if (e.target.matches('.sell-business-price')) {
+                this._updateBusinessSellCalculations();
+            } else if (e.target.matches('.sell-preciousmetals-price')) {
+                this._updatePreciousMetalsSellCalculations();
+            } else if (e.target.matches('.sell-misc-price')) {
+                this._updateMiscSellCalculations();
+            }
+        });
+        
+        // Обработчик для кнопки продажи
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('#sell-asset-btn')) {
+                this._sellAsset();
+            }
+        });
     }
 
     // === МЕТОДЫ ДЛЯ ПОКУПКИ АКТИВОВ ===
@@ -166,6 +204,26 @@ class AssetManager {
         this._hideAllAssetInfo();
         this._disableSellButton();
     }
+    
+    /**
+     * Скрыть всю информацию об активах
+     */
+    _hideAllAssetInfo() {
+        const infoElements = [
+            'selected-stock-info',
+            'selected-realestate-info', 
+            'selected-business-info',
+            'selected-preciousmetals-info',
+            'selected-misc-info'
+        ];
+        
+        infoElements.forEach(id => {
+            const element = window.DOM?.get(id);
+            if (element) {
+                element.style.display = 'none';
+            }
+        });
+    }
 
     /**
      * Обновить кнопки выбора типа актива
@@ -176,7 +234,79 @@ class AssetManager {
             btn.classList.toggle('active', btn.dataset.type === this._currentAssetType);
         });
     }
+    
+    /**
+     * Отключить кнопку продажи
+     */
+    _disableSellButton() {
+        const sellBtn = document.querySelector('#sell-asset-btn');
+        if (sellBtn) {
+            sellBtn.disabled = true;
+        }
+    }
+    
+    /**
+     * Включить кнопку продажи
+     */
+    _enableSellButton() {
+        const sellBtn = document.querySelector('#sell-asset-btn');
+        if (sellBtn) {
+            sellBtn.disabled = false;
+        }
+    }
+    
+    /**
+     * Инициализация кнопок быстрых цен для продажи акций
+     */
+    _initializeSellPriceButtons(stockName) {
+        // Убираем активное состояние со всех кнопок
+        document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        
+        // Скрываем кнопки для GRO4US и ON2U (нет цен $4 и $50)
+        const hideButtons = ['GRO4US', 'ON2U'].includes(stockName);
+        
+        document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
+            const price = parseInt(btn.dataset.price);
+            if (hideButtons && (price === 4 || price === 50)) {
+                btn.style.display = 'none';
+            } else {
+                btn.style.display = 'block';
+            }
+        });
+        
+        // Добавляем обработчики событий для кнопок
+        document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const price = this.dataset.price;
+                const sellPriceInput = document.querySelector('.sell-price');
+                
+                // Убираем активное состояние со всех кнопок
+                document.querySelectorAll('.quick-sell-price-btn').forEach(b => b.classList.remove('active'));
+                
+                // Добавляем активное состояние к нажатой кнопке
+                this.classList.add('active');
+                
+                // Устанавливаем цену в поле ввода
+                sellPriceInput.value = price;
+                
+                // Запускаем расчет
+                this._updateSellCalculations();
+            }.bind(this));
+        });
+    }
 
+    /**
+     * Переключить тип актива
+     */
+    _switchAssetType(assetType) {
+        this._currentAssetType = assetType;
+        this._updateAssetTypeButtons();
+        this._loadAssetList();
+        this._hideAllAssetInfo();
+    }
+    
     /**
      * Загрузить список активов для продажи
      */
@@ -210,8 +340,9 @@ class AssetManager {
         
         const html = assets.map(asset => {
             let displayText = '';
-            if (asset.type === 'stocks') {
-                displayText = `${asset.name} (${asset.quantity} шт. по $${asset.price})`;
+            if (this._currentAssetType === 'stocks') {
+                const totalValue = asset.quantity * asset.price;
+                displayText = `${asset.name} (${asset.quantity} шт. × $${asset.price.toFixed(1)} = $${totalValue})`;
             } else {
                 displayText = `${asset.name} - $${asset.value}`;
             }
@@ -384,6 +515,153 @@ class AssetManager {
     }
 
     /**
+     * Выбрать актив для продажи
+     */
+    _selectAsset(assetId) {
+        if (!window.gameState) return;
+        
+        const asset = window.gameState.data.asset.find(a => a.id === assetId);
+        if (!asset) return;
+        
+        this._selectedAsset = asset;
+        this._showAssetInfo(asset);
+        this._enableSellButton();
+    }
+    
+    /**
+     * Показать информацию об активе
+     */
+    _showAssetInfo(asset) {
+        this._hideAllAssetInfo();
+        
+        const infoElement = this._getAssetInfoElement();
+        if (!infoElement) return;
+        
+        infoElement.style.display = 'block';
+        
+        // Заполняем информацию в зависимости от типа актива
+        if (this._currentAssetType === 'stocks') {
+            this._fillStockInfo(asset);
+        } else if (this._currentAssetType === 'realestate') {
+            this._fillRealEstateInfo(asset);
+        } else if (this._currentAssetType === 'business') {
+            this._fillBusinessInfo(asset);
+        } else if (this._currentAssetType === 'preciousmetals') {
+            this._fillPreciousMetalsInfo(asset);
+        } else if (this._currentAssetType === 'misc') {
+            this._fillMiscInfo(asset);
+        }
+    }
+    
+    /**
+     * Заполнить информацию об акции
+     */
+    _fillStockInfo(asset) {
+        const nameElement = document.querySelector('.selected-stock-name');
+        const quantityElement = document.querySelector('.selected-stock-quantity');
+        const priceElement = document.querySelector('.selected-stock-buy-price');
+        
+        if (nameElement) nameElement.textContent = asset.name;
+        if (quantityElement) quantityElement.textContent = asset.quantity;
+        if (priceElement) priceElement.textContent = `$${asset.price}`;
+        
+        // Устанавливаем максимальное количество для продажи
+        const quantityInput = document.querySelector('.sell-quantity');
+        if (quantityInput) {
+            quantityInput.max = asset.quantity;
+            quantityInput.value = asset.quantity;
+        }
+        
+        // Устанавливаем цену продажи равной цене покупки по умолчанию
+        const sellPriceInput = document.querySelector('.sell-price');
+        if (sellPriceInput) {
+            sellPriceInput.value = asset.price;
+        }
+        
+        // Инициализируем кнопки быстрых цен для продажи
+        this._initializeSellPriceButtons(asset.name);
+        
+        // Обновляем расчеты
+        this._updateSellCalculations();
+    }
+    
+    /**
+     * Заполнить информацию о недвижимости
+     */
+    _fillRealEstateInfo(asset) {
+        const nameElement = document.querySelector('.selected-realestate-name');
+        const valueElement = document.querySelector('.selected-realestate-value');
+        
+        if (nameElement) nameElement.textContent = asset.name;
+        if (valueElement) valueElement.textContent = `$${asset.value}`;
+        
+        // Устанавливаем цену продажи равной стоимости по умолчанию
+        const sellPriceInput = document.querySelector('.sell-realestate-price');
+        if (sellPriceInput) {
+            sellPriceInput.value = asset.value;
+        }
+        
+        this._updateRealEstateSellCalculations();
+    }
+    
+    /**
+     * Заполнить информацию о бизнесе
+     */
+    _fillBusinessInfo(asset) {
+        const nameElement = document.querySelector('.selected-business-name');
+        const valueElement = document.querySelector('.selected-business-value');
+        
+        if (nameElement) nameElement.textContent = asset.name;
+        if (valueElement) valueElement.textContent = `$${asset.value}`;
+        
+        // Устанавливаем цену продажи равной стоимости по умолчанию
+        const sellPriceInput = document.querySelector('.sell-business-price');
+        if (sellPriceInput) {
+            sellPriceInput.value = asset.value;
+        }
+        
+        this._updateBusinessSellCalculations();
+    }
+    
+    /**
+     * Заполнить информацию о драгметаллах
+     */
+    _fillPreciousMetalsInfo(asset) {
+        const nameElement = document.querySelector('.selected-preciousmetals-name');
+        const valueElement = document.querySelector('.selected-preciousmetals-value');
+        
+        if (nameElement) nameElement.textContent = asset.name;
+        if (valueElement) valueElement.textContent = `$${asset.value}`;
+        
+        // Устанавливаем цену продажи равной стоимости по умолчанию
+        const sellPriceInput = document.querySelector('.sell-preciousmetals-price');
+        if (sellPriceInput) {
+            sellPriceInput.value = asset.value;
+        }
+        
+        this._updatePreciousMetalsSellCalculations();
+    }
+    
+    /**
+     * Заполнить информацию о misc активе
+     */
+    _fillMiscInfo(asset) {
+        const nameElement = document.querySelector('.selected-misc-name');
+        const valueElement = document.querySelector('.selected-misc-value');
+        
+        if (nameElement) nameElement.textContent = asset.name;
+        if (valueElement) valueElement.textContent = `$${asset.value}`;
+        
+        // Устанавливаем цену продажи равной стоимости по умолчанию
+        const sellPriceInput = document.querySelector('.sell-misc-price');
+        if (sellPriceInput) {
+            sellPriceInput.value = asset.value;
+        }
+        
+        this._updateMiscSellCalculations();
+    }
+    
+    /**
      * Получить элемент информации об активе
      */
     _getAssetInfoElement() {
@@ -440,6 +718,141 @@ class AssetManager {
         if (!window.gameState) return [];
         
         return window.gameState.data.asset;
+    }
+    
+    // === МЕТОДЫ ДЛЯ РАСЧЕТОВ ПРОДАЖИ ===
+    
+    /**
+     * Обновить расчеты продажи акций
+     */
+    _updateSellCalculations() {
+        const quantityInput = document.querySelector('.sell-quantity');
+        const priceInput = document.querySelector('.sell-price');
+        const totalElement = document.querySelector('.sell-total');
+        
+        if (!quantityInput || !priceInput || !totalElement) return;
+        
+        const quantity = parseInt(quantityInput.value) || 0;
+        const price = parseFloat(priceInput.value) || 0;
+        const total = quantity * price;
+        
+        totalElement.textContent = `$${total}`;
+    }
+    
+    /**
+     * Обновить расчеты продажи недвижимости
+     */
+    _updateRealEstateSellCalculations() {
+        const priceInput = document.querySelector('.sell-realestate-price');
+        const totalElement = document.querySelector('.sell-realestate-total');
+        
+        if (!priceInput || !totalElement) return;
+        
+        const price = parseFloat(priceInput.value) || 0;
+        totalElement.textContent = `$${price}`;
+    }
+    
+    /**
+     * Обновить расчеты продажи бизнеса
+     */
+    _updateBusinessSellCalculations() {
+        const priceInput = document.querySelector('.sell-business-price');
+        const totalElement = document.querySelector('.sell-business-total');
+        
+        if (!priceInput || !totalElement) return;
+        
+        const price = parseFloat(priceInput.value) || 0;
+        totalElement.textContent = `$${price}`;
+    }
+    
+    /**
+     * Обновить расчеты продажи драгметаллов
+     */
+    _updatePreciousMetalsSellCalculations() {
+        const priceInput = document.querySelector('.sell-preciousmetals-price');
+        const totalElement = document.querySelector('.sell-preciousmetals-total');
+        
+        if (!priceInput || !totalElement) return;
+        
+        const price = parseFloat(priceInput.value) || 0;
+        totalElement.textContent = `$${price}`;
+    }
+    
+    /**
+     * Обновить расчеты продажи misc активов
+     */
+    _updateMiscSellCalculations() {
+        const priceInput = document.querySelector('.sell-misc-price');
+        const totalElement = document.querySelector('.sell-misc-total');
+        
+        if (!priceInput || !totalElement) return;
+        
+        const price = parseFloat(priceInput.value) || 0;
+        totalElement.textContent = `$${price}`;
+    }
+    
+    /**
+     * Обработчик продажи актива
+     */
+    _sellAsset() {
+        if (!this._selectedAsset) return;
+        
+        let sellPrice = 0;
+        
+        // Получаем цену продажи в зависимости от типа актива
+        if (this._currentAssetType === 'stocks') {
+            sellPrice = parseFloat(document.querySelector('.sell-price')?.value) || 0;
+        } else if (this._currentAssetType === 'realestate') {
+            sellPrice = parseFloat(document.querySelector('.sell-realestate-price')?.value) || 0;
+        } else if (this._currentAssetType === 'business') {
+            sellPrice = parseFloat(document.querySelector('.sell-business-price')?.value) || 0;
+        } else if (this._currentAssetType === 'preciousmetals') {
+            sellPrice = parseFloat(document.querySelector('.sell-preciousmetals-price')?.value) || 0;
+        } else if (this._currentAssetType === 'misc') {
+            sellPrice = parseFloat(document.querySelector('.sell-misc-price')?.value) || 0;
+        }
+        
+        if (sellPrice < 0) {
+            alert('Цена продажи не может быть отрицательной!');
+            return;
+        }
+        
+        this._executeSellAsset(this._selectedAsset, sellPrice);
+    }
+    
+    /**
+     * Выполнить продажу актива
+     */
+    _executeSellAsset(asset, sellPrice) {
+        if (!window.gameState) return;
+        
+        // Рассчитываем выручку
+        let revenue = 0;
+        if (this._currentAssetType === 'stocks') {
+            const quantityInput = document.querySelector('.sell-quantity');
+            const quantity = parseInt(quantityInput?.value) || asset.quantity;
+            revenue = quantity * sellPrice;
+        } else {
+            revenue = sellPrice;
+        }
+        
+        // Добавляем деньги
+        window.gameState.addCash(revenue, `Продажа ${asset.name}`);
+        
+        // Удаляем актив
+        window.gameState.removeAsset(asset.id);
+        
+        // Закрываем модальное окно
+        this.closeSellModal();
+        
+        // Отправляем событие
+        if (window.eventBus) {
+            window.eventBus.emit(window.AppEvents.ASSET_REMOVED, {
+                asset: asset,
+                revenue: revenue,
+                sellPrice: sellPrice
+            });
+        }
     }
 }
 
