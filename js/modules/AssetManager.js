@@ -375,6 +375,37 @@ class AssetManager {
             btn.classList.toggle('active', btn.dataset.type === this._currentAssetType);
         });
     }
+
+    /**
+     * Показать список активов для текущего типа
+     */
+    _showAssetList() {
+        // Скрываем все списки активов
+        const allLists = [
+            'stock-list',
+            'realestate-list', 
+            'business-list',
+            'preciousmetals-list',
+            'misc-list'
+        ];
+        
+        allLists.forEach(listId => {
+            const listElement = document.getElementById(listId);
+            if (listElement) {
+                listElement.style.display = 'none';
+            }
+        });
+        
+        // Показываем список для текущего типа
+        const currentListId = this._getAssetListId();
+        const currentListElement = document.getElementById(currentListId);
+        if (currentListElement) {
+            currentListElement.style.display = 'block';
+            console.log(`📋 Показан список активов: ${currentListId}`);
+        } else {
+            console.log(`❌ Список активов не найден: ${currentListId}`);
+        }
+    }
     
     /**
      * Отключить кнопку продажи
@@ -455,6 +486,7 @@ class AssetManager {
         console.log(`🔄 Переключение типа актива: ${this._currentAssetType} → ${assetType}`);
         this._currentAssetType = assetType;
         this._updateAssetTypeButtons();
+        this._showAssetList();
         this._loadAssetList();
         this._hideAllAssetInfo();
     }
