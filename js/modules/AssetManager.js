@@ -788,6 +788,11 @@ class AssetManager {
             if (window.renderAll) {
                 window.renderAll();
             }
+            
+            // Обновляем отображение баланса
+            if (window.renderCash) {
+                window.renderCash();
+            }
         }
         
         // Закрываем модальное окно продажи актива
@@ -1258,6 +1263,11 @@ class AssetManager {
             // Обновляем отображение
             if (window.renderAll) {
                 window.renderAll();
+            }
+            
+            // Обновляем отображение баланса
+            if (window.renderCash) {
+                window.renderCash();
             }
         } else if (window.gameState) {
             // Fallback на gameState
