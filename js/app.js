@@ -275,6 +275,9 @@ function selectAsset(asset, type) {
         // Устанавливаем цену продажи равной цене покупки по умолчанию
         sellPriceInput.value = asset.price;
         
+        // Инициализируем кнопки быстрых цен для продажи
+        initializeSellPriceButtons(asset.name);
+        
         updateSellCalculations();
     } else if (type === 'realestate') {
         selectedStockInfo.style.display = 'none';
@@ -1673,3 +1676,43 @@ document.addEventListener('DOMContentLoaded', function() {
     // Также обновляем при первоначальной загрузке
     updateRepayLoanButton();
 }); 
+
+// Функция инициализации кнопок быстрых цен для продажи акций
+function initializeSellPriceButtons(stockName) {
+    // Убираем активное состояние со всех кнопок
+    document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Скрываем кнопки для GRO4US и ON2U (нет цен $4 и $50)
+    const hideButtons = ['GRO4US', 'ON2U'].includes(stockName);
+    
+    document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
+        const price = parseInt(btn.dataset.price);
+        if (hideButtons && (price === 4 || price === 50)) {
+            btn.style.display = 'none';
+        } else {
+            btn.style.display = 'block';
+        }
+    });
+    
+    // Добавляем обработчики событий для кнопок
+    document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const price = this.dataset.price;
+            const sellPriceInput = document.querySelector('.sell-price');
+            
+            // Убираем активное состояние со всех кнопок
+            document.querySelectorAll('.quick-sell-price-btn').forEach(b => b.classList.remove('active'));
+            
+            // Добавляем активное состояние к нажатой кнопке
+            this.classList.add('active');
+            
+            // Устанавливаем цену в поле ввода
+            sellPriceInput.value = price;
+            
+            // Запускаем расчет
+            updateSellCalculations();
+        });
+    });
+} 

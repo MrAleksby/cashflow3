@@ -704,14 +704,16 @@
 }
 
 /* Быстрые кнопки цен для мобильных устройств */
-.quick-price-buttons {
+.quick-price-buttons,
+.quick-sell-price-buttons {
     display: flex;
     flex-wrap: wrap;
     gap: 4px;
     margin-bottom: 10px;
 }
 
-.quick-price-btn {
+.quick-price-btn,
+.quick-sell-price-btn {
     padding: 6px 8px;
     background: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -727,24 +729,28 @@
     max-width: 60px;
 }
 
-.quick-price-btn:hover {
+.quick-price-btn:hover,
+.quick-sell-price-btn:hover {
     background: #e9ecef;
     border-color: #6c757d;
     color: #495057;
 }
 
-.quick-price-btn.active {
+.quick-price-btn.active,
+.quick-sell-price-btn.active {
     background: #007bff;
     border-color: #007bff;
     color: white;
 }
 
-.quick-price-btn:active {
+.quick-price-btn:active,
+.quick-sell-price-btn:active {
     transform: scale(0.98);
 }
 
 /* Поле для ручного ввода цены */
-.custom-price-input {
+.custom-price-input,
+.custom-sell-price-input {
     margin-top: 10px;
 }
 
