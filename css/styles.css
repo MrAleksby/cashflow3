@@ -1,9 +1,0 @@
-.quit-job-btn {
-    margin-top: 10px;
-    width: 100%;
-}
-
-.quit-job-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-} 
