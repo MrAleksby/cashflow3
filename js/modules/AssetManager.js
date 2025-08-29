@@ -1477,6 +1477,23 @@ class AssetManager {
                 if (assetIndex !== -1) {
                     window.data.asset.splice(assetIndex, 1);
                 }
+                
+                // Удаляем связанные доходы и расходы
+                if (this._selectedAsset.type === 'realestate' || this._selectedAsset.type === 'business') {
+                    // Удаляем связанный денежный поток (доход)
+                    if (window.data.income) {
+                        window.data.income = window.data.income.filter(income => 
+                            income.source !== this._selectedAsset.name
+                        );
+                    }
+                    
+                    // Удаляем связанную ипотеку (для недвижимости)
+                    if (this._selectedAsset.type === 'realestate' && window.data.liability) {
+                        window.data.liability = window.data.liability.filter(liability => 
+                            !liability.name.includes(this._selectedAsset.name)
+                        );
+                    }
+                }
             }
             
             // Добавляем запись в историю
@@ -1502,6 +1519,16 @@ class AssetManager {
             // Обновляем отображение баланса
             if (window.renderCash) {
                 window.renderCash();
+            }
+            
+            // Обновляем доходы и пассивы (для недвижимости и бизнеса)
+            if (this._selectedAsset.type === 'realestate' || this._selectedAsset.type === 'business') {
+                if (window.renderIncome) {
+                    window.renderIncome();
+                }
+                if (window.renderLiability) {
+                    window.renderLiability();
+                }
             }
             
             // Обновляем историю
@@ -1982,6 +2009,23 @@ class AssetManager {
                 window.data.asset.splice(assetIndex, 1);
             }
             
+            // Удаляем связанные доходы и расходы для недвижимости и бизнеса
+            if (asset.type === 'realestate' || asset.type === 'business') {
+                // Удаляем связанный денежный поток (доход)
+                if (window.data.income) {
+                    window.data.income = window.data.income.filter(income => 
+                        income.source !== asset.name
+                    );
+                }
+                
+                // Удаляем связанную ипотеку (для недвижимости)
+                if (asset.type === 'realestate' && window.data.liability) {
+                    window.data.liability = window.data.liability.filter(liability => 
+                        !liability.name.includes(asset.name)
+                    );
+                }
+            }
+            
             // Добавляем запись в историю
             if (!window.data.history) window.data.history = [];
             window.data.history.push({
@@ -2005,6 +2049,16 @@ class AssetManager {
             // Обновляем отображение баланса
             if (window.renderCash) {
                 window.renderCash();
+            }
+            
+            // Обновляем доходы и пассивы (для недвижимости и бизнеса)
+            if (asset.type === 'realestate' || asset.type === 'business') {
+                if (window.renderIncome) {
+                    window.renderIncome();
+                }
+                if (window.renderLiability) {
+                    window.renderLiability();
+                }
             }
             
             // Обновляем историю
