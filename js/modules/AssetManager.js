@@ -1387,12 +1387,18 @@ class AssetManager {
         }
         
         const priceInput = document.querySelector('#sell-asset-modal .sell-price');
+        console.log('🔍 Поле цены найдено:', priceInput);
         
-        if (!priceInput) return;
+        if (!priceInput) {
+            console.log('❌ Поле цены не найдено!');
+            return;
+        }
         
         const sellPrice = parseFloat(priceInput.value) || 0;
+        console.log('💰 Цена продажи:', sellPrice);
         
         if (sellPrice <= 0) {
+            console.log('❌ Цена продажи должна быть больше 0!');
             alert('Цена продажи должна быть больше 0!');
             return;
         }
@@ -1407,16 +1413,25 @@ class AssetManager {
         if (this._selectedAsset.type === 'stocks' || this._selectedAsset.type === 'preciousmetals') {
             // Для акций и драгоценных металлов есть количество
             const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
-            if (!quantityInput) return;
+            console.log('🔍 Поле количества найдено:', quantityInput);
+            
+            if (!quantityInput) {
+                console.log('❌ Поле количества не найдено!');
+                return;
+            }
             
             quantity = parseInt(quantityInput.value) || 0;
+            console.log('📦 Количество для продажи:', quantity);
+            console.log('📦 Доступное количество:', this._selectedAsset.quantity);
             
             if (quantity <= 0 || quantity > this._selectedAsset.quantity) {
+                console.log('❌ Некорректное количество для продажи!');
                 alert('Некорректное количество для продажи!');
                 return;
             }
             
             revenue = quantity * sellPrice;
+            console.log('💰 Выручка рассчитана:', revenue);
         } else {
             // Для недвижимости, бизнеса и прочих активов продаем целиком
             revenue = sellPrice;
@@ -1425,23 +1440,37 @@ class AssetManager {
         console.log(`💰 Продажа актива из модального окна: ${assetName} ${quantity} шт. за $${sellPrice}, выручка: $${revenue}`);
         
         // Добавляем деньги
+        console.log('💵 window.data доступен:', !!window.data);
+        console.log('💵 Текущий баланс:', window.cash);
+        
         if (window.data) {
             window.cash += revenue;
+            console.log('💵 Новый баланс:', window.cash);
             
             // Обновляем или удаляем актив
+            console.log('🗂️ Обновляем активы...');
+            console.log('🗂️ Тип актива:', this._selectedAsset.type);
+            console.log('🗂️ Количество для продажи:', quantity);
+            console.log('🗂️ Общее количество актива:', this._selectedAsset.quantity);
+            
             if (this._selectedAsset.type === 'stocks' || this._selectedAsset.type === 'preciousmetals') {
                 // Для акций и драгоценных металлов может быть частичная продажа
                 if (quantity === this._selectedAsset.quantity) {
                     // Продаем все - удаляем актив
+                    console.log('🗑️ Продаем весь актив - удаляем');
                     const assetIndex = window.data.asset.findIndex(a => a.id === this._selectedAsset.id);
+                    console.log('🗂️ Индекс актива в массиве:', assetIndex);
                     if (assetIndex !== -1) {
                         window.data.asset.splice(assetIndex, 1);
+                        console.log('✅ Актив удален из массива');
                     }
                 } else {
                     // Продаем часть - уменьшаем количество
+                    console.log('📦 Продаем часть актива - уменьшаем количество');
                     const asset = window.data.asset.find(a => a.id === this._selectedAsset.id);
                     if (asset) {
                         asset.quantity -= quantity;
+                        console.log('✅ Количество актива обновлено:', asset.quantity);
                     }
                 }
             } else {
@@ -1453,29 +1482,48 @@ class AssetManager {
             }
             
             // Сохраняем данные
+            console.log('💾 Сохраняем данные...');
             if (window.saveData) {
                 window.saveData();
+                console.log('✅ Данные сохранены');
+            } else {
+                console.log('❌ Функция saveData не найдена');
             }
             
             // Обновляем отображение
+            console.log('🔄 Обновляем отображение...');
             if (window.renderAll) {
                 window.renderAll();
+                console.log('✅ Отображение обновлено');
+            } else {
+                console.log('❌ Функция renderAll не найдена');
             }
             
             // Обновляем отображение баланса
+            console.log('💰 Обновляем баланс...');
             if (window.renderCash) {
                 window.renderCash();
+                console.log('✅ Баланс обновлен');
+            } else {
+                console.log('❌ Функция renderCash не найдена');
             }
+        } else {
+            console.log('❌ window.data недоступен!');
         }
         
         // Закрываем модальное окно продажи актива
+        console.log('🚪 Закрываем модальное окно...');
         this.closeSellAssetModal();
         
         // Очищаем выбранный актив
+        console.log('🧹 Очищаем выбранный актив');
         this._selectedAsset = null;
         
         // Обновляем список активов в основном модальном окне продажи
+        console.log('📋 Обновляем список активов...');
         this._loadAssetList();
+        
+        console.log('🎉 Продажа завершена успешно!');
         
         // Обновляем список акций в модальном окне списка акций
         this._loadStocksList();
