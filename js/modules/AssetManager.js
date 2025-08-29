@@ -623,9 +623,21 @@ class AssetManager {
         if (asset.type === 'stocks') {
             console.log('🔍 Заполняем модальное окно для акций');
             this._fillSellStockModal(asset, infoElement, formElement);
+        } else if (asset.type === 'realestate') {
+            console.log('🔍 Заполняем модальное окно для недвижимости');
+            this._fillSellRealEstateModal(asset, infoElement, formElement);
+        } else if (asset.type === 'business') {
+            console.log('🔍 Заполняем модальное окно для бизнеса');
+            this._fillSellBusinessModal(asset, infoElement, formElement);
+        } else if (asset.type === 'preciousmetals') {
+            console.log('🔍 Заполняем модальное окно для драгоценных металлов');
+            this._fillSellPreciousMetalsModal(asset, infoElement, formElement);
+        } else if (asset.type === 'misc') {
+            console.log('🔍 Заполняем модальное окно для прочих активов');
+            this._fillSellMiscModal(asset, infoElement, formElement);
         } else {
-            console.log('🔍 Используем старую логику для других типов активов');
-            // Для других типов пока используем старую логику
+            console.log('🔍 Используем старую логику для неизвестных типов активов');
+            // Для неизвестных типов используем старую логику
             this._showAssetInfo(asset);
             this._enableSellButton();
         }
@@ -690,6 +702,224 @@ class AssetManager {
     }
 
     /**
+     * Заполнить модальное окно продажи недвижимости
+     */
+    _fillSellRealEstateModal(asset, infoElement, formElement) {
+        // Проверяем, что актив существует и имеет необходимые свойства
+        if (!asset || !asset.name || typeof asset.value === 'undefined') {
+            console.log('❌ Некорректные данные недвижимости:', asset);
+            return;
+        }
+        
+        // Информация о недвижимости
+        infoElement.innerHTML = `
+            <div class="asset-info">
+                <h3>${asset.name}</h3>
+                <p><strong>Тип:</strong> Недвижимость</p>
+                <p><strong>Стоимость:</strong> $${asset.value.toFixed(0)}</p>
+                <p><strong>Доход:</strong> $${asset.income || 0}/мес</p>
+            </div>
+        `;
+
+        // Форма продажи
+        formElement.innerHTML = `
+            <div class="sell-form">
+                <div class="input-group">
+                    <label>Цена продажи ($):</label>
+                    <div class="quick-sell-price-buttons">
+                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
+                        <button class="quick-sell-price-btn" data-price="5000">$5K</button>
+                        <button class="quick-sell-price-btn" data-price="10000">$10K</button>
+                        <button class="quick-sell-price-btn" data-price="25000">$25K</button>
+                        <button class="quick-sell-price-btn" data-price="50000">$50K</button>
+                        <button class="quick-sell-price-btn" data-price="100000">$100K</button>
+                        <button class="quick-sell-price-btn" data-price="250000">$250K</button>
+                        <button class="quick-sell-price-btn" data-price="500000">$500K</button>
+                    </div>
+                    <div class="custom-sell-price-input">
+                        <input type="number" class="sell-price" min="0" value="${asset.value}" step="1000">
+                    </div>
+                </div>
+                
+                <div class="total-info">
+                    <p><strong>Итого к получению:</strong> <span class="sell-total">$${asset.value.toFixed(0)}</span></p>
+                </div>
+            </div>
+        `;
+
+        // Инициализируем кнопки быстрых цен
+        this._initializeSellPriceButtons(asset.name);
+        
+        // Добавляем обработчики событий
+        this._addSellModalEventHandlers();
+    }
+
+    /**
+     * Заполнить модальное окно продажи бизнеса
+     */
+    _fillSellBusinessModal(asset, infoElement, formElement) {
+        // Проверяем, что актив существует и имеет необходимые свойства
+        if (!asset || !asset.name || typeof asset.value === 'undefined') {
+            console.log('❌ Некорректные данные бизнеса:', asset);
+            return;
+        }
+        
+        // Информация о бизнесе
+        infoElement.innerHTML = `
+            <div class="asset-info">
+                <h3>${asset.name}</h3>
+                <p><strong>Тип:</strong> Бизнес</p>
+                <p><strong>Стоимость:</strong> $${asset.value.toFixed(0)}</p>
+                <p><strong>Доход:</strong> $${asset.income || 0}/мес</p>
+            </div>
+        `;
+
+        // Форма продажи
+        formElement.innerHTML = `
+            <div class="sell-form">
+                <div class="input-group">
+                    <label>Цена продажи ($):</label>
+                    <div class="quick-sell-price-buttons">
+                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
+                        <button class="quick-sell-price-btn" data-price="5000">$5K</button>
+                        <button class="quick-sell-price-btn" data-price="10000">$10K</button>
+                        <button class="quick-sell-price-btn" data-price="25000">$25K</button>
+                        <button class="quick-sell-price-btn" data-price="50000">$50K</button>
+                        <button class="quick-sell-price-btn" data-price="100000">$100K</button>
+                        <button class="quick-sell-price-btn" data-price="250000">$250K</button>
+                        <button class="quick-sell-price-btn" data-price="500000">$500K</button>
+                    </div>
+                    <div class="custom-sell-price-input">
+                        <input type="number" class="sell-price" min="0" value="${asset.value}" step="1000">
+                    </div>
+                </div>
+                
+                <div class="total-info">
+                    <p><strong>Итого к получению:</strong> <span class="sell-total">$${asset.value.toFixed(0)}</span></p>
+                </div>
+            </div>
+        `;
+
+        // Инициализируем кнопки быстрых цен
+        this._initializeSellPriceButtons(asset.name);
+        
+        // Добавляем обработчики событий
+        this._addSellModalEventHandlers();
+    }
+
+    /**
+     * Заполнить модальное окно продажи драгоценных металлов
+     */
+    _fillSellPreciousMetalsModal(asset, infoElement, formElement) {
+        // Проверяем, что актив существует и имеет необходимые свойства
+        if (!asset || !asset.name || typeof asset.quantity === 'undefined' || typeof asset.price === 'undefined') {
+            console.log('❌ Некорректные данные драгоценных металлов:', asset);
+            return;
+        }
+        
+        // Информация о драгоценных металлах
+        infoElement.innerHTML = `
+            <div class="asset-info">
+                <h3>${asset.name}</h3>
+                <p><strong>Тип:</strong> Драгоценные металлы</p>
+                <p><strong>Количество:</strong> ${asset.quantity} ${asset.unit || 'г'}</p>
+                <p><strong>Цена за единицу:</strong> $${asset.price.toFixed(1)}</p>
+                <p><strong>Общая стоимость:</strong> $${(asset.quantity * asset.price).toFixed(0)}</p>
+            </div>
+        `;
+
+        // Форма продажи
+        formElement.innerHTML = `
+            <div class="sell-form">
+                <div class="input-group">
+                    <label>Количество для продажи:</label>
+                    <input type="number" class="sell-quantity" min="1" max="${asset.quantity}" value="${asset.quantity}" step="1">
+                </div>
+                
+                <div class="input-group">
+                    <label>Цена продажи за единицу ($):</label>
+                    <div class="quick-sell-price-buttons">
+                        <button class="quick-sell-price-btn" data-price="10">$10</button>
+                        <button class="quick-sell-price-btn" data-price="25">$25</button>
+                        <button class="quick-sell-price-btn" data-price="50">$50</button>
+                        <button class="quick-sell-price-btn" data-price="100">$100</button>
+                        <button class="quick-sell-price-btn" data-price="250">$250</button>
+                        <button class="quick-sell-price-btn" data-price="500">$500</button>
+                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
+                        <button class="quick-sell-price-btn" data-price="2000">$2K</button>
+                    </div>
+                    <div class="custom-sell-price-input">
+                        <input type="number" class="sell-price" min="0" value="${asset.price}" step="10">
+                    </div>
+                </div>
+                
+                <div class="total-info">
+                    <p><strong>Итого к получению:</strong> <span class="sell-total">$${(asset.quantity * asset.price).toFixed(0)}</span></p>
+                </div>
+            </div>
+        `;
+
+        // Инициализируем кнопки быстрых цен
+        this._initializeSellPriceButtons(asset.name);
+        
+        // Добавляем обработчики событий
+        this._addSellModalEventHandlers();
+    }
+
+    /**
+     * Заполнить модальное окно продажи прочих активов
+     */
+    _fillSellMiscModal(asset, infoElement, formElement) {
+        // Проверяем, что актив существует и имеет необходимые свойства
+        if (!asset || !asset.name || typeof asset.value === 'undefined') {
+            console.log('❌ Некорректные данные прочего актива:', asset);
+            return;
+        }
+        
+        // Информация о прочем активе
+        infoElement.innerHTML = `
+            <div class="asset-info">
+                <h3>${asset.name}</h3>
+                <p><strong>Тип:</strong> Прочий актив</p>
+                <p><strong>Стоимость:</strong> $${asset.value.toFixed(0)}</p>
+                <p><strong>Доход:</strong> $${asset.income || 0}/мес</p>
+            </div>
+        `;
+
+        // Форма продажи
+        formElement.innerHTML = `
+            <div class="sell-form">
+                <div class="input-group">
+                    <label>Цена продажи ($):</label>
+                    <div class="quick-sell-price-buttons">
+                        <button class="quick-sell-price-btn" data-price="100">$100</button>
+                        <button class="quick-sell-price-btn" data-price="500">$500</button>
+                        <button class="quick-sell-price-btn" data-price="1000">$1K</button>
+                        <button class="quick-sell-price-btn" data-price="5000">$5K</button>
+                        <button class="quick-sell-price-btn" data-price="10000">$10K</button>
+                        <button class="quick-sell-price-btn" data-price="25000">$25K</button>
+                        <button class="quick-sell-price-btn" data-price="50000">$50K</button>
+                        <button class="quick-sell-price-btn" data-price="100000">$100K</button>
+                    </div>
+                    <div class="custom-sell-price-input">
+                        <input type="number" class="sell-price" min="0" value="${asset.value}" step="100">
+                    </div>
+                </div>
+                
+                <div class="total-info">
+                    <p><strong>Итого к получению:</strong> <span class="sell-total">$${asset.value.toFixed(0)}</span></p>
+                </div>
+            </div>
+        `;
+
+        // Инициализируем кнопки быстрых цен
+        this._initializeSellPriceButtons(asset.name);
+        
+        // Добавляем обработчики событий
+        this._addSellModalEventHandlers();
+    }
+
+    /**
      * Добавить обработчики событий для модального окна продажи
      */
     _addSellModalEventHandlers() {
@@ -715,15 +945,23 @@ class AssetManager {
      * Обновить расчеты в модальном окне продажи
      */
     _updateSellModalCalculations() {
-        const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
         const priceInput = document.querySelector('#sell-asset-modal .sell-price');
         const totalElement = document.querySelector('#sell-asset-modal .sell-total');
         
-        if (!quantityInput || !priceInput || !totalElement) return;
+        if (!priceInput || !totalElement) return;
         
-        const quantity = parseInt(quantityInput.value) || 0;
         const price = parseFloat(priceInput.value) || 0;
-        const total = quantity * price;
+        let total = 0;
+        
+        // Проверяем, есть ли поле количества (для акций и драгоценных металлов)
+        const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
+        if (quantityInput) {
+            const quantity = parseInt(quantityInput.value) || 0;
+            total = quantity * price;
+        } else {
+            // Для недвижимости, бизнеса и прочих активов продаем целиком
+            total = price;
+        }
         
         totalElement.textContent = `$${total.toFixed(0)}`;
     }
@@ -734,12 +972,10 @@ class AssetManager {
     _executeSellFromModal() {
         if (!this._selectedAsset) return;
         
-        const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
         const priceInput = document.querySelector('#sell-asset-modal .sell-price');
         
-        if (!quantityInput || !priceInput) return;
+        if (!priceInput) return;
         
-        const quantity = parseInt(quantityInput.value) || 0;
         const sellPrice = parseFloat(priceInput.value) || 0;
         
         if (sellPrice <= 0) {
@@ -747,16 +983,30 @@ class AssetManager {
             return;
         }
         
-        if (quantity <= 0 || quantity > this._selectedAsset.quantity) {
-            alert('Некорректное количество для продажи!');
-            return;
-        }
-        
         // Сохраняем информацию об активе для уведомления
         const assetName = this._selectedAsset.name;
         
-        // Рассчитываем выручку
-        const revenue = quantity * sellPrice;
+        // Рассчитываем выручку в зависимости от типа актива
+        let revenue = 0;
+        let quantity = 1;
+        
+        if (this._selectedAsset.type === 'stocks' || this._selectedAsset.type === 'preciousmetals') {
+            // Для акций и драгоценных металлов есть количество
+            const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
+            if (!quantityInput) return;
+            
+            quantity = parseInt(quantityInput.value) || 0;
+            
+            if (quantity <= 0 || quantity > this._selectedAsset.quantity) {
+                alert('Некорректное количество для продажи!');
+                return;
+            }
+            
+            revenue = quantity * sellPrice;
+        } else {
+            // Для недвижимости, бизнеса и прочих активов продаем целиком
+            revenue = sellPrice;
+        }
         
         console.log(`💰 Продажа актива из модального окна: ${assetName} ${quantity} шт. за $${sellPrice}, выручка: $${revenue}`);
         
@@ -765,17 +1015,26 @@ class AssetManager {
             window.cash += revenue;
             
             // Обновляем или удаляем актив
-            if (quantity === this._selectedAsset.quantity) {
-                // Продаем все - удаляем актив
+            if (this._selectedAsset.type === 'stocks' || this._selectedAsset.type === 'preciousmetals') {
+                // Для акций и драгоценных металлов может быть частичная продажа
+                if (quantity === this._selectedAsset.quantity) {
+                    // Продаем все - удаляем актив
+                    const assetIndex = window.data.asset.findIndex(a => a.id === this._selectedAsset.id);
+                    if (assetIndex !== -1) {
+                        window.data.asset.splice(assetIndex, 1);
+                    }
+                } else {
+                    // Продаем часть - уменьшаем количество
+                    const asset = window.data.asset.find(a => a.id === this._selectedAsset.id);
+                    if (asset) {
+                        asset.quantity -= quantity;
+                    }
+                }
+            } else {
+                // Для недвижимости, бизнеса и прочих активов продаем целиком
                 const assetIndex = window.data.asset.findIndex(a => a.id === this._selectedAsset.id);
                 if (assetIndex !== -1) {
                     window.data.asset.splice(assetIndex, 1);
-                }
-            } else {
-                // Продаем часть - уменьшаем количество
-                const asset = window.data.asset.find(a => a.id === this._selectedAsset.id);
-                if (asset) {
-                    asset.quantity -= quantity;
                 }
             }
             
