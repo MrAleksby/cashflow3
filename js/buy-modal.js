@@ -1092,8 +1092,8 @@ const ASSET_CATEGORIES = {
                 alert('Введите количество акций!');
                 return;
             }
-            if (pricePerShare < 0) {
-                alert('Цена за акцию не может быть отрицательной!');
+            if (pricePerShare <= 0) {
+                alert('Введите цену за акцию!');
                 return;
             }
 
@@ -1116,21 +1116,10 @@ const ASSET_CATEGORIES = {
 
             if (!window.data.asset) window.data.asset = [];
             
-            // Debug logs
-            console.log('🎯 Debug: Текущие активы в window.data.asset:', window.data.asset);
-            console.log('🎯 Debug: Покупаемый актив item.name:', item.name);
-            console.log('🎯 Debug: window.data:', window.data);
-            console.log('🎯 Debug: localStorage appData:', localStorage.getItem('appData'));
-
             // Ищем существующие акции с таким же названием
             let existingStock = window.data.asset.find(asset => 
                 asset.type === 'stocks' && asset.name === item.name
             );
-            
-            console.log('🎯 Debug: Найденная существующая акция:', existingStock);
-            console.log('🎯 Debug: pricePerShare:', pricePerShare);
-            console.log('🎯 Debug: shares:', shares);
-            console.log('🎯 Debug: totalPrice:', totalPrice);
             
             if (existingStock) {
                 // Если акции уже есть, обновляем количество и среднюю цену
