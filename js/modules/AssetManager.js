@@ -1479,6 +1479,16 @@ class AssetManager {
                 }
             }
             
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'sell',
+                assetName: assetName,
+                amount: revenue,
+                quantity: quantity,
+                date: new Date().toISOString()
+            });
+            
             // Сохраняем данные
             if (window.saveData) {
                 window.saveData();
@@ -1492,6 +1502,11 @@ class AssetManager {
             // Обновляем отображение баланса
             if (window.renderCash) {
                 window.renderCash();
+            }
+            
+            // Обновляем историю
+            if (window.renderHistory) {
+                window.renderHistory();
             }
         }
         
@@ -1967,6 +1982,16 @@ class AssetManager {
                 window.data.asset.splice(assetIndex, 1);
             }
             
+            // Добавляем запись в историю
+            if (!window.data.history) window.data.history = [];
+            window.data.history.push({
+                type: 'sell',
+                assetName: asset.name,
+                amount: revenue,
+                quantity: 1,
+                date: new Date().toISOString()
+            });
+            
             // Сохраняем данные
             if (window.saveData) {
                 window.saveData();
@@ -1980,6 +2005,11 @@ class AssetManager {
             // Обновляем отображение баланса
             if (window.renderCash) {
                 window.renderCash();
+            }
+            
+            // Обновляем историю
+            if (window.renderHistory) {
+                window.renderHistory();
             }
         } else if (window.gameState) {
             // Fallback на gameState
