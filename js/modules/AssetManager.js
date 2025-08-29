@@ -139,10 +139,7 @@ class AssetManager {
             modal.classList.add('active');
             this._updateBuyModalWallet();
             
-            // Показываем уведомление о новой логике
-            if (window.animationManager) {
-                window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика покупки активов', 'info');
-            }
+            // AssetManager активен
             console.log('🎯 AssetManager: Открыто модальное окно покупки');
         }
     }
@@ -227,10 +224,7 @@ class AssetManager {
             console.log('📊 GameState доступен:', !!window.gameState);
             console.log('📊 Данные GameState:', window.gameState?.data);
             
-            // Показываем уведомление о новой логике
-            if (window.animationManager) {
-                window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика продажи активов', 'info');
-            }
+            // AssetManager активен
         } else {
             console.error('❌ Модальное окно продажи не найдено');
         }
