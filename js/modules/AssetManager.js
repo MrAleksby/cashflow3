@@ -45,9 +45,9 @@ class AssetManager {
     _initEventHandlers() {
         // Обработчики для кнопок покупки/продажи
         if (window.DOM) {
-            // Не добавляем обработчики, так как они уже есть в старом коде
-            // window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
-            // window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
+            // Добавляем обработчики для новой логики
+            window.DOM.addEventListener('main-buy-btn', 'click', () => this.openBuyModal());
+            window.DOM.addEventListener('main-sell-btn', 'click', () => this.openSellModal());
         }
     }
 
@@ -64,6 +64,12 @@ class AssetManager {
             // Используем старый способ открытия для совместимости
             modal.classList.add('active');
             this._updateBuyModalWallet();
+            
+            // Показываем уведомление о новой логике
+            if (window.animationManager) {
+                window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика покупки активов', 'info');
+            }
+            console.log('🎯 AssetManager: Открыто модальное окно покупки');
         }
     }
 
@@ -136,6 +142,12 @@ class AssetManager {
             this._currentAssetType = 'stocks';
             this._updateAssetTypeButtons();
             this._loadAssetList();
+            
+            // Показываем уведомление о новой логике
+            if (window.animationManager) {
+                window.animationManager.showNotification('🆕 AssetManager активен! Улучшенная логика продажи активов', 'info');
+            }
+            console.log('🎯 AssetManager: Открыто модальное окно продажи');
         }
     }
 
