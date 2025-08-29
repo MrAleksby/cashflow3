@@ -289,7 +289,7 @@ class AssetManager {
         console.log('📊 Загружено акций для продажи:', stocks.length);
 
         if (stocks.length === 0) {
-            listElement.innerHTML = '<div class="asset-item">Нет доступных акций для продажи</div>';
+            listElement.innerHTML = '<div class="asset-item" style="text-align: center; padding: 20px; color: #666;">Нет доступных акций для продажи</div>';
             return;
         }
 
@@ -798,6 +798,9 @@ class AssetManager {
         
         // Обновляем список активов в основном модальном окне продажи
         this._loadAssetList();
+        
+        // Обновляем список акций в модальном окне списка акций
+        this._loadStocksList();
         
         // Показываем уведомление
         if (window.animationManager) {
