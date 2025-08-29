@@ -1167,18 +1167,7 @@ const ASSET_CATEGORIES = {
                 return;
             }
 
-            let confirmText = `Подтвердите ${totalPrice === 0 ? 'получение' : 'покупку'}:\n`;
-            confirmText += `${shares} акций ${item.name}\n`;
-            if (totalPrice > 0) {
-                confirmText += `Стоимость: $${totalPrice}\n`;
-            }
-            if (monthlyIncome > 0) {
-                confirmText += `Денежный поток: $${monthlyIncome.toFixed(0)}`;
-            }
-
-            if (!confirm(confirmText)) {
-                return;
-            }
+            // Убираем подтверждение для быстрого UX
 
             if (totalPrice > 0) {
                 window.cash -= totalPrice;

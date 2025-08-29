@@ -427,10 +427,7 @@ function sellStocks() {
     // Рассчитываем сумму продажи используя цену продажи
     const totalSale = quantity * sellPrice;
     
-    // Подтверждение продажи
-    if (!confirm(`Подтвердите продажу:\n${quantity} шт. ${selectedAsset.name}\nСумма: $${totalSale}`)) {
-        return;
-    }
+    // Убираем подтверждение для быстрого UX
     
     // Добавляем деньги от продажи
     window.cash += totalSale;
@@ -506,12 +503,7 @@ function sellRealEstate() {
         return;
     }
     
-    // Подтверждение продажи
-    const actionWord = sellPrice === 0 ? 'передачу' : 'продажу';
-    const priceText = sellPrice === 0 ? '' : `\nЦена: $${sellPrice}`;
-    if (!confirm(`Подтвердите ${actionWord}:\n${selectedAsset.name}${priceText}`)) {
-        return;
-    }
+    // Убираем подтверждение для быстрого UX
     
     // Обновляем наличные только если цена больше 0
     if (sellPrice > 0) {
