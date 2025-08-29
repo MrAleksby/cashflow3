@@ -414,6 +414,23 @@ const ASSET_CATEGORIES = {
     // Показ формы для конкретного типа драгоценного металла
     function showPreciousMetalForm(item) {
         const content = modal.querySelector('.asset-categories');
+        
+        // Определяем фиксированную цену в зависимости от типа металла
+        let fixedPrice = 0;
+        let priceButtons = '';
+        
+        if (item.id === 'krugerrand') {
+            fixedPrice = 3000;
+            priceButtons = `
+                <button class="quick-price-btn" data-price="3000">$3000</button>
+            `;
+        } else if (item.id === 'rare-coin') {
+            fixedPrice = 500;
+            priceButtons = `
+                <button class="quick-price-btn" data-price="500">$500</button>
+            `;
+        }
+        
         content.innerHTML = `
             <div class="assets-list">
                 <div class="asset-card">
@@ -422,11 +439,12 @@ const ASSET_CATEGORIES = {
                         <div class="precious-metal-inputs">
                             <div class="input-group">
                                 <label>Цена ($):</label>
-                                <input type="number" class="metal-price" min="0" step="1000" inputmode="numeric" pattern="[0-9]*">
-                            </div>
-                            <div class="input-group">
-                                <label>Первый взнос ($):</label>
-                                <input type="number" class="metal-down-payment" min="0" step="10" inputmode="numeric" pattern="[0-9]*">
+                                <div class="quick-price-buttons">
+                                    ${priceButtons}
+                                </div>
+                                <div class="custom-price-input">
+                                    <input type="number" class="metal-price" min="0" step="100" value="${fixedPrice}" inputmode="numeric" pattern="[0-9]*" placeholder="Или введите свою цену">
+                                </div>
                             </div>
                             <button class="buy-metal-btn">Купить</button>
                         </div>
@@ -443,38 +461,42 @@ const ASSET_CATEGORIES = {
         // Добавляем обработчики
         const form = content.querySelector('.precious-metal-inputs');
         const priceInput = form.querySelector('.metal-price');
-        const downPaymentInput = form.querySelector('.metal-down-payment');
         const buyButton = form.querySelector('.buy-metal-btn');
+
+        // Обработчики для быстрых кнопок цен
+        const quickPriceButtons = form.querySelectorAll('.quick-price-btn');
+        quickPriceButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const price = parseFloat(btn.dataset.price);
+                
+                // Убираем активный класс у всех кнопок
+                quickPriceButtons.forEach(b => b.classList.remove('active'));
+                // Добавляем активный класс к нажатой кнопке
+                btn.classList.add('active');
+                
+                // Устанавливаем цену в поле ввода
+                priceInput.value = price;
+                priceInput.dispatchEvent(new Event('input'));
+            });
+        });
 
         // Обработчик покупки
         buyButton.addEventListener('click', () => {
             const price = parseFloat(priceInput.value) || 0;
-            const downPayment = parseFloat(downPaymentInput.value) || 0;
 
             // Валидация
-            if (price < 0) {
-                alert('Цена не может быть отрицательной!');
+            if (price <= 0) {
+                alert('Цена должна быть больше 0!');
                 return;
             }
-            if (downPayment < 0) {
-                alert('Первый взнос не может быть отрицательным!');
-                return;
-            }
-            if (downPayment > price) {
-                alert('Первый взнос не может быть больше цены!');
-                return;
-            }
-            if (downPayment > 0 && downPayment > window.cash) {
-                alert('Недостаточно средств для первого взноса!');
+            if (price > window.cash) {
+                alert('Недостаточно средств для покупки!');
                 return;
             }
 
-            // Убираем подтверждение для быстрого UX
-
-            // Списываем деньги только если есть первый взнос
-            if (downPayment > 0) {
-                window.cash -= downPayment;
-            }
+            // Списываем деньги
+            window.cash -= price;
 
             // Добавляем в активы
             if (!window.data.asset) window.data.asset = [];
@@ -491,7 +513,7 @@ const ASSET_CATEGORIES = {
             window.data.history.push({
                 type: 'buy',
                 assetName: item.name,
-                amount: downPayment,
+                amount: price,
                 date: new Date().toISOString()
             });
 
