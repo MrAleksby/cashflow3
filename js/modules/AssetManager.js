@@ -468,7 +468,11 @@ class AssetManager {
      * Открыть модальное окно продажи конкретного актива
      */
     _openSellAssetModal(asset) {
+        console.log('🔍 Попытка открыть модальное окно продажи актива:', asset);
+        
         const modal = document.getElementById('sell-asset-modal');
+        console.log('🔍 Найденное модальное окно:', modal);
+        
         if (!modal) {
             console.log('❌ Модальное окно продажи актива не найдено');
             return;
@@ -498,9 +502,13 @@ class AssetManager {
      * Заполнить модальное окно продажи актива
      */
     _fillSellAssetModal(asset) {
+        console.log('🔍 Заполнение модального окна продажи для актива:', asset);
+        
         const titleElement = document.getElementById('sell-asset-title');
         const infoElement = document.getElementById('sell-asset-info');
         const formElement = document.getElementById('sell-asset-form');
+        
+        console.log('🔍 Найденные элементы:', { titleElement, infoElement, formElement });
         
         if (!titleElement || !infoElement || !formElement) {
             console.log('❌ Элементы модального окна продажи не найдены');
@@ -512,8 +520,10 @@ class AssetManager {
 
         // Заполняем информацию об активе в зависимости от типа
         if (asset.type === 'stocks') {
+            console.log('🔍 Заполняем модальное окно для акций');
             this._fillSellStockModal(asset, infoElement, formElement);
         } else {
+            console.log('🔍 Используем старую логику для других типов активов');
             // Для других типов пока используем старую логику
             this._showAssetInfo(asset);
             this._enableSellButton();
@@ -635,10 +645,13 @@ class AssetManager {
             return;
         }
         
+        // Сохраняем информацию об активе для уведомления
+        const assetName = this._selectedAsset.name;
+        
         // Рассчитываем выручку
         const revenue = quantity * sellPrice;
         
-        console.log(`💰 Продажа актива из модального окна: ${this._selectedAsset.name} ${quantity} шт. за $${sellPrice}, выручка: $${revenue}`);
+        console.log(`💰 Продажа актива из модального окна: ${assetName} ${quantity} шт. за $${sellPrice}, выручка: $${revenue}`);
         
         // Добавляем деньги
         if (window.data) {
@@ -670,8 +683,11 @@ class AssetManager {
             }
         }
         
-        // Закрываем модальное окно
+        // Закрываем модальное окно продажи актива
         this.closeSellAssetModal();
+        
+        // Обновляем список активов в основном модальном окне продажи
+        this._loadAssetList();
         
         // Показываем уведомление
         if (window.animationManager) {
