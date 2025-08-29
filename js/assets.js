@@ -46,7 +46,7 @@
       
       if (a.type === 'stocks') {
         value = a.quantity * a.price;
-        displayText = `${a.name} (${a.quantity} шт. по $${a.price}/шт)`;
+        displayText = `${a.name} (${a.quantity} шт. × $${a.price} = $${value})`;
       } else {
         value = Number(a.value) || 0;
         displayText = a.name;

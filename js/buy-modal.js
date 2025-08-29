@@ -1115,13 +1115,36 @@ const ASSET_CATEGORIES = {
             }
 
             if (!window.data.asset) window.data.asset = [];
-            window.data.asset.push({
-                id: `${item.name}-${Date.now()}`,
-                name: item.name,
-                quantity: shares,
-                price: pricePerShare,
-                type: 'stocks'
-            });
+            
+            // Ищем существующие акции с таким же названием
+            let existingStock = window.data.asset.find(asset => 
+                asset.type === 'stocks' && asset.name === item.name
+            );
+            
+            if (existingStock) {
+                // Если акции уже есть, обновляем количество и среднюю цену
+                const oldQuantity = existingStock.quantity;
+                const oldTotalValue = oldQuantity * existingStock.price;
+                const newTotalValue = shares * pricePerShare;
+                const totalQuantity = oldQuantity + shares;
+                const averagePrice = (oldTotalValue + newTotalValue) / totalQuantity;
+                
+                existingStock.quantity = totalQuantity;
+                existingStock.price = Math.round(averagePrice);
+                
+                console.log(`📈 Обновлены акции ${item.name}: ${oldQuantity} + ${shares} = ${totalQuantity} шт. (средняя цена: $${Math.round(averagePrice)})`);
+            } else {
+                // Если акций нет, создаем новую запись
+                window.data.asset.push({
+                    id: `${item.name}-${Date.now()}`,
+                    name: item.name,
+                    quantity: shares,
+                    price: pricePerShare,
+                    type: 'stocks'
+                });
+                
+                console.log(`🆕 Куплены новые акции ${item.name}: ${shares} шт. по $${pricePerShare}`);
+            }
 
             if (monthlyIncome > 0) {
                 if (!window.data.income) window.data.income = [];

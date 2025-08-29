@@ -96,8 +96,9 @@ function loadStockList() {
     stocks.forEach(stock => {
         const stockItem = document.createElement('div');
         stockItem.className = 'asset-item';
+        const totalValue = stock.quantity * stock.price;
         stockItem.innerHTML = `
-            <span>${stock.name} (${stock.quantity} шт. по $${stock.price})</span>
+            <span>${stock.name} (${stock.quantity} шт. × $${stock.price} = $${totalValue})</span>
         `;
         
         stockItem.addEventListener('click', () => selectAsset(stock, 'stocks'));
@@ -446,9 +447,9 @@ function sellStocks() {
     
     // Обновляем количество акций или удаляем их полностью
     if (quantity === selectedAsset.quantity) {
-        // Удаляем только конкретную позицию по id
+        // Удаляем все акции этого типа
         window.data.asset = window.data.asset.filter(asset => 
-            asset.id !== selectedAsset.id
+            !(asset.type === 'stocks' && asset.name === selectedAsset.name)
         );
         
         // Если это дивидендная акция, обновляем пассивный доход
@@ -466,8 +467,8 @@ function sellStocks() {
             }
         }
     } else {
-        // Уменьшаем количество акций в конкретной позиции
-        const asset = window.data.asset.find(a => a.id === selectedAsset.id);
+        // Уменьшаем количество акций в группированной позиции
+        const asset = window.data.asset.find(a => a.type === 'stocks' && a.name === selectedAsset.name);
         if (asset) {
             asset.quantity -= quantity;
             
