@@ -1410,8 +1410,8 @@ class AssetManager {
         let revenue = 0;
         let quantity = 1;
         
-        if (this._selectedAsset.type === 'stocks' || this._selectedAsset.type === 'preciousmetals') {
-            // Для акций и драгоценных металлов есть количество
+        if (this._selectedAsset.type === 'stocks') {
+            // Для акций всегда есть количество
             const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
             console.log('🔍 Поле количества найдено:', quantityInput);
             
@@ -1432,6 +1432,37 @@ class AssetManager {
             
             revenue = quantity * sellPrice;
             console.log('💰 Выручка рассчитана:', revenue);
+        } else if (this._selectedAsset.type === 'preciousmetals') {
+            // Для драгоценных металлов проверяем структуру данных
+            if (this._selectedAsset.price && this._selectedAsset.quantity) {
+                // Если есть цена за единицу и количество - продаем по частям
+                const quantityInput = document.querySelector('#sell-asset-modal .sell-quantity');
+                console.log('🔍 Поле количества найдено:', quantityInput);
+                
+                if (!quantityInput) {
+                    console.log('❌ Поле количества не найдено!');
+                    return;
+                }
+                
+                quantity = parseInt(quantityInput.value) || 0;
+                console.log('📦 Количество для продажи:', quantity);
+                console.log('📦 Доступное количество:', this._selectedAsset.quantity);
+                
+                if (quantity <= 0 || quantity > this._selectedAsset.quantity) {
+                    console.log('❌ Некорректное количество для продажи!');
+                    alert('Некорректное количество для продажи!');
+                    return;
+                }
+                
+                revenue = quantity * sellPrice;
+                console.log('💰 Выручка рассчитана:', revenue);
+            } else {
+                // Если есть только общая стоимость - продаем целиком
+                console.log('💎 Продаем драгоценный металл целиком');
+                quantity = 1;
+                revenue = sellPrice;
+                console.log('💰 Выручка рассчитана:', revenue);
+            }
         } else {
             // Для недвижимости, бизнеса и прочих активов продаем целиком
             revenue = sellPrice;
@@ -1453,8 +1484,8 @@ class AssetManager {
             console.log('🗂️ Количество для продажи:', quantity);
             console.log('🗂️ Общее количество актива:', this._selectedAsset.quantity);
             
-            if (this._selectedAsset.type === 'stocks' || this._selectedAsset.type === 'preciousmetals') {
-                // Для акций и драгоценных металлов может быть частичная продажа
+            if (this._selectedAsset.type === 'stocks') {
+                // Для акций может быть частичная продажа
                 if (quantity === this._selectedAsset.quantity) {
                     // Продаем все - удаляем актив
                     console.log('🗑️ Продаем весь актив - удаляем');
@@ -1471,6 +1502,38 @@ class AssetManager {
                     if (asset) {
                         asset.quantity -= quantity;
                         console.log('✅ Количество актива обновлено:', asset.quantity);
+                    }
+                }
+            } else if (this._selectedAsset.type === 'preciousmetals') {
+                // Для драгоценных металлов проверяем структуру данных
+                if (this._selectedAsset.price && this._selectedAsset.quantity) {
+                    // Если есть цена за единицу и количество - может быть частичная продажа
+                    if (quantity === this._selectedAsset.quantity) {
+                        // Продаем все - удаляем актив
+                        console.log('🗑️ Продаем весь драгоценный металл - удаляем');
+                        const assetIndex = window.data.asset.findIndex(a => a.id === this._selectedAsset.id);
+                        console.log('🗂️ Индекс актива в массиве:', assetIndex);
+                        if (assetIndex !== -1) {
+                            window.data.asset.splice(assetIndex, 1);
+                            console.log('✅ Актив удален из массива');
+                        }
+                    } else {
+                        // Продаем часть - уменьшаем количество
+                        console.log('📦 Продаем часть драгоценного металла - уменьшаем количество');
+                        const asset = window.data.asset.find(a => a.id === this._selectedAsset.id);
+                        if (asset) {
+                            asset.quantity -= quantity;
+                            console.log('✅ Количество актива обновлено:', asset.quantity);
+                        }
+                    }
+                } else {
+                    // Если есть только общая стоимость - продаем целиком
+                    console.log('💎 Продаем драгоценный металл целиком - удаляем');
+                    const assetIndex = window.data.asset.findIndex(a => a.id === this._selectedAsset.id);
+                    console.log('🗂️ Индекс актива в массиве:', assetIndex);
+                    if (assetIndex !== -1) {
+                        window.data.asset.splice(assetIndex, 1);
+                        console.log('✅ Актив удален из массива');
                     }
                 }
             } else {
