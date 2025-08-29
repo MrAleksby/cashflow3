@@ -344,17 +344,7 @@ const ASSET_CATEGORIES = {
                 return;
             }
 
-            // Подтверждение покупки
-            const confirmText = `Подтвердите ${price === 0 ? 'получение' : 'покупку'} бизнеса:\n` +
-                `Название: ${name}\n` +
-                `${price > 0 ? `Цена: $${price}\n` : ''}` +
-                `${downPayment > 0 ? `Первый взнос: $${downPayment}\n` : ''}` +
-                `${liability > 0 ? `Пассив: $${liability}\n` : ''}` +
-                `Денежный поток: $${cashflow}`;
-
-            if (!confirm(confirmText)) {
-                return;
-            }
+            // Убираем подтверждение для быстрого UX
 
             // Списываем деньги
             if (downPayment > 0) {
@@ -479,15 +469,7 @@ const ASSET_CATEGORIES = {
                 return;
             }
 
-            // Подтверждение покупки
-            const confirmText = `Подтвердите ${price === 0 ? 'получение' : 'покупку'}:\n` +
-                `${item.name}\n` +
-                `${price > 0 ? `Цена: $${price}\n` : ''}` +
-                `${downPayment > 0 ? `Первый взнос: $${downPayment}` : ''}`;
-
-            if (!confirm(confirmText)) {
-                return;
-            }
+            // Убираем подтверждение для быстрого UX
 
             // Списываем деньги только если есть первый взнос
             if (downPayment > 0) {
@@ -607,16 +589,7 @@ const ASSET_CATEGORIES = {
                 return;
             }
 
-            // Подтверждение покупки
-            const confirmText = `Подтвердите ${price === 0 ? 'получение' : 'покупку'}:\n` +
-                `${name}\n` +
-                `${price > 0 ? `Цена: $${price}\n` : ''}` +
-                `${downPayment > 0 ? `Первый взнос: $${downPayment}\n` : ''}` +
-                `${expense > 0 ? `Ежемесячный расход: $${expense}` : ''}`;
-
-            if (!confirm(confirmText)) {
-                return;
-            }
+            // Убираем подтверждение для быстрого UX
 
             // Списываем деньги если есть первый взнос
             if (downPayment > 0) {
@@ -1434,21 +1407,7 @@ const ASSET_CATEGORIES = {
             return;
         }
 
-        // Подготовка текста для подтверждения
-        let confirmText = `Подтвердите ${price === 0 ? 'получение' : 'покупку'}:\n`;
-        confirmText += `${item.name}${additionalInfo ? ` (${additionalInfo})` : ''}\n`;
-        if (price > 0) {
-            confirmText += `Цена: $${price}\n`;
-        }
-        if (downPayment > 0) {
-            confirmText += `Первый взнос: $${downPayment}\n`;
-        }
-        confirmText += `Денежный поток: $${cashflow}`;
-
-        // Подтверждение покупки
-        if (!confirm(confirmText)) {
-            return;
-        }
+                    // Убираем подтверждение для быстрого UX
 
         // Списываем деньги (только если есть первый взнос)
         if (downPayment > 0) {
