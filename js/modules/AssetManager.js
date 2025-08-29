@@ -317,6 +317,8 @@ class AssetManager {
                 const price = this.dataset.price;
                 const sellPriceInput = document.querySelector('.sell-price');
                 
+                console.log('🎯 Клик по кнопке быстрой цены продажи:', price);
+                
                 // Убираем активное состояние со всех кнопок
                 document.querySelectorAll('.quick-sell-price-btn').forEach(b => b.classList.remove('active'));
                 
@@ -324,11 +326,18 @@ class AssetManager {
                 this.classList.add('active');
                 
                 // Устанавливаем цену в поле ввода
-                sellPriceInput.value = price;
+                if (sellPriceInput) {
+                    sellPriceInput.value = price;
+                    console.log('✅ Цена установлена в поле ввода:', price);
+                } else {
+                    console.log('❌ Поле ввода цены не найдено');
+                }
                 
-                // Запускаем расчет
-                this._updateSellCalculations();
-            }.bind(this));
+                // Запускаем расчет (используем правильный контекст)
+                if (window.assetManager) {
+                    window.assetManager._updateSellCalculations();
+                }
+            });
         });
     }
 
