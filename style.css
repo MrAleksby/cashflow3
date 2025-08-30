@@ -871,6 +871,56 @@ button:hover {
     border-top: 1px solid #eee;
 }
 
+/* Стили для выпадающего списка недвижимости */
+.realestate-selector {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.realestate-selector:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.realestate-selector optgroup {
+    font-weight: bold;
+    color: #333;
+    padding: 8px 0;
+}
+
+.realestate-selector option {
+    padding: 8px;
+    font-weight: normal;
+}
+
+.realestate-purchase-form {
+    padding: 20px;
+}
+
+.realestate-purchase-form .input-group {
+    margin-bottom: 20px;
+}
+
+.realestate-purchase-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+#realestate-details {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
 /* Дополнительные мобильные стили для планшетов */
 @media (max-width: 768px) {
     .stock-selector {
@@ -890,6 +940,28 @@ button:hover {
     }
     
     #stock-details {
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+    
+    /* Стили для недвижимости на планшетах */
+    .realestate-selector {
+        padding: 14px;
+        font-size: 1.1rem;
+        border-width: 3px;
+        min-height: 50px;
+    }
+    
+    .realestate-purchase-form {
+        padding: 15px;
+    }
+    
+    .realestate-purchase-form label {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    
+    #realestate-details {
         margin-top: 15px;
         padding-top: 15px;
     }
@@ -1047,6 +1119,88 @@ button:hover {
     /* Улучшение полей ввода для мобильных */
     .price-per-share,
     .shares-amount {
+        min-height: 48px !important;
+        padding: 12px 16px !important;
+        font-size: 1.1rem !important;
+        border-radius: 10px !important;
+        border-width: 2px !important;
+    }
+    
+    /* Оптимизация выпадающего списка недвижимости для мобильных */
+    .realestate-selector {
+        padding: 16px 12px;
+        font-size: 1.2rem;
+        border-width: 3px;
+        border-radius: 12px;
+        min-height: 56px; /* Стандарт для touch targets */
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 20px;
+        padding-right: 44px;
+    }
+    
+    .realestate-selector:focus {
+        border-color: #4CAF50;
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.4);
+    }
+    
+    /* Улучшение optgroup и option для недвижимости на мобильных */
+    .realestate-selector optgroup {
+        font-size: 1.1rem;
+        font-weight: bold;
+        color: #2c3e50;
+        padding: 12px 8px;
+        background-color: #f8f9fa;
+    }
+    
+    .realestate-selector option {
+        padding: 14px 8px;
+        font-size: 1rem;
+        font-weight: normal;
+        color: #333;
+        line-height: 1.4;
+    }
+    
+    /* Оптимизация формы покупки недвижимости для мобильных */
+    .realestate-purchase-form {
+        padding: 12px;
+    }
+    
+    .realestate-purchase-form h3 {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+        text-align: center;
+        color: #2c3e50;
+    }
+    
+    .realestate-purchase-form .input-group {
+        margin-bottom: 24px;
+    }
+    
+    .realestate-purchase-form label {
+        font-size: 1.2rem;
+        margin-bottom: 12px;
+        font-weight: 600;
+        color: #34495e;
+        display: block;
+    }
+    
+    /* Оптимизация области деталей недвижимости для мобильных */
+    #realestate-details {
+        margin-top: 20px;
+        padding: 16px;
+        background-color: #f8f9fa;
+        border-radius: 12px;
+        border: 2px solid #e9ecef;
+    }
+    
+    /* Улучшение полей ввода для недвижимости на мобильных */
+    .property-price,
+    .property-down-payment {
         min-height: 48px !important;
         padding: 12px 16px !important;
         font-size: 1.1rem !important;

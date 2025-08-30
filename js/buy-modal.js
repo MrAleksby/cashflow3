@@ -191,30 +191,37 @@ const ASSET_CATEGORIES = {
         `;
     }
 
-    // Создание списка типов недвижимости
+    // Создание формы покупки недвижимости с выпадающим списком
     function createRealEstateTypeSelector() {
         return `
-            <div class="realestate-type-selector">
-                <h3>Выберите тип недвижимости:</h3>
-                <div class="type-list">
-                    <div class="type-group">
-                        <h4>Дома</h4>
-                        <button class="type-btn" data-type="house-2-1">2/1 (2 спальни, 1 ванная)</button>
-                        <button class="type-btn" data-type="house-3-2">3/2 (3 спальни, 2 ванные)</button>
-                    </div>
-                    <div class="type-group">
-                        <h4>Многоквартирные дома</h4>
-                        <button class="type-btn" data-type="plex-2">2 плекс (Дуплекс)</button>
-                        <button class="type-btn" data-type="plex-4">4 плекс</button>
-                        <button class="type-btn" data-type="plex-8">8 плекс</button>
-                        <button class="type-btn" data-type="plex-16">16 плекс</button>
-                        <button class="type-btn" data-type="apartment-building">Многоквартирный дом</button>
-                    </div>
-                    <div class="type-group">
-                        <h4>Земля</h4>
-                        <button class="type-btn" data-type="land">Земельный участок</button>
-                    </div>
+            <div class="realestate-purchase-form">
+                <h3>Покупка недвижимости</h3>
+                
+                <div class="input-group">
+                    <label>Выберите тип недвижимости:</label>
+                    <select class="realestate-selector">
+                        <option value="">-- Выберите недвижимость --</option>
+                        <optgroup label="🏠 Дома">
+                            <option value="house-2-1">2/1 (2 спальни, 1 ванная)</option>
+                            <option value="house-3-2">3/2 (3 спальни, 2 ванные)</option>
+                        </optgroup>
+                        <optgroup label="🏢 Многоквартирные">
+                            <option value="plex-2">2 плекс (Дуплекс)</option>
+                            <option value="plex-4">4 плекс</option>
+                            <option value="plex-8">8 плекс</option>
+                            <option value="plex-16">16 плекс</option>
+                            <option value="apartment-building">Многоквартирный дом</option>
+                        </optgroup>
+                        <optgroup label="🌱 Земля">
+                            <option value="land">Земельный участок</option>
+                        </optgroup>
+                    </select>
                 </div>
+                
+                <div id="realestate-details" style="display: none;">
+                    <!-- Детали выбранной недвижимости будут загружены здесь -->
+                </div>
+                
                 <button class="back-button">Назад</button>
             </div>
         `;
@@ -709,18 +716,52 @@ const ASSET_CATEGORIES = {
         const content = modal.querySelector('.asset-categories');
 
         if (category === 'realestate') {
-            // Показываем селектор типов недвижимости
+            // Показываем форму покупки недвижимости с выпадающим списком
             content.innerHTML = createRealEstateTypeSelector();
 
-            // Добавляем обработчики для кнопок выбора типа
-            content.querySelectorAll('.type-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const typeId = btn.dataset.type;
-                    const item = categoryData.items.find(i => i.id === typeId);
+            // Добавляем обработчик для выпадающего списка недвижимости
+            const realestateSelector = content.querySelector('.realestate-selector');
+            const realestateDetails = content.querySelector('#realestate-details');
+            
+            // Добавляем мобильно-оптимизированный обработчик изменений
+            realestateSelector.addEventListener('change', () => {
+                const selectedRealestateId = realestateSelector.value;
+                
+                if (selectedRealestateId) {
+                    const item = categoryData.items.find(i => i.id === selectedRealestateId);
                     if (item) {
-                        showRealEstateForm(item);
+                        // Показываем форму покупки недвижимости прямо в этом же модальном окне
+                        showRealEstateForm(item, realestateDetails);
+                        realestateDetails.style.display = 'block';
+                        
+                        // Плавная прокрутка к деталям на мобильных
+                        if (window.innerWidth <= 480) {
+                            setTimeout(() => {
+                                realestateDetails.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'start' 
+                                });
+                            }, 100);
+                        }
                     }
-                });
+                } else {
+                    realestateDetails.style.display = 'none';
+                }
+            });
+            
+            // Улучшения для мобильных: добавляем активную обратную связь
+            realestateSelector.addEventListener('focus', () => {
+                if (window.innerWidth <= 480) {
+                    realestateSelector.style.borderColor = '#4CAF50';
+                    realestateSelector.style.boxShadow = '0 0 8px rgba(76, 175, 80, 0.4)';
+                }
+            });
+            
+            realestateSelector.addEventListener('blur', () => {
+                if (window.innerWidth <= 480) {
+                    realestateSelector.style.borderColor = '#ddd';
+                    realestateSelector.style.boxShadow = 'none';
+                }
             });
         } else if (category === 'stocks') {
             // Показываем форму покупки акций с выпадающим списком
@@ -814,22 +855,34 @@ const ASSET_CATEGORIES = {
     }
 
     // Показ формы для конкретного типа недвижимости
-    function showRealEstateForm(item) {
-        const content = modal.querySelector('.asset-categories');
-        content.innerHTML = `
-            <div class="assets-list">
-                ${createAssetCard(item, 'realestate')}
-            </div>
-            <div class="buy-controls">
+    function showRealEstateForm(item, targetContainer = null) {
+        const content = targetContainer || modal.querySelector('.asset-categories');
+        
+        if (targetContainer) {
+            // Если используется контейнер деталей, показываем только форму
+            content.innerHTML = `
+                <div class="assets-list">
+                    ${createAssetCard(item, 'realestate')}
+                </div>
                 <div class="wallet-info">В кошельке: <span id="modal-wallet-amount">${window.cash || 0}</span></div>
-                <button class="back-button">Назад к типам недвижимости</button>
-            </div>
-        `;
+            `;
+        } else {
+            // Оригинальное поведение для обратной совместимости
+            content.innerHTML = `
+                <div class="assets-list">
+                    ${createAssetCard(item, 'realestate')}
+                </div>
+                <div class="buy-controls">
+                    <div class="wallet-info">В кошельке: <span id="modal-wallet-amount">${window.cash || 0}</span></div>
+                    <button class="back-button">Назад к типам недвижимости</button>
+                </div>
+            `;
 
-        // Добавляем обработчик для кнопки "Назад"
-        content.querySelector('.back-button').addEventListener('click', () => {
-            showCategoryItems('realestate');
-        });
+            // Добавляем обработчик для кнопки "Назад"
+            content.querySelector('.back-button').addEventListener('click', () => {
+                showCategoryItems('realestate');
+            });
+        }
 
         // Инициализируем обработчики для полей недвижимости
         initializePropertyInputs();
