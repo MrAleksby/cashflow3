@@ -92,7 +92,7 @@ class AssetManager {
         
         // Обработчик закрытия модального окна продажи
         document.addEventListener('click', (e) => {
-            if (e.target.closest('#sell-modal .close-btn') || e.target.closest('#cancel-sell-btn')) {
+            if (e.target.closest('#sell-modal .close-btn')) {
                 this.closeSellModal();
             }
         });
@@ -112,17 +112,7 @@ class AssetManager {
             }
         });
         
-        // Обработчик для кнопки продажи
-        document.addEventListener('click', (e) => {
-            if (e.target.matches('#sell-asset-btn')) {
-                // Используем новую систему продажи для всех типов активов
-                if (this._selectedAsset) {
-                    this._openSellAssetModal(this._selectedAsset);
-                } else {
-                    console.log('❌ Нет выбранного актива для продажи');
-                }
-            }
-        });
+
     }
 
     // === МЕТОДЫ ДЛЯ ПОКУПКИ АКТИВОВ ===
@@ -691,7 +681,6 @@ class AssetManager {
         
         this._selectedAsset = null;
         this._hideAllAssetInfo();
-        this._disableSellButton();
     }
     
     /**
@@ -760,25 +749,7 @@ class AssetManager {
         }
     }
     
-    /**
-     * Отключить кнопку продажи
-     */
-    _disableSellButton() {
-        const sellBtn = document.querySelector('#sell-asset-btn');
-        if (sellBtn) {
-            sellBtn.disabled = true;
-        }
-    }
     
-    /**
-     * Включить кнопку продажи
-     */
-    _enableSellButton() {
-        const sellBtn = document.querySelector('#sell-asset-btn');
-        if (sellBtn) {
-            sellBtn.disabled = false;
-        }
-    }
     
     /**
      * Переключить тип актива
@@ -842,8 +813,8 @@ class AssetManager {
         console.log(`🎨 Отрисовка ${assets.length} активов в элемент:`, listElement);
         
         if (assets.length === 0) {
-            listElement.innerHTML = '<div class="asset-item">Нет доступных активов для продажи</div>';
-            console.log('📝 Отображено сообщение "Нет активов"');
+            listElement.innerHTML = '';
+            console.log('📝 Список активов пуст');
             return;
         }
         
@@ -977,7 +948,6 @@ class AssetManager {
             console.log('🔍 Используем старую логику для неизвестных типов активов');
             // Для неизвестных типов используем старую логику
             this._showAssetInfo(asset);
-            this._enableSellButton();
         }
     }
 
@@ -1624,25 +1594,7 @@ class AssetManager {
         });
     }
 
-    /**
-     * Включить кнопку продажи
-     */
-    _enableSellButton() {
-        const sellBtn = window.DOM?.get('sell-asset-btn');
-        if (sellBtn) {
-            sellBtn.disabled = false;
-        }
-    }
 
-    /**
-     * Отключить кнопку продажи
-     */
-    _disableSellButton() {
-        const sellBtn = window.DOM?.get('sell-asset-btn');
-        if (sellBtn) {
-            sellBtn.disabled = true;
-        }
-    }
 
     /**
      * Продать выбранный актив
