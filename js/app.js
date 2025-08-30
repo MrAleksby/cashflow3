@@ -982,8 +982,8 @@ function initializeSellPriceButtons(stockName) {
     document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
         const price = parseInt(btn.dataset.price);
         
-        // Для GRO4US и ON2U скрываем $4 и $50
-        if (['GRO4US', 'ON2U'].includes(stockName) && (price === 4 || price === 50)) {
+        // Для GRO4US и ON2U скрываем $1, $4 и $50
+        if (['GRO4US', 'ON2U'].includes(stockName) && (price === 1 || price === 4 || price === 50)) {
             btn.style.display = 'none';
         }
         // Для MYT4U скрываем только $50

@@ -794,9 +794,8 @@ const ASSET_CATEGORIES = {
                     // Определяем цены для разных акций
                     let priceButtons = '';
                     if (item.id === 'gro4us' || item.id === 'on2u') {
-                        // Для GRO4US и ON2U - без цен $4 и $50
+                        // Для GRO4US и ON2U - без цен $1, $4 и $50
                         priceButtons = `
-                            <button class="quick-price-btn" data-price="1">$1</button>
                             <button class="quick-price-btn" data-price="5">$5</button>
                             <button class="quick-price-btn" data-price="10">$10</button>
                             <button class="quick-price-btn" data-price="20">$20</button>
