@@ -169,15 +169,15 @@ const ASSET_CATEGORIES = {
                     <label>Выберите акцию:</label>
                     <select class="stock-selector">
                         <option value="">-- Выберите акцию --</option>
-                        <optgroup label="Спекулятивные акции">
-                            <option value="myt4u">MYT4U - Спекулятивные акции без пассивного дохода</option>
-                            <option value="on2u">ON2U - Спекулятивные акции без пассивного дохода</option>
-                            <option value="ok4u">OK4U - Спекулятивные акции без пассивного дохода</option>
-                            <option value="gro4us">GRO4US - Спекулятивные акции без пассивного дохода</option>
+                        <optgroup label="📈 Спекулятивные">
+                            <option value="myt4u">MYT4U - Без дохода</option>
+                            <option value="on2u">ON2U - Без дохода</option>
+                            <option value="ok4u">OK4U - Без дохода</option>
+                            <option value="gro4us">GRO4US - Без дохода</option>
                         </optgroup>
-                        <optgroup label="Дивидендные акции">
-                            <option value="2bigpower">2BIGPOWER - Стабильные акции с фиксированным доходом $10 в месяц</option>
-                            <option value="cd">CD - Акции с фиксированным месячным доходом $20</option>
+                        <optgroup label="💰 Дивидендные">
+                            <option value="2bigpower">2BIGPOWER - $10/мес</option>
+                            <option value="cd">CD - $20/мес</option>
                         </optgroup>
                     </select>
                 </div>
@@ -730,6 +730,7 @@ const ASSET_CATEGORIES = {
             const stockSelector = content.querySelector('.stock-selector');
             const stockDetails = content.querySelector('#stock-details');
             
+            // Добавляем мобильно-оптимизированный обработчик изменений
             stockSelector.addEventListener('change', () => {
                 const selectedStockId = stockSelector.value;
                 
@@ -745,11 +746,36 @@ const ASSET_CATEGORIES = {
                         `;
                         stockDetails.style.display = 'block';
                         
+                        // Плавная прокрутка к деталям на мобильных
+                        if (window.innerWidth <= 480) {
+                            setTimeout(() => {
+                                stockDetails.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'start' 
+                                });
+                            }, 100);
+                        }
+                        
                         // Инициализируем обработчики для кнопок и полей ввода
                         initializeStockInputs();
                     }
                 } else {
                     stockDetails.style.display = 'none';
+                }
+            });
+            
+            // Улучшения для мобильных: добавляем активную обратную связь
+            stockSelector.addEventListener('focus', () => {
+                if (window.innerWidth <= 480) {
+                    stockSelector.style.borderColor = '#4CAF50';
+                    stockSelector.style.boxShadow = '0 0 8px rgba(76, 175, 80, 0.4)';
+                }
+            });
+            
+            stockSelector.addEventListener('blur', () => {
+                if (window.innerWidth <= 480) {
+                    stockSelector.style.borderColor = '#ddd';
+                    stockSelector.style.boxShadow = 'none';
                 }
             });
         } else if (category === 'business') {
