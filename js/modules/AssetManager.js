@@ -1104,13 +1104,27 @@ class AssetManager {
         // Определяем доход из различных возможных свойств
         let income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
         
+        console.log('🔍 Отладка дохода для недвижимости:', asset.name);
+        console.log('📊 Свойства актива:', {
+            income: asset.income,
+            monthlyIncome: asset.monthlyIncome,
+            cashFlow: asset.cashFlow,
+            flow: asset.flow
+        });
+        console.log('💰 Найденный доход в свойствах:', income);
+        
         // Если доход не найден в свойствах актива, ищем в массиве доходов
         if (income === 0 && window.data && window.data.income) {
+            console.log('🔍 Ищем в массиве доходов:', window.data.income);
             const incomeRecord = window.data.income.find(inc => inc.source === asset.name);
+            console.log('📋 Найденная запись дохода:', incomeRecord);
             if (incomeRecord) {
                 income = incomeRecord.amount || 0;
+                console.log('✅ Установлен доход из массива:', income);
             }
         }
+        
+        console.log('🎯 Финальный доход:', income);
         
         // Информация о недвижимости
         infoElement.innerHTML = `
@@ -1155,13 +1169,27 @@ class AssetManager {
         // Определяем доход из различных возможных свойств
         let income = asset.income || asset.monthlyIncome || asset.cashFlow || asset.flow || 0;
         
+        console.log('🔍 Отладка дохода для бизнеса:', asset.name);
+        console.log('📊 Свойства актива:', {
+            income: asset.income,
+            monthlyIncome: asset.monthlyIncome,
+            cashFlow: asset.cashFlow,
+            flow: asset.flow
+        });
+        console.log('💰 Найденный доход в свойствах:', income);
+        
         // Если доход не найден в свойствах актива, ищем в массиве доходов
         if (income === 0 && window.data && window.data.income) {
+            console.log('🔍 Ищем в массиве доходов:', window.data.income);
             const incomeRecord = window.data.income.find(inc => inc.source === asset.name);
+            console.log('📋 Найденная запись дохода:', incomeRecord);
             if (incomeRecord) {
                 income = incomeRecord.amount || 0;
+                console.log('✅ Установлен доход из массива:', income);
             }
         }
+        
+        console.log('🎯 Финальный доход:', income);
         
         // Информация о бизнесе
         infoElement.innerHTML = `
