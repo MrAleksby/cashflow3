@@ -285,6 +285,7 @@ const ASSET_CATEGORIES = {
                                     <option value="Автодиллер">Автодиллер</option>
                                     <option value="Сеть пиццерий">Сеть пиццерий</option>
                                     <option value="Автомойка">Автомойка</option>
+                                    <option value="Автомойка BIG">Автомойка BIG</option>
                                     <option value="Прачечная">Прачечная</option>
                                     <option value="Франшиза пиццерий">Франшиза пиццерий</option>
                                     <option value="Сеть телефонов-автоматов">Сеть телефонов-автоматов</option>
@@ -330,6 +331,33 @@ const ASSET_CATEGORIES = {
         const buyButton = form.querySelector('.buy-business-btn');
         const nameInput = form.querySelector('.business-name');
 
+        // Данные для каждого типа бизнеса (цена и доход)
+        const businessData = {
+            'Автодиллер': { price: 30000, income: 1000 },
+            'Сеть пиццерий': { price: 20000, income: 800 },
+            'Автомойка': { price: 125000, income: 1800 },
+            'Автомойка BIG': { price: 350000, income: 1500 },
+            'Прачечная': { price: 150000, income: 2500 },
+            'Франшиза пиццерий': { price: 500000, income: 5000 },
+            'Сеть телефонов-автоматов': { price: 200000, income: 2700 },
+            '30 Видеоавтоматов': { price: 100000, income: 1600 },
+            'Сеть бутербродных': { price: 30000, income: 1500 },
+            'Партнер в клинике': { price: 25000, income: 1000 }
+        };
+
+        // Функция для автоматического заполнения полей при выборе бизнеса
+        function fillBusinessData() {
+            const selectedBusiness = nameInput.value;
+            if (selectedBusiness && businessData[selectedBusiness]) {
+                const data = businessData[selectedBusiness];
+                priceInput.value = data.price;
+                cashflowInput.value = data.income;
+                
+                // Обновляем отображение пассива после изменения цены
+                updateLiabilityDisplay();
+            }
+        }
+
         // Функция для обновления отображения пассива
         function updateLiabilityDisplay() {
             const price = parseFloat(priceInput.value) || 0;
@@ -346,6 +374,9 @@ const ASSET_CATEGORIES = {
         // Добавляем обработчики для автообновления пассива
         priceInput.addEventListener('input', updateLiabilityDisplay);
         downPaymentInput.addEventListener('input', updateLiabilityDisplay);
+
+        // Добавляем обработчик для автоматического заполнения при выборе бизнеса
+        nameInput.addEventListener('change', fillBusinessData);
 
         // Обработчик покупки бизнеса
         buyButton.addEventListener('click', handleBusinessPurchase);
