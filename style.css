@@ -821,6 +821,56 @@ button:hover {
     margin: 10% auto;
 }
 
+/* Стили для выпадающего списка акций */
+.stock-selector {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    background: white;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+}
+
+.stock-selector:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+.stock-selector optgroup {
+    font-weight: bold;
+    color: #333;
+    padding: 8px 0;
+}
+
+.stock-selector option {
+    padding: 8px;
+    font-weight: normal;
+}
+
+.stock-purchase-form {
+    padding: 20px;
+}
+
+.stock-purchase-form .input-group {
+    margin-bottom: 20px;
+}
+
+.stock-purchase-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+#stock-details {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
 @media (max-width: 480px) {
     .tax-rate-options {
         grid-template-columns: repeat(2, 1fr) !important;
@@ -830,5 +880,10 @@ button:hover {
     .tax-rate-btn {
         padding: 12px 8px;
         font-size: 1.1em;
+    }
+    
+    .stock-selector {
+        padding: 10px;
+        font-size: 0.95rem;
     }
 } 

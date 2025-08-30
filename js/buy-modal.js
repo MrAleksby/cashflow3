@@ -159,25 +159,33 @@ const ASSET_CATEGORIES = {
         });
     });
 
-    // Создание списка типов акций
+    // Создание формы покупки акций с выпадающим списком
     function createStockTypeSelector() {
         return `
-            <div class="stock-type-selector">
-                <h3>Выберите тип акций:</h3>
-                <div class="type-list">
-                    <div class="type-group">
-                        <h4>Спекулятивные акции</h4>
-                        <button class="type-btn" data-type="myt4u">MYT4U - Спекулятивные акции без пассивного дохода</button>
-                        <button class="type-btn" data-type="on2u">ON2U - Спекулятивные акции без пассивного дохода</button>
-                        <button class="type-btn" data-type="ok4u">OK4U - Спекулятивные акции без пассивного дохода</button>
-                        <button class="type-btn" data-type="gro4us">GRO4US - Спекулятивные акции без пассивного дохода</button>
-                    </div>
-                    <div class="type-group">
-                        <h4>Дивидендные акции</h4>
-                        <button class="type-btn" data-type="2bigpower">2BIGPOWER - Стабильные акции с фиксированным доходом $10 в месяц</button>
-                        <button class="type-btn" data-type="cd">CD - Акции с фиксированным месячным доходом $20</button>
-                    </div>
+            <div class="stock-purchase-form">
+                <h3>Покупка акций</h3>
+                
+                <div class="input-group">
+                    <label>Выберите акцию:</label>
+                    <select class="stock-selector">
+                        <option value="">-- Выберите акцию --</option>
+                        <optgroup label="Спекулятивные акции">
+                            <option value="myt4u">MYT4U - Спекулятивные акции без пассивного дохода</option>
+                            <option value="on2u">ON2U - Спекулятивные акции без пассивного дохода</option>
+                            <option value="ok4u">OK4U - Спекулятивные акции без пассивного дохода</option>
+                            <option value="gro4us">GRO4US - Спекулятивные акции без пассивного дохода</option>
+                        </optgroup>
+                        <optgroup label="Дивидендные акции">
+                            <option value="2bigpower">2BIGPOWER - Стабильные акции с фиксированным доходом $10 в месяц</option>
+                            <option value="cd">CD - Акции с фиксированным месячным доходом $20</option>
+                        </optgroup>
+                    </select>
                 </div>
+                
+                <div id="stock-details" style="display: none;">
+                    <!-- Детали выбранной акции будут загружены здесь -->
+                </div>
+                
                 <button class="back-button">Назад</button>
             </div>
         `;
@@ -715,18 +723,34 @@ const ASSET_CATEGORIES = {
                 });
             });
         } else if (category === 'stocks') {
-            // Показываем селектор типов акций
+            // Показываем форму покупки акций с выпадающим списком
             content.innerHTML = createStockTypeSelector();
 
-            // Добавляем обработчики для кнопок выбора типа
-            content.querySelectorAll('.type-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const typeId = btn.dataset.type;
-                    const item = categoryData.items.find(i => i.id === typeId);
+            // Добавляем обработчик для выпадающего списка акций
+            const stockSelector = content.querySelector('.stock-selector');
+            const stockDetails = content.querySelector('#stock-details');
+            
+            stockSelector.addEventListener('change', () => {
+                const selectedStockId = stockSelector.value;
+                
+                if (selectedStockId) {
+                    const item = categoryData.items.find(i => i.id === selectedStockId);
                     if (item) {
-                        showStockForm(item);
+                        // Показываем детали выбранной акции прямо в этом же модальном окне
+                        const assetCard = createAssetCard(item, category);
+                        stockDetails.innerHTML = `
+                            <div data-item-id="${item.id}">
+                                ${assetCard}
+                            </div>
+                        `;
+                        stockDetails.style.display = 'block';
+                        
+                        // Инициализируем обработчики для кнопок и полей ввода
+                        initializeStockInputs();
                     }
-                });
+                } else {
+                    stockDetails.style.display = 'none';
+                }
             });
         } else if (category === 'business') {
             // Показываем форму создания бизнеса
