@@ -793,8 +793,16 @@ const ASSET_CATEGORIES = {
                 if (item.type === 'speculative') {
                     // Определяем цены для разных акций
                     let priceButtons = '';
-                    if (item.id === 'gro4us' || item.id === 'on2u') {
-                        // Для GRO4US и ON2U - без цен $1, $4 и $50
+                    if (item.id === 'gro4us') {
+                        // Для GRO4US - без цен $1, $4, $5 и $50
+                        priceButtons = `
+                            <button class="quick-price-btn" data-price="10">$10</button>
+                            <button class="quick-price-btn" data-price="20">$20</button>
+                            <button class="quick-price-btn" data-price="30">$30</button>
+                            <button class="quick-price-btn" data-price="40">$40</button>
+                        `;
+                    } else if (item.id === 'on2u') {
+                        // Для ON2U - без цен $1, $4 и $50
                         priceButtons = `
                             <button class="quick-price-btn" data-price="5">$5</button>
                             <button class="quick-price-btn" data-price="10">$10</button>
