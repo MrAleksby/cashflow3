@@ -1561,11 +1561,6 @@ class AssetManager {
         
         // Обновляем список акций в модальном окне списка акций
         this._loadStocksList();
-        
-        // Показываем уведомление
-        if (window.animationManager) {
-            window.animationManager.showNotification(`✅ Продано: ${assetName} ${quantity} шт. за $${sellPrice}`, 'success');
-        }
     }
 
     /**
@@ -2094,11 +2089,6 @@ class AssetManager {
                 revenue: revenue,
                 sellPrice: sellPrice
             });
-        }
-        
-        // Показываем уведомление
-        if (window.animationManager) {
-            window.animationManager.showNotification(`✅ Продано: ${asset.name} за $${sellPrice}`, 'success');
         }
     }
 }
