@@ -1119,7 +1119,7 @@ class AssetManager {
             const incomeRecord = window.data.income.find(inc => inc.source === asset.name);
             console.log('📋 Найденная запись дохода:', incomeRecord);
             if (incomeRecord) {
-                income = incomeRecord.amount || 0;
+                income = incomeRecord.value || 0;
                 console.log('✅ Установлен доход из массива:', income);
             }
         }
@@ -1184,7 +1184,7 @@ class AssetManager {
             const incomeRecord = window.data.income.find(inc => inc.source === asset.name);
             console.log('📋 Найденная запись дохода:', incomeRecord);
             if (incomeRecord) {
-                income = incomeRecord.amount || 0;
+                income = incomeRecord.value || 0;
                 console.log('✅ Установлен доход из массива:', income);
             }
         }
@@ -1526,9 +1526,12 @@ class AssetManager {
                 if (this._selectedAsset.type === 'realestate' || this._selectedAsset.type === 'business') {
                     // Удаляем связанный денежный поток (доход)
                     if (window.data.income) {
+                        console.log('🗑️ Удаляем доходы для:', this._selectedAsset.name);
+                        console.log('📋 Доходы до удаления:', window.data.income);
                         window.data.income = window.data.income.filter(income => 
                             income.source !== this._selectedAsset.name
                         );
+                        console.log('📋 Доходы после удаления:', window.data.income);
                     }
                     
                     // Удаляем связанную ипотеку (для недвижимости)
@@ -2057,9 +2060,12 @@ class AssetManager {
             if (asset.type === 'realestate' || asset.type === 'business') {
                 // Удаляем связанный денежный поток (доход)
                 if (window.data.income) {
+                    console.log('🗑️ Удаляем доходы для:', asset.name);
+                    console.log('📋 Доходы до удаления:', window.data.income);
                     window.data.income = window.data.income.filter(income => 
                         income.source !== asset.name
                     );
+                    console.log('📋 Доходы после удаления:', window.data.income);
                 }
                 
                 // Удаляем связанную ипотеку (для недвижимости)
