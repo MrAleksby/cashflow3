@@ -1500,9 +1500,11 @@ class AssetManager {
                         );
                     }
                     
-                    // Удаляем связанную ипотеку (для недвижимости)
-                    if (this._selectedAsset.type === 'realestate' && window.data.liability) {
+                    // Удаляем связанные пассивы (ипотека для недвижимости, долги для бизнеса)
+                    if (window.data.liability) {
                         window.data.liability = window.data.liability.filter(liability => 
+                            // Удаляем по source (ID актива) или по имени
+                            liability.source !== this._selectedAsset.id && 
                             !liability.name.includes(this._selectedAsset.name)
                         );
                     }
@@ -2040,9 +2042,11 @@ class AssetManager {
                     );
                 }
                 
-                // Удаляем связанную ипотеку (для недвижимости)
-                if (asset.type === 'realestate' && window.data.liability) {
+                // Удаляем связанные пассивы (ипотека для недвижимости, долги для бизнеса)
+                if (window.data.liability) {
                     window.data.liability = window.data.liability.filter(liability => 
+                        // Удаляем по source (ID актива) или по имени
+                        liability.source !== asset.id && 
                         !liability.name.includes(asset.name)
                     );
                 }

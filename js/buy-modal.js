@@ -428,8 +428,9 @@ const ASSET_CATEGORIES = {
 
             // Добавляем бизнес в активы
             if (!window.data.asset) window.data.asset = [];
+            const businessId = `business-${Date.now()}`;
             window.data.asset.push({
-                id: `business-${Date.now()}`,
+                id: businessId,
                 name: name,
                 type: 'business',
                 value: price,
@@ -444,7 +445,7 @@ const ASSET_CATEGORIES = {
                     name: `Долг: ${name}`,
                     type: 'business',
                     value: liability,
-                    source: `business-${Date.now()}`
+                    source: businessId  // Используем тот же ID актива
                 });
             }
 
