@@ -13,15 +13,10 @@ window.saveData = function() {
 
 // Функция сброса игры
 window.resetGame = function() {
-    console.log('🎮 Нажата кнопка "Новая игра"');
-    
     // Показываем одно окно подтверждения
     if (!confirm('Вы уверены, что хотите начать новую игру? Все текущие данные будут удалены!')) {
-        console.log('❌ Пользователь отменил создание новой игры');
         return;
     }
-    
-    console.log('✅ Пользователь подтвердил создание новой игры');
     
     // Показываем модальное окно выбора налоговой ставки
     window.showTaxRateModal();
@@ -29,29 +24,22 @@ window.resetGame = function() {
 
 // Функция показа модального окна выбора налоговой ставки
 window.showTaxRateModal = function() {
-    console.log('🔍 Попытка показать модальное окно выбора налоговой ставки');
-    
     const modal = document.getElementById('tax-rate-modal');
-    console.log('📋 Найдено модальное окно:', modal);
     
     if (!modal) {
-        console.error('❌ Модальное окно tax-rate-modal не найдено!');
         // Если модальное окно не найдено, запускаем игру с налогом по умолчанию
         window.startNewGameWithTaxRate(25);
         return;
     }
     
-    console.log('✅ Показываем модальное окно');
     modal.style.display = 'block';
     
     // Добавляем обработчики для кнопок выбора ставки
     const taxRateButtons = modal.querySelectorAll('.tax-rate-btn');
-    console.log('🔘 Найдено кнопок выбора ставки:', taxRateButtons.length);
     
     taxRateButtons.forEach(button => {
         button.onclick = function() {
             const selectedRate = parseInt(this.dataset.rate);
-            console.log('🎯 Выбрана налоговая ставка:', selectedRate + '%');
             window.startNewGameWithTaxRate(selectedRate);
         };
     });
@@ -59,8 +47,6 @@ window.showTaxRateModal = function() {
 
 // Функция начала новой игры с выбранной налоговой ставкой
 window.startNewGameWithTaxRate = function(taxRate) {
-    console.log('🎯 Начинаем новую игру с налоговой ставкой:', taxRate + '%');
-    
     // Закрываем модальное окно
     const modal = document.getElementById('tax-rate-modal');
     if (modal) {
@@ -80,8 +66,6 @@ window.startNewGameWithTaxRate = function(taxRate) {
     };
     window.cash = 0;
     
-    console.log('💾 Сохраняем данные с налоговой ставкой:', window.data.taxRate);
-    
     // Тщательная очистка localStorage
     localStorage.clear();
     localStorage.removeItem('appData');
@@ -91,8 +75,6 @@ window.startNewGameWithTaxRate = function(taxRate) {
     // Сохраняем данные с налоговой ставкой в localStorage
     localStorage.setItem('appData', JSON.stringify(window.data));
     localStorage.setItem('cash', '0');
-    
-    console.log('✅ Данные сохранены в localStorage:', JSON.parse(localStorage.getItem('appData')));
     
     // Очищаем все возможные кэши
     if (window.sessionStorage) {
@@ -156,8 +138,6 @@ window.loadData = function() {
             if (!Array.isArray(window.data.history)) window.data.history = [];
             if (typeof window.data.monthsCount === 'undefined') window.data.monthsCount = 0;
             if (typeof window.data.taxRate === 'undefined') window.data.taxRate = 0.25; // 25% по умолчанию
-            
-            console.log('📊 Загружена налоговая ставка:', window.data.taxRate * 100 + '%');
         } else {
             // Инициализируем пустые данные если ничего не сохранено
             window.data = {

@@ -246,13 +246,6 @@ const originalRenderSummary = function() {
     const taxRate = window.data.taxRate || 0.25; // По умолчанию 25%
     const taxableIncome = Math.max(0, totalIncome);
     const tax = Math.round(taxableIncome * taxRate);
-    
-    console.log('💰 Расчет налогов:', {
-        totalIncome: totalIncome,
-        taxRate: taxRate,
-        taxPercentage: Math.round(taxRate * 100) + '%',
-        tax: tax
-    });
 
     // Обновляем или создаем запись о налогах в расходах
     if (window.data && Array.isArray(window.data.expense)) {
