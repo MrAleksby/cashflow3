@@ -413,42 +413,7 @@ window.loadData = function() {
     monthsCounter.textContent = window.data.monthsCount;
 };
 
-// В функцию window.resetGame добавляем сброс счетчика месяцев
-window.resetGame = function() {
-    if (!confirm('Вы уверены, что хотите начать новую игру? Все текущие данные будут удалены!')) {
-        return;
-    }
-    
-    // Полностью очищаем все данные
-    window.data = {
-        income: [],
-        expense: [],
-        asset: [],
-        liability: [],
-        children: [],
-        history: [],
-        monthsCount: 0
-    };
-    window.cash = 0;
-    
-    // Тщательная очистка localStorage
-    localStorage.clear();
-    localStorage.removeItem('appData');
-    localStorage.removeItem('cash');
-    localStorage.removeItem('data');
-    
-    // Сохраняем пустые данные в localStorage
-    localStorage.setItem('appData', JSON.stringify(window.data));
-    localStorage.setItem('cash', '0');
-    
-    // Очищаем все возможные кэши
-    if (window.sessionStorage) {
-        sessionStorage.clear();
-    }
-    
-    // Принудительно перезагружаем страницу без использования кэша
-    window.location.href = window.location.href + '?nocache=' + new Date().getTime();
-};
+// Функция resetGame теперь определена в storage.js
 
 // Добавляем обработчик для кнопки PayDay
 document.addEventListener('DOMContentLoaded', function() {
