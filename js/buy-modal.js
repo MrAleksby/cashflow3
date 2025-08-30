@@ -803,8 +803,19 @@ const ASSET_CATEGORIES = {
                             <button class="quick-price-btn" data-price="30">$30</button>
                             <button class="quick-price-btn" data-price="40">$40</button>
                         `;
+                    } else if (item.id === 'myt4u') {
+                        // Для MYT4U - без цены $50
+                        priceButtons = `
+                            <button class="quick-price-btn" data-price="1">$1</button>
+                            <button class="quick-price-btn" data-price="4">$4</button>
+                            <button class="quick-price-btn" data-price="5">$5</button>
+                            <button class="quick-price-btn" data-price="10">$10</button>
+                            <button class="quick-price-btn" data-price="20">$20</button>
+                            <button class="quick-price-btn" data-price="30">$30</button>
+                            <button class="quick-price-btn" data-price="40">$40</button>
+                        `;
                     } else {
-                        // Для MYT4U и OK4U - все цены
+                        // Для OK4U - все цены (включая $50)
                         priceButtons = `
                             <button class="quick-price-btn" data-price="1">$1</button>
                             <button class="quick-price-btn" data-price="4">$4</button>

@@ -789,12 +789,16 @@ class AssetManager {
             btn.classList.remove('active');
         });
         
-        // Скрываем кнопки для GRO4US и ON2U (нет цен $4 и $50)
-        const hideButtons = ['GRO4US', 'ON2U'].includes(stockName);
-        
+        // Скрываем кнопки в зависимости от типа акций
         document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
             const price = parseInt(btn.dataset.price);
-            if (hideButtons && (price === 4 || price === 50)) {
+            
+            // Для GRO4US и ON2U скрываем $4 и $50
+            if (['GRO4US', 'ON2U'].includes(stockName) && (price === 4 || price === 50)) {
+                btn.style.display = 'none';
+            }
+            // Для MYT4U скрываем только $50
+            else if (stockName === 'MYT4U' && price === 50) {
                 btn.style.display = 'none';
             } else {
                 btn.style.display = 'block';
