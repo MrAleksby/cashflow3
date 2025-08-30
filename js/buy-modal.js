@@ -1022,10 +1022,6 @@ const ASSET_CATEGORIES = {
                         <div class="asset-info">
                             <div class="property-inputs">
                                 <div class="input-group">
-                                    <label>Количество квартир:</label>
-                                    <input type="number" class="property-units" step="1" inputmode="numeric" pattern="[0-9]*">
-                                </div>
-                                <div class="input-group">
                                     <label>Цена ($):</label>
                                     <input type="number" class="property-price" step="1" inputmode="numeric" pattern="[0-9]*">
                                 </div>
@@ -1393,13 +1389,6 @@ const ASSET_CATEGORIES = {
                     return;
                 }
                 additionalInfo = `${acres} акров`;
-            } else if (item.type === 'apartment') {
-                const units = parseInt(propertyInputs.querySelector('.property-units').value) || 0;
-                if (units <= 0) {
-                    alert('Укажите количество квартир!');
-                    return;
-                }
-                additionalInfo = `${units} квартир`;
             }
 
             if (price < 0) {
@@ -1496,8 +1485,6 @@ const ASSET_CATEGORIES = {
             propertyInputs.querySelector('.property-cashflow').value = '';
             if (item.type === 'land') {
                 propertyInputs.querySelector('.property-acres').value = '';
-            } else if (item.type === 'apartment') {
-                propertyInputs.querySelector('.property-units').value = '';
             }
 
             modal.classList.remove('active');
@@ -1525,13 +1512,6 @@ const ASSET_CATEGORIES = {
                 return;
             }
             additionalInfo = `${acres} акров`;
-        } else if (item.type === 'apartment') {
-            const units = parseInt(propertyInputs.querySelector('.property-units').value) || 0;
-            if (units <= 0) {
-                alert('Укажите количество квартир!');
-                return;
-            }
-            additionalInfo = `${units} квартир`;
         }
 
         // Проверяем введены ли все данные
@@ -1619,8 +1599,6 @@ const ASSET_CATEGORIES = {
         propertyInputs.querySelector('.property-cashflow').value = '';
         if (item.type === 'land') {
             propertyInputs.querySelector('.property-acres').value = '';
-        } else if (item.type === 'apartment') {
-            propertyInputs.querySelector('.property-units').value = '';
         }
 
         // Закрываем модальное окно
