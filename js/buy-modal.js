@@ -898,7 +898,9 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Ипотека ($):</label>
-                                    <input type="number" class="property-mortgage" step="1" inputmode="numeric" pattern="[0-9]*">
+                                    <div class="calculated-mortgage" style="padding: 8px; background: #f5f5f5; border-radius: 4px; font-weight: bold; color: #666;">
+                                        Рассчитается автоматически
+                                    </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
@@ -930,7 +932,9 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Ипотека ($):</label>
-                                    <input type="number" class="property-mortgage" step="1" inputmode="numeric" pattern="[0-9]*">
+                                    <div class="calculated-mortgage" style="padding: 8px; background: #f5f5f5; border-radius: 4px; font-weight: bold; color: #666;">
+                                        Рассчитается автоматически
+                                    </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
@@ -958,7 +962,9 @@ const ASSET_CATEGORIES = {
                                 </div>
                                 <div class="input-group">
                                     <label>Ипотека ($):</label>
-                                    <input type="number" class="property-mortgage" step="1" inputmode="numeric" pattern="[0-9]*">
+                                    <div class="calculated-mortgage" style="padding: 8px; background: #f5f5f5; border-radius: 4px; font-weight: bold; color: #666;">
+                                        Рассчитается автоматически
+                                    </div>
                                 </div>
                                 <div class="input-group">
                                     <label>Денежный поток ($):</label>
@@ -1096,7 +1102,6 @@ const ASSET_CATEGORIES = {
         propertyInputs.forEach(inputGroup => {
             const priceInput = inputGroup.querySelector('.property-price');
             const downPaymentInput = inputGroup.querySelector('.property-down-payment');
-            const mortgageInput = inputGroup.querySelector('.property-mortgage');
             const cashflowInput = inputGroup.querySelector('.property-cashflow');
             const buyButton = inputGroup.querySelector('.buy-property-btn');
             const toggleSignBtn = inputGroup.querySelector('.toggle-sign-btn');
@@ -1273,7 +1278,7 @@ const ASSET_CATEGORIES = {
 
             const price = parseFloat(propertyInputs.querySelector('.property-price').value) || 0;
             const downPayment = parseFloat(propertyInputs.querySelector('.property-down-payment').value) || 0;
-            const mortgage = parseFloat(propertyInputs.querySelector('.property-mortgage').value) || 0;
+            const mortgage = Math.max(0, price - downPayment); // Автоматически рассчитываем ипотеку
             const cashflow = parseFloat(propertyInputs.querySelector('.property-cashflow').value) || 0;
 
             // Получаем дополнительные значения в зависимости от типа
@@ -1302,8 +1307,8 @@ const ASSET_CATEGORIES = {
                 alert('Первый взнос не может быть отрицательным!');
                 return;
             }
-            if (mortgage < 0) {
-                alert('Ипотека не может быть отрицательной!');
+            if (downPayment > price) {
+                alert('Первый взнос не может быть больше цены недвижимости!');
                 return;
             }
 
@@ -1385,7 +1390,6 @@ const ASSET_CATEGORIES = {
             // Очищаем поля ввода
             propertyInputs.querySelector('.property-price').value = '';
             propertyInputs.querySelector('.property-down-payment').value = '';
-            propertyInputs.querySelector('.property-mortgage').value = '';
             propertyInputs.querySelector('.property-cashflow').value = '';
             if (item.type === 'land') {
                 propertyInputs.querySelector('.property-acres').value = '';
@@ -1406,7 +1410,7 @@ const ASSET_CATEGORIES = {
         // Получаем введенные значения
         const price = parseFloat(propertyInputs.querySelector('.property-price').value) || 0;
         const downPayment = parseFloat(propertyInputs.querySelector('.property-down-payment').value) || 0;
-        const mortgage = parseFloat(propertyInputs.querySelector('.property-mortgage').value) || 0;
+        const mortgage = Math.max(0, price - downPayment); // Автоматически рассчитываем ипотеку
         const cashflow = parseFloat(propertyInputs.querySelector('.property-cashflow').value) || 0;
 
         // Получаем дополнительные значения в зависимости от типа
@@ -1436,8 +1440,8 @@ const ASSET_CATEGORIES = {
             alert('Первый взнос не может быть отрицательным!');
             return;
         }
-        if (mortgage < 0) {
-            alert('Ипотека не может быть отрицательной!');
+        if (downPayment > price) {
+            alert('Первый взнос не может быть больше цены недвижимости!');
             return;
         }
 
@@ -1509,7 +1513,6 @@ const ASSET_CATEGORIES = {
         // Очищаем поля ввода
         propertyInputs.querySelector('.property-price').value = '';
         propertyInputs.querySelector('.property-down-payment').value = '';
-        propertyInputs.querySelector('.property-mortgage').value = '';
         propertyInputs.querySelector('.property-cashflow').value = '';
         if (item.type === 'land') {
             propertyInputs.querySelector('.property-acres').value = '';
@@ -1663,7 +1666,42 @@ const ASSET_CATEGORIES = {
         });
     }
 
+    // Функция для обновления отображения ипотеки
+    function updateMortgageDisplay() {
+        const propertyInputs = modal.querySelectorAll('.property-inputs');
+        propertyInputs.forEach(inputs => {
+            const priceInput = inputs.querySelector('.property-price');
+            const downPaymentInput = inputs.querySelector('.property-down-payment');
+            const mortgageDisplay = inputs.querySelector('.calculated-mortgage');
+            
+            if (priceInput && downPaymentInput && mortgageDisplay) {
+                const updateMortgage = () => {
+                    const price = parseFloat(priceInput.value) || 0;
+                    const downPayment = parseFloat(downPaymentInput.value) || 0;
+                    const mortgage = Math.max(0, price - downPayment);
+                    
+                    if (price > 0 || downPayment > 0) {
+                        mortgageDisplay.textContent = `$${mortgage.toLocaleString()}`;
+                        mortgageDisplay.style.color = mortgage > 0 ? '#333' : '#666';
+                    } else {
+                        mortgageDisplay.textContent = 'Рассчитается автоматически';
+                        mortgageDisplay.style.color = '#666';
+                    }
+                };
+                
+                priceInput.addEventListener('input', updateMortgage);
+                downPaymentInput.addEventListener('input', updateMortgage);
+            }
+        });
+    }
+    
     // Инициализируем обработчики при загрузке
     const numericInputs = modal.querySelectorAll('input[type="number"]');
     numericInputs.forEach(setupNumericInput);
+    
+    // Обновляем отображение ипотеки при изменении контента модального окна
+    const observer = new MutationObserver(() => {
+        updateMortgageDisplay();
+    });
+    observer.observe(modal, { childList: true, subtree: true });
 })(); 
