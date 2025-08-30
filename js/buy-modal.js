@@ -279,8 +279,19 @@ const ASSET_CATEGORIES = {
                     <div class="asset-info">
                         <div class="business-inputs">
                             <div class="input-group">
-                                <label>Название бизнеса:</label>
-                                <input type="text" class="business-name" placeholder="Например: Кофейня">
+                                <label>Выберите тип бизнеса:</label>
+                                <select class="business-name">
+                                    <option value="">-- Выберите бизнес --</option>
+                                    <option value="Автодиллер">Автодиллер</option>
+                                    <option value="Сеть пиццерий">Сеть пиццерий</option>
+                                    <option value="Автомойка">Автомойка</option>
+                                    <option value="Прачечная">Прачечная</option>
+                                    <option value="Франшиза пиццерий">Франшиза пиццерий</option>
+                                    <option value="Сеть телефонов-автоматов">Сеть телефонов-автоматов</option>
+                                    <option value="30 Видеоавтоматов">30 Видеоавтоматов</option>
+                                    <option value="Сеть бутербродных">Сеть бутербродных</option>
+                                    <option value="Партнер в клинике">Партнер в клинике</option>
+                                </select>
                             </div>
                             <div class="input-group">
                                 <label>Цена ($):</label>
@@ -349,7 +360,7 @@ const ASSET_CATEGORIES = {
         });
 
         function handleBusinessPurchase() {
-            const name = nameInput.value.trim();
+            const name = nameInput.value;
             const price = parseFloat(priceInput.value) || 0;
             const downPayment = parseFloat(downPaymentInput.value) || 0;
             const liability = Math.max(0, price - downPayment); // Автоматически рассчитываем пассив
@@ -357,7 +368,7 @@ const ASSET_CATEGORIES = {
 
             // Валидация
             if (!name) {
-                alert('Введите название бизнеса!');
+                alert('Выберите тип бизнеса!');
                 return;
             }
             if (price < 0) {
