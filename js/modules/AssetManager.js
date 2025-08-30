@@ -1559,8 +1559,12 @@ class AssetManager {
         // Обновляем список активов в основном модальном окне продажи
         this._loadAssetList();
         
-        // Обновляем список акций в модальном окне списка акций
+        // Обновляем все специализированные списки активов
         this._loadStocksList();
+        this._loadBusinessList();
+        this._loadRealEstateList();
+        this._loadPreciousMetalsList();
+        this._loadMiscList();
     }
 
     /**
