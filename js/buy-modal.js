@@ -442,7 +442,7 @@ const ASSET_CATEGORIES = {
                 if (!window.data.liability) window.data.liability = [];
                 window.data.liability.push({
                     id: `business-debt-${Date.now()}`,
-                    name: `Долг: ${name}`,
+                    name: `Пассив: ${name}`,
                     type: 'business',
                     value: liability,
                     source: businessId  // Используем тот же ID актива
@@ -454,7 +454,7 @@ const ASSET_CATEGORIES = {
                 if (!window.data.income) window.data.income = [];
                 window.data.income.push({
                     id: `business-income-${Date.now()}`,
-                    name: `Доход: ${name}`,
+                    name: `Денежный поток: ${name}`,
                     type: 'passive',
                     value: cashflow,
                     source: name
