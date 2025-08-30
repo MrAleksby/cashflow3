@@ -180,11 +180,11 @@ const ASSET_CATEGORIES = {
                             <option value="cd">CD - $20/мес</option>
                         </optgroup>
                     </select>
-                </div>
+                    </div>
                 
                 <div id="stock-details" style="display: none;">
                     <!-- Детали выбранной акции будут загружены здесь -->
-                </div>
+                    </div>
                 
                 <button class="back-button">Назад</button>
             </div>
@@ -216,11 +216,11 @@ const ASSET_CATEGORIES = {
                             <option value="land">Земельный участок</option>
                         </optgroup>
                     </select>
-                </div>
+                    </div>
                 
                 <div id="realestate-details" style="display: none;">
                     <!-- Детали выбранной недвижимости будут загружены здесь -->
-                </div>
+                    </div>
                 
                 <button class="back-button">Назад</button>
             </div>
@@ -292,7 +292,9 @@ const ASSET_CATEGORIES = {
                             </div>
                             <div class="input-group">
                                 <label>Пассив ($):</label>
-                                <input type="number" class="business-liability" min="0" step="1000" placeholder="Сумма долга">
+                                <div class="calculated-liability" style="padding: 8px; background: #f5f5f5; border-radius: 4px; font-weight: bold; color: #666;">
+                                    Рассчитается автоматически
+                                </div>
                             </div>
                             <div class="input-group">
                                 <label>Денежный поток ($):</label>
@@ -313,10 +315,26 @@ const ASSET_CATEGORIES = {
         const form = content.querySelector('.business-inputs');
         const priceInput = form.querySelector('.business-price');
         const downPaymentInput = form.querySelector('.business-down-payment');
-        const liabilityInput = form.querySelector('.business-liability');
         const cashflowInput = form.querySelector('.business-cashflow');
         const buyButton = form.querySelector('.buy-business-btn');
         const nameInput = form.querySelector('.business-name');
+
+        // Функция для обновления отображения пассива
+        function updateLiabilityDisplay() {
+            const price = parseFloat(priceInput.value) || 0;
+            const downPayment = parseFloat(downPaymentInput.value) || 0;
+            const liability = Math.max(0, price - downPayment);
+            
+            const liabilityDisplay = form.querySelector('.calculated-liability');
+            if (liabilityDisplay) {
+                liabilityDisplay.textContent = `$${liability.toFixed(0)}`;
+                liabilityDisplay.style.color = liability > 0 ? '#d32f2f' : '#666';
+            }
+        }
+
+        // Добавляем обработчики для автообновления пассива
+        priceInput.addEventListener('input', updateLiabilityDisplay);
+        downPaymentInput.addEventListener('input', updateLiabilityDisplay);
 
         // Обработчик покупки бизнеса
         buyButton.addEventListener('click', handleBusinessPurchase);
@@ -334,7 +352,7 @@ const ASSET_CATEGORIES = {
             const name = nameInput.value.trim();
             const price = parseFloat(priceInput.value) || 0;
             const downPayment = parseFloat(downPaymentInput.value) || 0;
-            const liability = parseFloat(liabilityInput.value) || 0;
+            const liability = Math.max(0, price - downPayment); // Автоматически рассчитываем пассив
             const cashflow = parseFloat(cashflowInput.value) || 0;
 
             // Валидация
@@ -350,8 +368,8 @@ const ASSET_CATEGORIES = {
                 alert('Первый взнос не может быть отрицательным!');
                 return;
             }
-            if (liability < 0) {
-                alert('Пассив не может быть отрицательным!');
+            if (downPayment > price) {
+                alert('Первый взнос не может быть больше цены бизнеса!');
                 return;
             }
             if (downPayment > window.cash) {
@@ -456,7 +474,7 @@ const ASSET_CATEGORIES = {
                                 <label>Цена ($):</label>
                                 <div class="quick-price-buttons">
                                     ${priceButtons}
-                                </div>
+                            </div>
                                 <div class="custom-price-input">
                                     <input type="number" class="metal-price" min="0" step="100" value="${fixedPrice}" inputmode="numeric" pattern="[0-9]*" placeholder="Или введите свою цену">
                                 </div>
@@ -868,20 +886,20 @@ const ASSET_CATEGORIES = {
             `;
         } else {
             // Оригинальное поведение для обратной совместимости
-            content.innerHTML = `
-                <div class="assets-list">
-                    ${createAssetCard(item, 'realestate')}
-                </div>
-                <div class="buy-controls">
-                    <div class="wallet-info">В кошельке: <span id="modal-wallet-amount">${window.cash || 0}</span></div>
-                    <button class="back-button">Назад к типам недвижимости</button>
-                </div>
-            `;
+        content.innerHTML = `
+            <div class="assets-list">
+                ${createAssetCard(item, 'realestate')}
+            </div>
+            <div class="buy-controls">
+                <div class="wallet-info">В кошельке: <span id="modal-wallet-amount">${window.cash || 0}</span></div>
+                <button class="back-button">Назад к типам недвижимости</button>
+            </div>
+        `;
 
-            // Добавляем обработчик для кнопки "Назад"
-            content.querySelector('.back-button').addEventListener('click', () => {
-                showCategoryItems('realestate');
-            });
+        // Добавляем обработчик для кнопки "Назад"
+        content.querySelector('.back-button').addEventListener('click', () => {
+            showCategoryItems('realestate');
+        });
         }
 
         // Инициализируем обработчики для полей недвижимости
@@ -1313,13 +1331,13 @@ const ASSET_CATEGORIES = {
                 console.log(`📈 Обновлены акции ${item.name}: ${oldQuantity} + ${shares} = ${totalQuantity} шт. (средняя цена: $${(Math.round(averagePrice * 10) / 10).toFixed(1)})`);
             } else {
                 // Если акций нет, создаем новую запись
-                window.data.asset.push({
-                    id: `${item.name}-${Date.now()}`,
-                    name: item.name,
-                    quantity: shares,
-                    price: pricePerShare,
-                    type: 'stocks'
-                });
+            window.data.asset.push({
+                id: `${item.name}-${Date.now()}`,
+                name: item.name,
+                quantity: shares,
+                price: pricePerShare,
+                type: 'stocks'
+            });
                 
                 console.log(`🆕 Куплены новые акции ${item.name}: ${shares} шт. по $${pricePerShare}`);
             }
@@ -1775,7 +1793,7 @@ const ASSET_CATEGORIES = {
             }
         });
     }
-    
+
     // Инициализируем обработчики при загрузке
     const numericInputs = modal.querySelectorAll('input[type="number"]');
     numericInputs.forEach(setupNumericInput);
