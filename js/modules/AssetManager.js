@@ -1524,27 +1524,37 @@ class AssetManager {
                 window.saveData();
             }
             
-            // Обновляем отображение
+            // Полное обновление всех отображений после продажи
             if (window.renderAll) {
                 window.renderAll();
             }
             
-            // Обновляем отображение баланса
+            // Обновляем отображение баланса наличных
             if (window.renderCash) {
                 window.renderCash();
             }
             
-            // Обновляем доходы и пассивы (для недвижимости и бизнеса)
-            if (this._selectedAsset.type === 'realestate' || this._selectedAsset.type === 'business') {
-                if (window.renderIncome) {
-                    window.renderIncome();
-                }
-                if (window.renderLiability) {
-                    window.renderLiability();
-                }
+            // Обновляем доходы (всегда, так как продажа может повлиять на доходы)
+            if (window.renderIncome) {
+                window.renderIncome();
             }
             
-            // Обновляем историю
+            // Обновляем пассивы (всегда, так как продажа может повлиять на пассивы)
+            if (window.renderLiability) {
+                window.renderLiability();
+            }
+            
+            // Обновляем расходы (может измениться из-за налогов)
+            if (window.renderExpense) {
+                window.renderExpense();
+            }
+            
+            // Обновляем суммарную информацию (показатели на главном экране)
+            if (window.renderSummary) {
+                window.renderSummary();
+            }
+            
+            // Обновляем историю транзакций
             if (window.renderHistory) {
                 window.renderHistory();
             }
@@ -2053,27 +2063,37 @@ class AssetManager {
                 window.saveData();
             }
             
-            // Обновляем отображение
+            // Полное обновление всех отображений после продажи
             if (window.renderAll) {
                 window.renderAll();
             }
             
-            // Обновляем отображение баланса
+            // Обновляем отображение баланса наличных
             if (window.renderCash) {
                 window.renderCash();
             }
             
-            // Обновляем доходы и пассивы (для недвижимости и бизнеса)
-            if (asset.type === 'realestate' || asset.type === 'business') {
-                if (window.renderIncome) {
-                    window.renderIncome();
-                }
-                if (window.renderLiability) {
-                    window.renderLiability();
-                }
+            // Обновляем доходы (всегда, так как продажа может повлиять на доходы)
+            if (window.renderIncome) {
+                window.renderIncome();
             }
             
-            // Обновляем историю
+            // Обновляем пассивы (всегда, так как продажа может повлиять на пассивы)
+            if (window.renderLiability) {
+                window.renderLiability();
+            }
+            
+            // Обновляем расходы (может измениться из-за налогов)
+            if (window.renderExpense) {
+                window.renderExpense();
+            }
+            
+            // Обновляем суммарную информацию (показатели на главном экране)
+            if (window.renderSummary) {
+                window.renderSummary();
+            }
+            
+            // Обновляем историю транзакций
             if (window.renderHistory) {
                 window.renderHistory();
             }
