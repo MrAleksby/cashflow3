@@ -781,4 +781,54 @@ button:hover {
         width: 30px;
         height: 30px;
     }
+}
+
+/* Стили для модального окна выбора налоговой ставки */
+.tax-rate-btn {
+    background: #f5f5f5;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    padding: 15px 10px;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.tax-rate-btn:hover {
+    background: #e3f2fd;
+    border-color: #2196f3;
+    color: #1976d2;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.tax-rate-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.tax-rate-btn.selected {
+    background: #4caf50;
+    border-color: #4caf50;
+    color: white;
+}
+
+#tax-rate-modal .modal-content {
+    max-width: 500px;
+    margin: 10% auto;
+}
+
+@media (max-width: 480px) {
+    .tax-rate-options {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+    }
+    
+    .tax-rate-btn {
+        padding: 12px 8px;
+        font-size: 1.1em;
+    }
 } 

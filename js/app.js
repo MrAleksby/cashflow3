@@ -242,19 +242,24 @@ const originalRenderSummary = function() {
     // Рассчитываем общий доход (зарплата + пассивный доход)
     const totalIncome = salary + passiveIncome;
 
-    // Рассчитываем налог (25% от положительных доходов)
-    const taxRate = 0.25;
+    // Рассчитываем налог (используем выбранную пользователем ставку)
+    const taxRate = window.data.taxRate || 0.25; // По умолчанию 25%
     const taxableIncome = Math.max(0, totalIncome);
     const tax = Math.round(taxableIncome * taxRate);
 
     // Обновляем или создаем запись о налогах в расходах
     if (window.data && Array.isArray(window.data.expense)) {
-        const taxExpenseIndex = window.data.expense.findIndex(exp => exp.name === 'Налоги (25%)');
+        const taxPercentage = Math.round(taxRate * 100);
+        const taxName = `Налоги (${taxPercentage}%)`;
+        
+        // Ищем существующую запись о налогах (любую)
+        const taxExpenseIndex = window.data.expense.findIndex(exp => exp.type === 'tax');
         if (taxExpenseIndex !== -1) {
+            window.data.expense[taxExpenseIndex].name = taxName;
             window.data.expense[taxExpenseIndex].value = tax;
         } else {
             window.data.expense.push({
-                name: 'Налоги (25%)',
+                name: taxName,
                 value: tax,
                 type: 'tax'
             });

@@ -18,6 +18,35 @@ window.resetGame = function() {
         return;
     }
     
+    // Показываем модальное окно выбора налоговой ставки
+    window.showTaxRateModal();
+};
+
+// Функция показа модального окна выбора налоговой ставки
+window.showTaxRateModal = function() {
+    const modal = document.getElementById('tax-rate-modal');
+    if (!modal) return;
+    
+    modal.style.display = 'block';
+    
+    // Добавляем обработчики для кнопок выбора ставки
+    const taxRateButtons = modal.querySelectorAll('.tax-rate-btn');
+    taxRateButtons.forEach(button => {
+        button.onclick = function() {
+            const selectedRate = parseInt(this.dataset.rate);
+            window.startNewGameWithTaxRate(selectedRate);
+        };
+    });
+};
+
+// Функция начала новой игры с выбранной налоговой ставкой
+window.startNewGameWithTaxRate = function(taxRate) {
+    // Закрываем модальное окно
+    const modal = document.getElementById('tax-rate-modal');
+    if (modal) {
+        modal.style.display = 'none';
+    }
+    
     // Полностью очищаем все данные
     window.data = {
         income: [],
@@ -26,7 +55,8 @@ window.resetGame = function() {
         liability: [],
         children: [],
         history: [],
-        monthsCount: 0
+        monthsCount: 0,
+        taxRate: taxRate / 100 // Сохраняем как десятичную дробь (0.25 для 25%)
     };
     window.cash = 0;
     
@@ -36,7 +66,7 @@ window.resetGame = function() {
     localStorage.removeItem('cash');
     localStorage.removeItem('data');
     
-    // Сохраняем пустые данные в localStorage
+    // Сохраняем данные с налоговой ставкой в localStorage
     localStorage.setItem('appData', JSON.stringify(window.data));
     localStorage.setItem('cash', '0');
     
@@ -101,6 +131,7 @@ window.loadData = function() {
             if (!Array.isArray(window.data.children)) window.data.children = [];
             if (!Array.isArray(window.data.history)) window.data.history = [];
             if (typeof window.data.monthsCount === 'undefined') window.data.monthsCount = 0;
+            if (typeof window.data.taxRate === 'undefined') window.data.taxRate = 0.25; // 25% по умолчанию
         } else {
             // Инициализируем пустые данные если ничего не сохранено
             window.data = {
@@ -110,7 +141,8 @@ window.loadData = function() {
                 liability: [],
                 children: [],
                 history: [],
-                monthsCount: 0
+                monthsCount: 0,
+                taxRate: 0.25 // 25% по умолчанию
             };
         }
 

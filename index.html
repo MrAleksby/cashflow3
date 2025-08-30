@@ -620,6 +620,34 @@
         </div>
     </div>
 
+    <!-- Модальное окно выбора налоговой ставки -->
+    <div id="tax-rate-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Выбор налоговой ставки</h2>
+            </div>
+            
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; text-align: center; font-size: 1.1em;">
+                    Выберите налоговую ставку для новой игры:
+                </p>
+                
+                <div class="tax-rate-options" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                    <button class="tax-rate-btn" data-rate="0">0%</button>
+                    <button class="tax-rate-btn" data-rate="10">10%</button>
+                    <button class="tax-rate-btn" data-rate="15">15%</button>
+                    <button class="tax-rate-btn" data-rate="20">20%</button>
+                    <button class="tax-rate-btn" data-rate="25">25%</button>
+                    <button class="tax-rate-btn" data-rate="30">30%</button>
+                </div>
+                
+                <p style="margin-top: 20px; text-align: center; color: #666; font-size: 0.9em;">
+                    Налог будет взиматься с общего дохода (зарплата + пассивный доход)
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Основные скрипты приложения -->
     <script src="js/storage.js"></script>
     <script src="js/assets.js"></script>
