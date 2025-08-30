@@ -1334,6 +1334,19 @@ class AssetManager {
         if (priceInput) {
             priceInput.addEventListener('input', () => this._updateSellModalCalculations());
         }
+
+        // Обработчики для кнопок быстрого выбора цены продажи
+        const quickSellPriceButtons = document.querySelectorAll('#sell-asset-modal .quick-sell-price-btn');
+        quickSellPriceButtons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                e.preventDefault();
+                const price = e.target.dataset.price;
+                if (priceInput && price) {
+                    priceInput.value = price;
+                    this._updateSellModalCalculations();
+                }
+            });
+        });
     }
 
     /**
