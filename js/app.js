@@ -421,6 +421,7 @@ document.addEventListener('DOMContentLoaded', function() {
     monthsCounter = document.getElementById('months-counter');
     
     if (paydayBtn) {
+
         paydayBtn.addEventListener('click', handlePayDay);
     }
 });
@@ -978,25 +979,7 @@ function initializeSellPriceButtons(stockName) {
         btn.classList.remove('active');
     });
     
-    // Скрываем кнопки в зависимости от типа акций
-    document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
-        const price = parseInt(btn.dataset.price);
-        
-        // Для GRO4US скрываем $1, $4, $5 и $50
-        if (stockName === 'GRO4US' && (price === 1 || price === 4 || price === 5 || price === 50)) {
-            btn.style.display = 'none';
-        }
-        // Для ON2U скрываем $1, $4 и $50
-        else if (stockName === 'ON2U' && (price === 1 || price === 4 || price === 50)) {
-            btn.style.display = 'none';
-        }
-        // Для MYT4U скрываем только $50
-        else if (stockName === 'MYT4U' && price === 50) {
-            btn.style.display = 'none';
-        } else {
-            btn.style.display = 'block';
-        }
-    });
+
     
     // Добавляем обработчики событий для кнопок
     document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {

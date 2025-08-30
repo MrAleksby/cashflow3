@@ -781,66 +781,6 @@ class AssetManager {
     }
     
     /**
-     * Инициализация кнопок быстрых цен для продажи акций
-     */
-    _initializeSellPriceButtons(stockName) {
-        // Убираем активное состояние со всех кнопок
-        document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        
-        // Скрываем кнопки в зависимости от типа акций
-        document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
-            const price = parseInt(btn.dataset.price);
-            
-            // Для GRO4US скрываем $1, $4, $5 и $50
-            if (stockName === 'GRO4US' && (price === 1 || price === 4 || price === 5 || price === 50)) {
-                btn.style.display = 'none';
-            }
-            // Для ON2U скрываем $1, $4 и $50
-            else if (stockName === 'ON2U' && (price === 1 || price === 4 || price === 50)) {
-                btn.style.display = 'none';
-            }
-            // Для MYT4U скрываем только $50
-            else if (stockName === 'MYT4U' && price === 50) {
-                btn.style.display = 'none';
-            } else {
-                btn.style.display = 'block';
-            }
-        });
-        
-        // Добавляем обработчики событий для кнопок
-        document.querySelectorAll('.quick-sell-price-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const price = this.dataset.price;
-                // Ищем поле ввода в новом модальном окне
-                const sellPriceInput = document.querySelector('#sell-asset-modal .sell-price') || document.querySelector('.sell-price');
-                
-                console.log('🎯 Клик по кнопке быстрой цены продажи:', price);
-                
-                // Убираем активное состояние со всех кнопок
-                document.querySelectorAll('.quick-sell-price-btn').forEach(b => b.classList.remove('active'));
-                
-                // Добавляем активное состояние к нажатой кнопке
-                this.classList.add('active');
-                
-                // Устанавливаем цену в поле ввода
-                if (sellPriceInput) {
-                    sellPriceInput.value = price;
-                    console.log('✅ Цена установлена в поле ввода:', price);
-                } else {
-                    console.log('❌ Поле ввода цены не найдено');
-                }
-                
-                // Запускаем расчет (используем правильный контекст)
-                if (window.assetManager) {
-                    window.assetManager._updateSellModalCalculations();
-                }
-            });
-        });
-    }
-
-    /**
      * Переключить тип актива
      */
     _switchAssetType(assetType) {
@@ -1051,6 +991,50 @@ class AssetManager {
             return;
         }
         
+        // Генерируем кнопки цен в зависимости от типа акции
+        let priceButtons = '';
+        if (asset.name === 'GRO4US') {
+            // Для GRO4US - без цен $1, $4, $5 и $50
+            priceButtons = `
+                <button class="quick-sell-price-btn" data-price="10">$10</button>
+                <button class="quick-sell-price-btn" data-price="20">$20</button>
+                <button class="quick-sell-price-btn" data-price="30">$30</button>
+                <button class="quick-sell-price-btn" data-price="40">$40</button>
+            `;
+        } else if (asset.name === 'ON2U') {
+            // Для ON2U - без цен $1, $4 и $50
+            priceButtons = `
+                <button class="quick-sell-price-btn" data-price="5">$5</button>
+                <button class="quick-sell-price-btn" data-price="10">$10</button>
+                <button class="quick-sell-price-btn" data-price="20">$20</button>
+                <button class="quick-sell-price-btn" data-price="30">$30</button>
+                <button class="quick-sell-price-btn" data-price="40">$40</button>
+            `;
+        } else if (asset.name === 'MYT4U') {
+            // Для MYT4U - без цены $50
+            priceButtons = `
+                <button class="quick-sell-price-btn" data-price="1">$1</button>
+                <button class="quick-sell-price-btn" data-price="4">$4</button>
+                <button class="quick-sell-price-btn" data-price="5">$5</button>
+                <button class="quick-sell-price-btn" data-price="10">$10</button>
+                <button class="quick-sell-price-btn" data-price="20">$20</button>
+                <button class="quick-sell-price-btn" data-price="30">$30</button>
+                <button class="quick-sell-price-btn" data-price="40">$40</button>
+            `;
+        } else {
+            // Для всех остальных акций - все цены
+            priceButtons = `
+                <button class="quick-sell-price-btn" data-price="1">$1</button>
+                <button class="quick-sell-price-btn" data-price="4">$4</button>
+                <button class="quick-sell-price-btn" data-price="5">$5</button>
+                <button class="quick-sell-price-btn" data-price="10">$10</button>
+                <button class="quick-sell-price-btn" data-price="20">$20</button>
+                <button class="quick-sell-price-btn" data-price="30">$30</button>
+                <button class="quick-sell-price-btn" data-price="40">$40</button>
+                <button class="quick-sell-price-btn" data-price="50">$50</button>
+            `;
+        }
+        
         // Информация об акции
         infoElement.innerHTML = `
             <div class="asset-info">
@@ -1072,14 +1056,7 @@ class AssetManager {
                 <div class="input-group">
                     <label>Цена продажи за акцию ($):</label>
                     <div class="quick-sell-price-buttons">
-                        <button class="quick-sell-price-btn" data-price="1">$1</button>
-                        <button class="quick-sell-price-btn" data-price="4">$4</button>
-                        <button class="quick-sell-price-btn" data-price="5">$5</button>
-                        <button class="quick-sell-price-btn" data-price="10">$10</button>
-                        <button class="quick-sell-price-btn" data-price="20">$20</button>
-                        <button class="quick-sell-price-btn" data-price="30">$30</button>
-                        <button class="quick-sell-price-btn" data-price="40">$40</button>
-                        <button class="quick-sell-price-btn" data-price="50">$50</button>
+                        ${priceButtons}
                     </div>
                     <div class="custom-sell-price-input">
                         <input type="number" class="sell-price" min="0" value="${asset.price}" step="1">
@@ -1092,8 +1069,7 @@ class AssetManager {
             </div>
         `;
 
-        // Инициализируем кнопки быстрых цен
-        this._initializeSellPriceButtons(asset.name);
+
         
         // Добавляем обработчики событий
         this._addSellModalEventHandlers();
@@ -1757,7 +1733,7 @@ class AssetManager {
         }
         
         // Инициализируем кнопки быстрых цен для продажи
-        this._initializeSellPriceButtons(asset.name);
+
         
         // Обновляем расчеты
         this._updateSellCalculations();
