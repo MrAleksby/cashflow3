@@ -1458,11 +1458,21 @@ class AssetManager {
                 
                 // Удаляем связанные расходы для всякой всячины
                 if (this._selectedAsset.type === 'misc') {
+                    console.log('🔍 Продажа всячины:', this._selectedAsset.name);
+                    console.log('📊 Расходы до удаления:', window.data.expense);
+                    
                     if (window.data.expense) {
-                        window.data.expense = window.data.expense.filter(expense => 
-                            !expense.name.includes(this._selectedAsset.name)
-                        );
+                        const expensesBefore = window.data.expense.length;
+                        window.data.expense = window.data.expense.filter(expense => {
+                            const shouldKeep = !expense.name.includes(this._selectedAsset.name);
+                            console.log(`💰 Расход "${expense.name}" - содержит "${this._selectedAsset.name}"? ${!shouldKeep} - ${shouldKeep ? 'ОСТАВЛЯЕМ' : 'УДАЛЯЕМ'}`);
+                            return shouldKeep;
+                        });
+                        const expensesAfter = window.data.expense.length;
+                        console.log(`📈 Расходов было: ${expensesBefore}, стало: ${expensesAfter}`);
                     }
+                    
+                    console.log('📊 Расходы после удаления:', window.data.expense);
                     
                     // Также удаляем связанные пассивы (долги) для всячины
                     if (window.data.liability) {
