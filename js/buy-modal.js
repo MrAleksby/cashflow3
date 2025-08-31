@@ -562,8 +562,8 @@ const ASSET_CATEGORIES = {
             const price = parseFloat(priceInput.value) || 0;
 
             // Валидация
-            if (price <= 0) {
-                alert('Цена должна быть больше 0!');
+            if (price < 0) {
+                alert('Цена не может быть отрицательной!');
                 return;
             }
             if (price > window.cash) {

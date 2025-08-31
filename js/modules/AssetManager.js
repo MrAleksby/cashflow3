@@ -1257,7 +1257,14 @@ class AssetManager {
         const confirmBtn = document.getElementById('confirm-sell-btn');
         
         if (confirmBtn) {
-            confirmBtn.onclick = () => this._executeSellFromModal();
+            // Удаляем старый обработчик и добавляем новый
+            confirmBtn.onclick = null;
+            confirmBtn.onclick = () => {
+                console.log('🎯 Клик по кнопке Продать');
+                this._executeSellFromModal();
+            };
+        } else {
+            console.error('❌ Кнопка confirm-sell-btn не найдена');
         }
 
         // Обработчики для полей ввода
