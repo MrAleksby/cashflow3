@@ -519,7 +519,7 @@ const ASSET_CATEGORIES = {
                                     ${priceButtons}
                             </div>
                                 <div class="custom-price-input">
-                                    <input type="number" class="metal-price" min="0" step="100" value="${fixedPrice}" inputmode="numeric" pattern="[0-9]*" placeholder="Или введите свою цену">
+                                    <input type="number" class="metal-price" min="0" step="100" value="" inputmode="numeric" pattern="[0-9]*" placeholder="Введите цену (можно $0)">
                                 </div>
                             </div>
                             <button class="buy-metal-btn">Купить</button>
