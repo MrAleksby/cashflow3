@@ -1455,6 +1455,22 @@ class AssetManager {
                         );
                     }
                 }
+                
+                // Удаляем связанные расходы для всякой всячины
+                if (this._selectedAsset.type === 'misc') {
+                    if (window.data.expense) {
+                        window.data.expense = window.data.expense.filter(expense => 
+                            !expense.name.includes(this._selectedAsset.name)
+                        );
+                    }
+                    
+                    // Также удаляем связанные пассивы (долги) для всячины
+                    if (window.data.liability) {
+                        window.data.liability = window.data.liability.filter(liability => 
+                            !liability.name.includes(this._selectedAsset.name)
+                        );
+                    }
+                }
             }
             
             // Добавляем запись в историю
@@ -1969,6 +1985,22 @@ class AssetManager {
                     window.data.liability = window.data.liability.filter(liability => 
                         // Удаляем по source (ID актива) или по имени
                         liability.source !== asset.id && 
+                        !liability.name.includes(asset.name)
+                    );
+                }
+            }
+            
+            // Удаляем связанные расходы для всякой всячины
+            if (asset.type === 'misc') {
+                if (window.data.expense) {
+                    window.data.expense = window.data.expense.filter(expense => 
+                        !expense.name.includes(asset.name)
+                    );
+                }
+                
+                // Также удаляем связанные пассивы (долги) для всячины
+                if (window.data.liability) {
+                    window.data.liability = window.data.liability.filter(liability => 
                         !liability.name.includes(asset.name)
                     );
                 }
