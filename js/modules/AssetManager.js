@@ -61,34 +61,7 @@ class AssetManager {
             }
         }
         
-        // Обработчики для кнопок типов активов в модальном окне продажи
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('.asset-type-btn')) {
-                const btn = e.target.closest('.asset-type-btn');
-                const assetType = btn.dataset.type;
-                console.log('🎯 Клик по кнопке типа актива:', assetType, btn);
-                
-                if (assetType === 'stocks') {
-                    // Для акций открываем новое модальное окно со списком акций
-                    this._openSellStocksListModal();
-                } else if (assetType === 'realestate') {
-                    // Для недвижимости открываем новое модальное окно со списком недвижимости
-                    this._openSellRealEstateListModal();
-                } else if (assetType === 'business') {
-                    // Для бизнеса открываем новое модальное окно со списком бизнеса
-                    this._openSellBusinessListModal();
-                } else if (assetType === 'preciousmetals') {
-                    // Для драгоценных металлов открываем новое модальное окно со списком металлов
-                    this._openSellPreciousMetalsListModal();
-                } else if (assetType === 'misc') {
-                    // Для прочих активов открываем новое модальное окно со списком активов
-                    this._openSellMiscListModal();
-                } else {
-                    // Для неизвестных типов используем старую логику
-                    this._switchAssetType(assetType);
-                }
-            }
-        });
+
         
         // Обработчик закрытия модального окна продажи
         document.addEventListener('click', (e) => {
@@ -205,16 +178,10 @@ class AssetManager {
         
         if (modal) {
             modal.style.display = 'block';
-            this._currentAssetType = 'stocks';
-            this._updateAssetTypeButtons();
+            this._loadUnifiedAssetsList();
+            this._initFilterButtons();
             
-            console.log('🎯 AssetManager: Открыто модальное окно продажи');
-            console.log('📊 window.data доступен:', !!window.data);
-            console.log('📊 window.data.asset:', window.data?.asset);
-            console.log('📊 GameState доступен:', !!window.gameState);
-            console.log('📊 Данные GameState:', window.gameState?.data);
-            
-            // AssetManager активен
+            console.log('🎯 AssetManager: Открыто единое модальное окно продажи');
         } else {
             console.error('❌ Модальное окно продажи не найдено');
         }
@@ -2071,6 +2038,148 @@ class AssetManager {
             });
         }
     }
+    /**
+     * Загрузить единый список всех активов
+     */
+    _loadUnifiedAssetsList(filter = 'all') {
+        const listElement = document.getElementById('unified-assets-list');
+        if (!listElement) {
+            console.error('❌ Элемент unified-assets-list не найден');
+            return;
+        }
+
+        // Собираем все активы из разных источников
+        const allAssets = [];
+        
+        // Акции
+        if (window.data?.asset) {
+            const stocks = window.data.asset.filter(asset => asset.type === 'stocks');
+            stocks.forEach(stock => {
+                allAssets.push({
+                    ...stock,
+                    displayType: 'stocks',
+                    displayName: stock.name,
+                    displayValue: `${stock.quantity} шт. × $${stock.price} = $${(stock.quantity * stock.price).toFixed(0)}`,
+                    badge: '📈 Акции'
+                });
+            });
+        }
+
+        // Недвижимость
+        if (window.data?.asset) {
+            const realestate = window.data.asset.filter(asset => asset.type === 'realestate');
+            realestate.forEach(property => {
+                allAssets.push({
+                    ...property,
+                    displayType: 'realestate',
+                    displayName: property.name,
+                    displayValue: `$${property.value?.toFixed(0) || '0'}`,
+                    badge: '🏠 Недвижимость'
+                });
+            });
+        }
+
+        // Бизнес
+        if (window.data?.asset) {
+            const business = window.data.asset.filter(asset => asset.type === 'business');
+            business.forEach(biz => {
+                allAssets.push({
+                    ...biz,
+                    displayType: 'business',
+                    displayName: biz.name,
+                    displayValue: `$${biz.value?.toFixed(0) || '0'}`,
+                    badge: '🏢 Бизнес'
+                });
+            });
+        }
+
+        // Драгметаллы
+        if (window.data?.asset) {
+            const metals = window.data.asset.filter(asset => asset.type === 'preciousmetals');
+            metals.forEach(metal => {
+                allAssets.push({
+                    ...metal,
+                    displayType: 'preciousmetals',
+                    displayName: metal.name,
+                    displayValue: `$${metal.value?.toFixed(0) || '0'}`,
+                    badge: '🪙 Драгметаллы'
+                });
+            });
+        }
+
+        // Всячина
+        if (window.data?.asset) {
+            const misc = window.data.asset.filter(asset => asset.type === 'misc');
+            misc.forEach(item => {
+                allAssets.push({
+                    ...item,
+                    displayType: 'misc',
+                    displayName: item.name,
+                    displayValue: `$${item.value?.toFixed(0) || '0'}`,
+                    badge: '🛍️ Всячина'
+                });
+            });
+        }
+
+        // Фильтруем по выбранному типу
+        const filteredAssets = filter === 'all' ? allAssets : allAssets.filter(asset => asset.displayType === filter);
+
+        // Генерируем HTML
+        if (filteredAssets.length === 0) {
+            listElement.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Нет активов для продажи</div>';
+            return;
+        }
+
+        const html = filteredAssets.map(asset => `
+            <div class="unified-asset-item" data-asset-id="${asset.id}" data-asset-type="${asset.displayType}">
+                <div class="asset-info">
+                    <div class="asset-name">
+                        <span class="asset-type-badge">${asset.badge}</span>
+                        ${asset.displayName}
+                    </div>
+                    <div class="asset-details">${asset.displayValue}</div>
+                </div>
+                <div class="asset-value">Продать</div>
+            </div>
+        `).join('');
+
+        listElement.innerHTML = html;
+
+        // Добавляем обработчики кликов
+        listElement.querySelectorAll('.unified-asset-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const assetId = item.dataset.assetId;
+                const assetType = item.dataset.assetType;
+                const asset = allAssets.find(a => a.id === assetId);
+                if (asset) {
+                    this._openSellAssetModal(asset);
+                }
+            });
+        });
+
+        console.log(`🎨 Загружено ${filteredAssets.length} активов (фильтр: ${filter})`);
+    }
+
+    /**
+     * Инициализировать кнопки фильтров
+     */
+    _initFilterButtons() {
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Убираем активный класс со всех кнопок
+                filterButtons.forEach(b => b.classList.remove('active'));
+                // Добавляем активный класс к нажатой кнопке
+                btn.classList.add('active');
+                
+                // Загружаем список с новым фильтром
+                const filter = btn.dataset.filter;
+                this._loadUnifiedAssetsList(filter);
+            });
+        });
+    }
+
 }
 
 // Создаем глобальный экземпляр AssetManager

@@ -237,162 +237,23 @@
     <div id="sell-modal" class="modal">
         <div class="modal-content">
             <button class="close-btn">&times;</button>
-            <h2>Выберите тип актива для продажи</h2>
-            <div class="asset-type-selector">
-                <div class="asset-type-btn" data-type="stocks">
-                    <i class="fas fa-chart-line"></i>
-                    <h3>Акции</h3>
-                    <p>Продажа ценных бумаг</p>
-                </div>
-                <div class="asset-type-btn" data-type="realestate">
-                    <i class="fas fa-home"></i>
-                    <h3>Недвижимость</h3>
-                    <p>Продажа недвижимости</p>
-                </div>
-                <div class="asset-type-btn" data-type="business">
-                    <i class="fas fa-store"></i>
-                    <h3>Бизнес</h3>
-                    <p>Продажа бизнеса</p>
-                </div>
-                <div class="asset-type-btn" data-type="preciousmetals">
-                    <i class="fas fa-coins"></i>
-                    <h3>Драгметаллы</h3>
-                    <p>Продажа драгметаллов</p>
-                </div>
-                <div class="asset-type-btn" data-type="misc">
-                    <i class="fas fa-shopping-bag"></i>
-                    <h3>Всякая всячина</h3>
-                    <p>Продажа прочих активов</p>
-                </div>
+            <h2>Продажа активов</h2>
+            
+            <!-- Фильтры по типам активов -->
+            <div class="asset-type-filters">
+                <button class="filter-btn active" data-filter="all">Все активы</button>
+                <button class="filter-btn" data-filter="stocks">📈 Акции</button>
+                <button class="filter-btn" data-filter="realestate">🏠 Недвижимость</button>
+                <button class="filter-btn" data-filter="business">🏢 Бизнес</button>
+                <button class="filter-btn" data-filter="preciousmetals">🪙 Драгметаллы</button>
+                <button class="filter-btn" data-filter="misc">🛍️ Всячина</button>
             </div>
             
-            <!-- Список активов -->
-            <div id="stock-list" class="asset-list"></div>
-            <div id="realestate-list" class="asset-list" style="display: none;"></div>
-            <div id="business-list" class="asset-list" style="display: none;"></div>
-            <div id="preciousmetals-list" class="asset-list" style="display: none;"></div>
-            <div id="misc-list" class="asset-list" style="display: none;"></div>
-            
-            <!-- Информация о выбранной акции -->
-            <div id="selected-stock-info" class="selected-asset-info" style="display: none;">
-                <div class="stock-details">
-                    <p>Акция: <span class="selected-stock-name"></span></p>
-                    <p>В наличии: <span class="selected-stock-quantity"></span> шт.</p>
-                    <p>Цена покупки: <span class="selected-stock-buy-price"></span>/шт</p>
-                    
-                    <!-- Информация о дивидендах -->
-                    <div class="dividend-info" style="display: none;">
-                        <p>Текущий доход: <span class="current-dividend"></span>/мес</p>
-                    </div>
-                </div>
-                
-                <!-- Поля для продажи -->
-                <div class="sell-controls">
-                    <div class="input-group">
-                        <label>Количество для продажи:</label>
-                        <input type="number" class="sell-quantity" min="1" step="1" inputmode="numeric" pattern="[0-9]*">
-                    </div>
-                    <div class="input-group">
-                        <label>Цена продажи за акцию ($):</label>
-                        <div class="quick-sell-price-buttons">
-                            <button class="quick-sell-price-btn" data-price="1">$1</button>
-                            <button class="quick-sell-price-btn" data-price="4">$4</button>
-                            <button class="quick-sell-price-btn" data-price="5">$5</button>
-                            <button class="quick-sell-price-btn" data-price="10">$10</button>
-                            <button class="quick-sell-price-btn" data-price="20">$20</button>
-                            <button class="quick-sell-price-btn" data-price="30">$30</button>
-                            <button class="quick-sell-price-btn" data-price="40">$40</button>
-                            <button class="quick-sell-price-btn" data-price="50">$50</button>
-                        </div>
-                        <div class="custom-sell-price-input">
-                            <input type="number" class="sell-price" min="0" step="1" inputmode="numeric" pattern="[0-9]*">
-                        </div>
-                    </div>
-                    <div class="total-info">
-                        <p>Итого к получению: <span class="sell-total">$0</span></p>
-                    </div>
-                </div>
+            <!-- Единый список всех активов -->
+            <div id="unified-assets-list" class="unified-assets-list">
+                <!-- Активы будут загружены динамически -->
             </div>
 
-            <!-- Информация о выбранной недвижимости -->
-            <div id="selected-realestate-info" class="selected-asset-info" style="display: none;">
-                <div class="realestate-details">
-                    <p>Объект: <span class="selected-realestate-name"></span></p>
-                    <p>Стоимость: <span class="selected-realestate-value"></span></p>
-                    <p>Пассивный доход: <span class="selected-realestate-income"></span>/мес</p>
-                </div>
-                
-                <!-- Поля для продажи -->
-                <div class="sell-controls">
-                    <div class="input-group">
-                        <label>Цена продажи ($):</label>
-                        <input type="number" class="sell-realestate-price" min="0" step="1000" inputmode="numeric" pattern="[0-9]*">
-                    </div>
-                    <div class="total-info">
-                        <p>Итого к получению: <span class="sell-realestate-total">$0</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Информация о выбранном бизнесе -->
-            <div id="selected-business-info" class="selected-asset-info" style="display: none;">
-                <div class="business-details">
-                    <p>Название: <span class="selected-business-name"></span></p>
-                    <p>Стоимость покупки: <span class="selected-business-value"></span></p>
-                    <p>Ежемесячный доход: <span class="selected-business-income"></span>/мес</p>
-                </div>
-                
-                <!-- Поля для продажи -->
-                <div class="sell-controls">
-                    <div class="input-group">
-                        <label>Цена продажи ($):</label>
-                        <input type="number" class="sell-business-price" min="0" step="1000" inputmode="numeric" pattern="[0-9]*">
-                    </div>
-                    <div class="total-info">
-                        <p>Итого к получению: <span class="sell-business-total">$0</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Информация о выбранном драгметалле -->
-            <div id="selected-preciousmetals-info" class="selected-asset-info" style="display: none;">
-                <div class="preciousmetals-details">
-                    <p>Название: <span class="selected-preciousmetals-name"></span></p>
-                    <p>Стоимость покупки: <span class="selected-preciousmetals-value"></span></p>
-                </div>
-                
-                <!-- Поля для продажи -->
-                <div class="sell-controls">
-                    <div class="input-group">
-                        <label>Цена продажи ($):</label>
-                        <input type="number" class="sell-preciousmetals-price" min="0" step="100" inputmode="numeric" pattern="[0-9]*">
-                    </div>
-                    <div class="total-info">
-                        <p>Итого к получению: <span class="sell-preciousmetals-total">$0</span></p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Информация о выбранном предмете -->
-            <div id="selected-misc-info" class="selected-asset-info" style="display: none;">
-                <div class="misc-details">
-                    <p>Название: <span class="selected-misc-name"></span></p>
-                    <p>Стоимость покупки: <span class="selected-misc-value"></span></p>
-                    <p>Ежемесячный расход: <span class="selected-misc-expense"></span>/мес</p>
-                </div>
-                
-                <!-- Поля для продажи -->
-                <div class="sell-controls">
-                    <div class="input-group">
-                        <label>Цена продажи ($):</label>
-                        <input type="number" class="sell-misc-price" min="0" step="100" inputmode="numeric" pattern="[0-9]*">
-                    </div>
-                    <div class="total-info">
-                        <p>Итого к получению: <span class="sell-misc-total">$0</span></p>
-                    </div>
-                </div>
-            </div>
-            
 
         </div>
     </div>

@@ -1279,4 +1279,116 @@ button:hover {
         border-radius: 10px !important;
         border-width: 2px !important;
     }
+}
+
+/* Стили для единого модального окна продажи */
+.asset-type-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 16px 0;
+    padding: 0 4px;
+}
+
+.filter-btn {
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.filter-btn:hover {
+    background: #e8f5e8;
+    border-color: #4CAF50;
+}
+
+.filter-btn.active {
+    background: #4CAF50;
+    color: white;
+    border-color: #4CAF50;
+}
+
+.unified-assets-list {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin: 16px 0;
+}
+
+.unified-asset-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.unified-asset-item:hover {
+    background-color: #f8f9fa;
+}
+
+.unified-asset-item:last-child {
+    border-bottom: none;
+}
+
+.asset-info {
+    flex: 1;
+}
+
+.asset-name {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.asset-type-badge {
+    display: inline-block;
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    margin-right: 8px;
+}
+
+.asset-details {
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.asset-value {
+    font-weight: bold;
+    color: #4CAF50;
+    font-size: 1rem;
+}
+
+/* Мобильные стили для фильтров */
+@media (max-width: 480px) {
+    .asset-type-filters {
+        gap: 6px;
+        margin: 12px 0;
+    }
+    
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .unified-asset-item {
+        padding: 10px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .asset-value {
+        align-self: flex-end;
+    }
 } 
