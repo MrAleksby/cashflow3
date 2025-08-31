@@ -179,9 +179,8 @@ class AssetManager {
         if (modal) {
             modal.style.display = 'block';
             this._loadUnifiedAssetsList();
-            this._initFilterButtons();
             
-            console.log('🎯 AssetManager: Открыто единое модальное окно продажи');
+            console.log('🎯 AssetManager: Открыто упрощенное модальное окно продажи');
         } else {
             console.error('❌ Модальное окно продажи не найдено');
         }
@@ -2041,7 +2040,7 @@ class AssetManager {
     /**
      * Загрузить единый список всех активов
      */
-    _loadUnifiedAssetsList(filter = 'all') {
+    _loadUnifiedAssetsList() {
         const listElement = document.getElementById('unified-assets-list');
         if (!listElement) {
             console.error('❌ Элемент unified-assets-list не найден');
@@ -2121,16 +2120,13 @@ class AssetManager {
             });
         }
 
-        // Фильтруем по выбранному типу
-        const filteredAssets = filter === 'all' ? allAssets : allAssets.filter(asset => asset.displayType === filter);
-
         // Генерируем HTML
-        if (filteredAssets.length === 0) {
+        if (allAssets.length === 0) {
             listElement.innerHTML = '<div style="text-align: center; padding: 20px; color: #666;">Нет активов для продажи</div>';
             return;
         }
 
-        const html = filteredAssets.map(asset => `
+        const html = allAssets.map(asset => `
             <div class="unified-asset-item" data-asset-id="${asset.id}" data-asset-type="${asset.displayType}">
                 <div class="asset-info">
                     <div class="asset-name">
@@ -2157,28 +2153,10 @@ class AssetManager {
             });
         });
 
-        console.log(`🎨 Загружено ${filteredAssets.length} активов (фильтр: ${filter})`);
+        console.log(`🎨 Загружено ${allAssets.length} активов`);
     }
 
-    /**
-     * Инициализировать кнопки фильтров
-     */
-    _initFilterButtons() {
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        
-        filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
-                // Убираем активный класс со всех кнопок
-                filterButtons.forEach(b => b.classList.remove('active'));
-                // Добавляем активный класс к нажатой кнопке
-                btn.classList.add('active');
-                
-                // Загружаем список с новым фильтром
-                const filter = btn.dataset.filter;
-                this._loadUnifiedAssetsList(filter);
-            });
-        });
-    }
+
 
 }
 
