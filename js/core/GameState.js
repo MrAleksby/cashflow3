@@ -37,6 +37,11 @@ class GameState {
         const oldValue = this._cash;
         this._cash = Number(value) || 0;
         
+        // Синхронизируем с window.cash для обратной совместимости
+        if (window.cash !== this._cash) {
+            window.cash = this._cash;
+        }
+        
         // Уведомляем слушателей об изменении
         this._notifyListeners('cashChanged', {
             oldValue,
@@ -71,6 +76,11 @@ class GameState {
     addCash(amount, description = '') {
         const oldCash = this._cash;
         this._cash += Number(amount) || 0;
+        
+        // Синхронизируем с window.cash для обратной совместимости
+        if (window.cash !== this._cash) {
+            window.cash = this._cash;
+        }
         
         // Добавляем в историю
         this.addHistory({
@@ -111,6 +121,11 @@ class GameState {
         
         if (this._cash >= amountToRemove) {
             this._cash -= amountToRemove;
+            
+            // Синхронизируем с window.cash для обратной совместимости
+            if (window.cash !== this._cash) {
+                window.cash = this._cash;
+            }
             
             // Добавляем в историю
             this.addHistory({
@@ -550,6 +565,11 @@ class GameState {
                     job: state.data?.job || { title: '', salary: 0 }
                 };
                 
+                // Синхронизируем с window.cash для обратной совместимости
+                if (window.cash !== this._cash) {
+                    window.cash = this._cash;
+                }
+                
                 // Уведомляем о загрузке
                 this._notifyListeners('stateLoaded', {
                     cash: this._cash,
@@ -577,6 +597,11 @@ class GameState {
             job: { title: '', salary: 0 }
         };
         
+        // Синхронизируем с window.cash для обратной совместимости
+        if (window.cash !== this._cash) {
+            window.cash = this._cash;
+        }
+        
         // Очищаем localStorage
         localStorage.removeItem('gameState');
         localStorage.removeItem('appData');
@@ -595,3 +620,8 @@ class GameState {
 
 // Создаем глобальный экземпляр GameState
 window.gameState = new GameState();
+
+// Синхронизируем начальное состояние с window.cash если он уже существует
+if (typeof window.cash === 'number' && !isNaN(window.cash)) {
+    window.gameState.cash = window.cash;
+}

@@ -130,9 +130,17 @@
   // === ОТРИСОВКА КОШЕЛЬКА ===
   const originalRenderCash = function() {
     var cashElem = document.getElementById('top-cash-amount');
+    var modalWalletElem = document.getElementById('modal-action-wallet-amount');
     var cash = Number(window.cash);
     if (isNaN(cash)) cash = 0;
+    
+    // Синхронизируем с gameState если он доступен
+    if (window.gameState && window.gameState.cash !== cash) {
+      window.gameState.cash = cash;
+    }
+    
     if (cashElem) cashElem.textContent = cash;
+    if (modalWalletElem) modalWalletElem.textContent = `$${cash}`;
   };
 
   // Оборачиваем все функции рендеринга в автосохранение
