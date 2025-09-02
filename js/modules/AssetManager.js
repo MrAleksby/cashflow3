@@ -1332,8 +1332,8 @@ class AssetManager {
         
         const sellPrice = parseFloat(priceInput.value) || 0;
         
-        if (sellPrice <= 0) {
-            alert('Цена продажи должна быть больше 0!');
+        if (sellPrice < 0) {
+            alert('Цена продажи не может быть отрицательной!');
             return;
         }
         
@@ -1602,8 +1602,8 @@ class AssetManager {
         const sellPriceInput = document.querySelector('.sell-price');
         const sellPrice = sellPriceInput ? Number(sellPriceInput.value) : 0;
         
-        if (sellPrice <= 0) {
-            alert('Введите корректную цену продажи');
+        if (sellPrice < 0) {
+            alert('Цена продажи не может быть отрицательной!');
             return;
         }
         
