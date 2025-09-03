@@ -487,13 +487,21 @@
             updateTournamentState(state) {
                 this.isActive = state.is_active;
                 this.isPaused = state.is_paused || false;
+                
+                // Если турнир был на паузе, а теперь возобновлен
+                if (!this.isPaused && this.pauseTime && this.tournamentStartTime) {
+                    // Корректируем время начала турнира, добавляя время паузы
+                    const pauseDuration = Date.now() - this.pauseTime;
+                    this.tournamentStartTime += pauseDuration;
+                    this.pauseTime = null;
+                }
+                
+                // Обновляем время начала турнира с сервера
                 this.tournamentStartTime = state.start_time ? state.start_time * 1000 : null;
                 
                 // Если турнир на паузе, запоминаем время паузы
                 if (this.isPaused && !this.pauseTime) {
                     this.pauseTime = Date.now();
-                } else if (!this.isPaused) {
-                    this.pauseTime = null;
                 }
                 
                 // Обновляем количество зрителей
