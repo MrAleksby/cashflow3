@@ -582,11 +582,18 @@
 
             startTimeUpdate() {
                 setInterval(() => {
-                    if (this.tournamentStartTime && this.isActive) {
+                    if (this.tournamentStartTime && this.isActive && !this.isPaused) {
                         const elapsed = Date.now() - this.tournamentStartTime;
                         const minutes = Math.floor(elapsed / 60000);
                         const seconds = Math.floor((elapsed % 60000) / 1000);
                         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        document.getElementById('tournament-time').textContent = timeString;
+                    } else if (this.tournamentStartTime && this.isActive && this.isPaused) {
+                        // При паузе показываем последнее время с индикатором паузы
+                        const elapsed = Date.now() - this.tournamentStartTime;
+                        const minutes = Math.floor(elapsed / 60000);
+                        const seconds = Math.floor((elapsed % 60000) / 1000);
+                        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ⏸️`;
                         document.getElementById('tournament-time').textContent = timeString;
                     } else {
                         document.getElementById('tournament-time').textContent = '00:00';

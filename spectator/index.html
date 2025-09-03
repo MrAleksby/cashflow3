@@ -483,6 +483,7 @@
                 this.players = new Map();
                 this.tournamentStartTime = null;
                 this.isActive = false;
+                this.isPaused = false;
                 this.onlineSpectators = 0;
                 
                 this.init();
@@ -520,6 +521,7 @@
 
             updateTournamentState(state) {
                 this.isActive = state.is_active;
+                this.isPaused = state.is_paused || false;
                 // Конвертируем время из секунд в миллисекунды
                 this.tournamentStartTime = state.start_time ? state.start_time * 1000 : null;
                 
@@ -639,11 +641,18 @@
 
             startTimeUpdate() {
                 setInterval(() => {
-                    if (this.tournamentStartTime && this.isActive) {
+                    if (this.tournamentStartTime && this.isActive && !this.isPaused) {
                         const elapsed = Date.now() - this.tournamentStartTime;
                         const minutes = Math.floor(elapsed / 60000);
                         const seconds = Math.floor((elapsed % 60000) / 1000);
                         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                        document.getElementById('tournament-time').textContent = timeString;
+                    } else if (this.tournamentStartTime && this.isActive && this.isPaused) {
+                        // При паузе показываем последнее время с индикатором паузы
+                        const elapsed = Date.now() - this.tournamentStartTime;
+                        const minutes = Math.floor(elapsed / 60000);
+                        const seconds = Math.floor((elapsed % 60000) / 1000);
+                        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ⏸️`;
                         document.getElementById('tournament-time').textContent = timeString;
                     } else if (!this.isActive) {
                         document.getElementById('tournament-time').textContent = '00:00';
