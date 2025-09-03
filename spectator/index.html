@@ -484,6 +484,7 @@
                 this.tournamentStartTime = null;
                 this.isActive = false;
                 this.isPaused = false;
+                this.pauseTime = null;
                 this.onlineSpectators = 0;
                 
                 this.init();
@@ -524,6 +525,13 @@
                 this.isPaused = state.is_paused || false;
                 // Конвертируем время из секунд в миллисекунды
                 this.tournamentStartTime = state.start_time ? state.start_time * 1000 : null;
+                
+                // Если турнир на паузе, запоминаем время паузы
+                if (this.isPaused && !this.pauseTime) {
+                    this.pauseTime = Date.now();
+                } else if (!this.isPaused) {
+                    this.pauseTime = null;
+                }
                 
                 // Обновляем количество зрителей
                 this.onlineSpectators = state.online_spectators || 0;
@@ -647,9 +655,9 @@
                         const seconds = Math.floor((elapsed % 60000) / 1000);
                         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                         document.getElementById('tournament-time').textContent = timeString;
-                    } else if (this.tournamentStartTime && this.isActive && this.isPaused) {
-                        // При паузе показываем последнее время с индикатором паузы
-                        const elapsed = Date.now() - this.tournamentStartTime;
+                    } else if (this.tournamentStartTime && this.isActive && this.isPaused && this.pauseTime) {
+                        // При паузе показываем время на момент паузы
+                        const elapsed = this.pauseTime - this.tournamentStartTime;
                         const minutes = Math.floor(elapsed / 60000);
                         const seconds = Math.floor((elapsed % 60000) / 1000);
                         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ⏸️`;
