@@ -92,13 +92,23 @@
             color: white;
         }
 
+        .btn-pause {
+            background: linear-gradient(45deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-resume {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+        }
+
         .btn-stop {
             background: linear-gradient(45deg, #ef4444, #dc2626);
             color: white;
         }
 
         .btn-reset {
-            background: linear-gradient(45deg, #f59e0b, #d97706);
+            background: linear-gradient(45deg, #6366f1, #4f46e5);
             color: white;
         }
 
@@ -138,6 +148,10 @@
 
         .status-active {
             background: #4ade80;
+        }
+
+        .status-paused {
+            background: #f59e0b;
         }
 
         .status-inactive {
@@ -260,6 +274,9 @@
             <button class="control-btn btn-start" id="start-tournament">
                 <i class="fas fa-play"></i> Начать турнир
             </button>
+            <button class="control-btn btn-pause" id="pause-tournament" disabled>
+                <i class="fas fa-pause"></i> Пауза
+            </button>
             <button class="control-btn btn-stop" id="stop-tournament" disabled>
                 <i class="fas fa-stop"></i> Завершить турнир
             </button>
@@ -320,6 +337,7 @@
         class TournamentAdmin {
             constructor() {
                 this.isActive = false;
+                this.isPaused = false;
                 this.tournamentStartTime = null;
                 this.players = new Map();
                 this.onlineSpectators = 0;
@@ -343,6 +361,14 @@
                     this.startTournament();
                 });
 
+                document.getElementById('pause-tournament').addEventListener('click', () => {
+                    if (this.isPaused) {
+                        this.resumeTournament();
+                    } else {
+                        this.pauseTournament();
+                    }
+                });
+
                 document.getElementById('stop-tournament').addEventListener('click', () => {
                     this.stopTournament();
                 });
@@ -362,6 +388,7 @@
                     const data = await response.json();
                     if (data.status === 'success') {
                         this.isActive = true;
+                        this.isPaused = false;
                         this.tournamentStartTime = Date.now();
                         this.updateControls();
                         this.updateStatus();
@@ -369,6 +396,36 @@
                     }
                 } catch (error) {
                     console.error('❌ Ошибка запуска турнира:', error);
+                }
+            }
+
+            async pauseTournament() {
+                try {
+                    const response = await fetch('/api/tournament/pause');
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        this.isPaused = true;
+                        this.updateControls();
+                        this.updateStatus();
+                        console.log('⏸️ Турнир поставлен на паузу!');
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка паузы турнира:', error);
+                }
+            }
+
+            async resumeTournament() {
+                try {
+                    const response = await fetch('/api/tournament/resume');
+                    const data = await response.json();
+                    if (data.status === 'success') {
+                        this.isPaused = false;
+                        this.updateControls();
+                        this.updateStatus();
+                        console.log('▶️ Турнир возобновлен!');
+                    }
+                } catch (error) {
+                    console.error('❌ Ошибка возобновления турнира:', error);
                 }
             }
 
@@ -428,6 +485,7 @@
 
             updateTournamentState(state) {
                 this.isActive = state.is_active;
+                this.isPaused = state.is_paused || false;
                 this.tournamentStartTime = state.start_time ? state.start_time * 1000 : null;
                 
                 // Обновляем количество зрителей
@@ -447,13 +505,23 @@
 
             updateControls() {
                 const startBtn = document.getElementById('start-tournament');
+                const pauseBtn = document.getElementById('pause-tournament');
                 const stopBtn = document.getElementById('stop-tournament');
 
                 if (this.isActive) {
                     startBtn.disabled = true;
+                    if (this.isPaused) {
+                        pauseBtn.innerHTML = '<i class="fas fa-play"></i> Возобновить';
+                        pauseBtn.className = 'control-btn btn-resume';
+                    } else {
+                        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Пауза';
+                        pauseBtn.className = 'control-btn btn-pause';
+                    }
+                    pauseBtn.disabled = false;
                     stopBtn.disabled = false;
                 } else {
                     startBtn.disabled = false;
+                    pauseBtn.disabled = true;
                     stopBtn.disabled = true;
                 }
             }
@@ -463,8 +531,13 @@
                 const statusText = document.getElementById('status-text');
 
                 if (this.isActive) {
-                    indicator.className = 'status-indicator status-active';
-                    statusText.textContent = 'Турнир активен';
+                    if (this.isPaused) {
+                        indicator.className = 'status-indicator status-paused';
+                        statusText.textContent = 'Турнир на паузе';
+                    } else {
+                        indicator.className = 'status-indicator status-active';
+                        statusText.textContent = 'Турнир активен';
+                    }
                 } else {
                     indicator.className = 'status-indicator status-inactive';
                     statusText.textContent = 'Турнир не активен';

@@ -66,10 +66,18 @@
             margin: 0 auto;
         }
 
-        /* Оптимизация для больших экранов */
+        /* Принудительно 12 участников на больших экранах */
+        @media (min-width: 1200px) {
+            .players-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 16px;
+                max-width: 1600px;
+            }
+        }
+
         @media (min-width: 1600px) {
             .players-grid {
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                grid-template-columns: repeat(6, 1fr);
                 gap: 18px;
                 max-width: 2000px;
             }
@@ -77,10 +85,71 @@
 
         @media (min-width: 2000px) {
             .players-grid {
-                grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+                grid-template-columns: repeat(6, 1fr);
                 gap: 16px;
                 max-width: 2400px;
             }
+        }
+
+        /* Для очень больших экранов - 12 участников в 2 ряда */
+        @media (min-width: 2400px) {
+            .players-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 20px;
+                max-width: 3000px;
+            }
+        }
+
+        /* Специально для Mac и больших экранов - принудительно 12 участников */
+        @media (min-width: 1200px) and (max-height: 1000px) {
+            .players-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 15px;
+                max-width: 1800px;
+            }
+        }
+
+        /* Для подключения к телевизору - максимум 12 участников */
+        @media (min-width: 1920px) {
+            .players-grid {
+                grid-template-columns: repeat(6, 1fr);
+                gap: 20px;
+                max-width: 2200px;
+            }
+        }
+
+        /* Принудительный режим для 12 участников */
+        .players-grid.force-12 {
+            grid-template-columns: repeat(6, 1fr) !important;
+            gap: 16px !important;
+            max-width: 2000px !important;
+        }
+
+        .players-grid.force-12 .player-card {
+            padding: 18px !important;
+            border-radius: 14px !important;
+        }
+
+        .players-grid.force-12 .player-name {
+            font-size: 1.2em !important;
+        }
+
+        .players-grid.force-12 .player-cash {
+            font-size: 2em !important;
+            margin: 12px 0 !important;
+        }
+
+        .players-grid.force-12 .player-stats {
+            gap: 10px !important;
+            margin-bottom: 12px !important;
+        }
+
+        .players-grid.force-12 .stat-item {
+            padding: 8px !important;
+        }
+
+        .players-grid.force-12 .stat-value {
+            font-size: 1em !important;
         }
 
         .player-card {
@@ -91,6 +160,36 @@
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+        }
+
+        /* Компактные карточки для больших экранов */
+        @media (min-width: 1200px) {
+            .player-card {
+                padding: 20px;
+                border-radius: 16px;
+            }
+            
+            .player-name {
+                font-size: 1.3em;
+            }
+            
+            .player-cash {
+                font-size: 2.2em;
+                margin: 15px 0;
+            }
+            
+            .player-stats {
+                gap: 12px;
+                margin-bottom: 15px;
+            }
+            
+            .stat-item {
+                padding: 10px;
+            }
+            
+            .stat-value {
+                font-size: 1.1em;
+            }
         }
 
         .player-card::before {

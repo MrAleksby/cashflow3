@@ -21,6 +21,8 @@ class TournamentServer:
         self.spectators = {}  # IP зрителя -> время последнего просмотра
         self.tournament_start_time = None
         self.is_active = False
+        self.is_paused = False
+        self.pause_start_time = None
         
     def add_player(self, player_id, player_data):
         """Добавить участника"""
@@ -114,6 +116,7 @@ class TournamentServer:
         return {
             'players': list(self.players.values()),
             'is_active': self.is_active,
+            'is_paused': self.is_paused,
             'start_time': self.tournament_start_time,
             'total_players': len(self.players),
             'online_players': online_count,
@@ -123,13 +126,38 @@ class TournamentServer:
     def start_tournament(self):
         """Начать турнир"""
         self.is_active = True
+        self.is_paused = False
         self.tournament_start_time = time.time()
+        self.pause_start_time = None
         logger.info("🏁 Турнир начался!")
+        
+    def pause_tournament(self):
+        """Поставить турнир на паузу"""
+        if self.is_active and not self.is_paused:
+            self.is_paused = True
+            self.pause_start_time = time.time()
+            logger.info("⏸️ Турнир поставлен на паузу!")
+            
+    def resume_tournament(self):
+        """Возобновить турнир"""
+        if self.is_active and self.is_paused:
+            self.is_paused = False
+            # Корректируем время начала турнира на время паузы
+            if self.pause_start_time:
+                pause_duration = time.time() - self.pause_start_time
+                self.tournament_start_time += pause_duration
+            self.pause_start_time = None
+            logger.info("▶️ Турнир возобновлен!")
         
     def stop_tournament(self):
         """Остановить турнир"""
+        duration = 0
+        if self.tournament_start_time:
+            duration = time.time() - self.tournament_start_time
         self.is_active = False
-        duration = time.time() - self.tournament_start_time if self.tournament_start_time else 0
+        self.is_paused = False
+        self.tournament_start_time = None
+        self.pause_start_time = None
         logger.info(f"🏁 Турнир завершен! Длительность: {duration:.1f} сек")
 
 class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
@@ -204,6 +232,26 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             
             self.tournament.stop_tournament()
             response = {'status': 'success', 'message': 'Турнир завершен!'}
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+
+        elif path == '/api/tournament/pause':
+            # API для паузы турнира
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            self.tournament.pause_tournament()
+            response = {'status': 'success', 'message': 'Турнир поставлен на паузу!'}
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+
+        elif path == '/api/tournament/resume':
+            # API для возобновления турнира
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            self.tournament.resume_tournament()
+            response = {'status': 'success', 'message': 'Турнир возобновлен!'}
             self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
             
         elif path == '/api/player/join':
