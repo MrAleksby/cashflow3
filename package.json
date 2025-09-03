@@ -1,0 +1,29 @@
+{
+  "name": "cashflow-tournament",
+  "version": "1.0.0",
+  "description": "Турнирный сервер для игры Cashflow",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "install-deps": "npm install"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": [
+    "cashflow",
+    "tournament",
+    "game",
+    "websocket",
+    "real-time"
+  ],
+  "author": "MrAleksby",
+  "license": "MIT"
+}
+
+

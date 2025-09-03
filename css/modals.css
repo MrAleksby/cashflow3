@@ -1492,7 +1492,10 @@
 
 /* Мобильные стили с повышенной специфичностью */
 @media (max-width: 480px) {
-    #buy-modal .modal-content {
+    /* Общие стили для всех модальных окон */
+    #buy-modal .modal-content,
+    #action-modal .modal-content,
+    #sell-modal .modal-content {
         margin: 0 !important;
         padding: 6px !important;
         width: 94% !important;
@@ -1504,13 +1507,17 @@
         transform: translate(-50%, -50%) !important;
     }
 
-    #buy-modal .modal-content h2 {
+    #buy-modal .modal-content h2,
+    #action-modal .modal-content h2,
+    #sell-modal .modal-content h2 {
         font-size: 1em !important;
         margin: 4px 0 !important;
         text-align: center !important;
     }
 
-    #buy-modal .close-btn {
+    #buy-modal .close-btn,
+    #action-modal .close-btn,
+    #sell-modal .close-btn {
         top: 2px !important;
         right: 2px !important;
         width: 20px !important;
@@ -1519,7 +1526,9 @@
         font-size: 16px !important;
     }
 
-    #buy-modal .category-card {
+    #buy-modal .category-card,
+    #action-modal .category-card,
+    #sell-modal .category-card {
         min-height: 32px !important;
         height: 32px !important;
         padding: 4px 6px !important;
@@ -1535,7 +1544,9 @@
         color: white !important;
     }
 
-    #buy-modal .category-card i {
+    #buy-modal .category-card i,
+    #action-modal .category-card i,
+    #sell-modal .category-card i {
         font-size: 1em !important;
         margin: 0 !important;
         min-width: 16px !important;
@@ -1545,7 +1556,9 @@
         color: #4CAF50 !important;
     }
 
-    #buy-modal .category-card h3 {
+    #buy-modal .category-card h3,
+    #action-modal .category-card h3,
+    #sell-modal .category-card h3 {
         font-size: 0.85em !important;
         margin: 0 !important;
         line-height: 1 !important;
@@ -1553,11 +1566,15 @@
         font-weight: 500 !important;
     }
 
-    #buy-modal .category-card p {
+    #buy-modal .category-card p,
+    #action-modal .category-card p,
+    #sell-modal .category-card p {
         display: none !important;
     }
 
-    #buy-modal .asset-categories {
+    #buy-modal .asset-categories,
+    #action-modal .asset-categories,
+    #sell-modal .asset-categories {
         display: grid !important;
         grid-template-columns: 1fr !important;
         gap: 3px !important;
@@ -1566,14 +1583,241 @@
         width: 100% !important;
     }
 
-    #buy-modal .category-card:active {
+    #buy-modal .category-card:active,
+    #action-modal .category-card:active,
+    #sell-modal .category-card:active {
         transform: scale(0.98) !important;
         background: #444 !important;
     }
 
-    #buy-modal .category-card.active {
+    #buy-modal .category-card.active,
+    #action-modal .category-card.active,
+    #sell-modal .category-card.active {
         background: #444 !important;
         border-color: #4CAF50 !important;
+    }
+
+    /* Специальные стили для модального окна действий */
+    #action-modal .wallet-balance {
+        font-size: 0.85em !important;
+        margin: 4px 0 !important;
+        padding: 6px !important;
+        border-radius: 4px !important;
+    }
+
+    #action-modal .wallet-balance span {
+        font-size: 1em !important;
+    }
+
+    /* Специальные стили для модального окна продажи */
+    #sell-modal .unified-assets-list {
+        margin: 4px 0 !important;
+        max-height: 200px !important;
+        overflow-y: auto !important;
+        padding: 4px !important;
+        background: #f8f9fa !important;
+        border-radius: 6px !important;
+    }
+
+    #sell-modal .unified-asset-item {
+        padding: 8px 10px !important;
+        margin-bottom: 4px !important;
+        border-radius: 6px !important;
+        min-height: 32px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        gap: 8px !important;
+    }
+
+    #sell-modal .unified-asset-item:last-child {
+        margin-bottom: 0 !important;
+    }
+
+    #sell-modal .asset-info {
+        flex: 1 !important;
+    }
+
+    #sell-modal .asset-name {
+        font-size: 0.85em !important;
+        margin-bottom: 2px !important;
+        line-height: 1.2 !important;
+    }
+
+    #sell-modal .asset-type-badge {
+        font-size: 0.7em !important;
+        padding: 2px 6px !important;
+        margin-right: 6px !important;
+    }
+
+    #sell-modal .asset-details {
+        font-size: 0.75em !important;
+        line-height: 1.2 !important;
+    }
+
+    #sell-modal .asset-value {
+        padding: 6px 12px !important;
+        font-size: 0.8em !important;
+        border-radius: 15px !important;
+        min-height: 28px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+    }
+
+    /* Стили для сообщения об отсутствии активов */
+    #sell-modal .no-assets-message {
+        text-align: center !important;
+        padding: 20px 10px !important;
+        color: #666 !important;
+        font-size: 0.9em !important;
+        background: #f8f9fa !important;
+        border-radius: 6px !important;
+        margin: 10px 0 !important;
+    }
+
+    /* Стили для кнопок выбора типа актива в модальном окне продажи */
+    #sell-modal .asset-type-selector {
+        display: grid !important;
+        grid-template-columns: 1fr !important;
+        gap: 3px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    #sell-modal .asset-type-btn {
+        min-height: 32px !important;
+        height: 32px !important;
+        padding: 4px 6px !important;
+        flex-direction: row !important;
+        justify-content: flex-start !important;
+        align-items: center !important;
+        text-align: left !important;
+        gap: 6px !important;
+        border-radius: 6px !important;
+        margin: 0 !important;
+        background: #333 !important;
+        border: 1px solid #444 !important;
+        color: white !important;
+    }
+
+    #sell-modal .asset-type-btn i {
+        font-size: 1em !important;
+        margin: 0 !important;
+        min-width: 16px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        color: #4CAF50 !important;
+    }
+
+    #sell-modal .asset-type-btn h3 {
+        font-size: 0.85em !important;
+        margin: 0 !important;
+        line-height: 1 !important;
+        color: white !important;
+        font-weight: 500 !important;
+    }
+
+    #sell-modal .asset-type-btn p {
+        display: none !important;
+    }
+
+    #sell-modal .asset-type-btn:active {
+        transform: scale(0.98) !important;
+        background: #444 !important;
+    }
+
+    #sell-modal .asset-type-btn.active {
+        background: #444 !important;
+        border-color: #4CAF50 !important;
+    }
+
+    /* Стили для форм в модальном окне действий */
+    #action-modal .action-form {
+        margin-top: 8px !important;
+        padding-top: 8px !important;
+        border-top: 1px solid #444 !important;
+    }
+
+    #action-modal .input-group {
+        gap: 6px !important;
+        margin-bottom: 8px !important;
+    }
+
+    #action-modal input {
+        height: 28px !important;
+        padding: 4px 6px !important;
+        font-size: 14px !important;
+        border-radius: 4px !important;
+    }
+
+    #action-modal button {
+        height: 28px !important;
+        padding: 4px 8px !important;
+        font-size: 0.85em !important;
+        border-radius: 4px !important;
+    }
+
+    /* Стили для текстового содержимого в карточках действий */
+    #action-modal .text-content {
+        flex: 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: center !important;
+        gap: 2px !important;
+    }
+
+    #action-modal .text-content h3 {
+        margin: 0 !important;
+        line-height: 1.2 !important;
+    }
+
+    #action-modal .text-content p {
+        margin: 0 !important;
+        line-height: 1.1 !important;
+    }
+
+    /* Стили для списка детей */
+    #action-modal .children-list {
+        margin-top: 8px !important;
+    }
+
+    #action-modal .child-item {
+        padding: 6px 8px !important;
+        margin-bottom: 6px !important;
+        border-radius: 4px !important;
+    }
+
+    #action-modal .child-name {
+        font-size: 0.85em !important;
+    }
+
+    #action-modal .child-expense {
+        font-size: 0.8em !important;
+    }
+
+    #action-modal .remove-child-btn {
+        padding: 2px 6px !important;
+        font-size: 0.75em !important;
+        border-radius: 3px !important;
+    }
+
+    /* Стили для активного состояния карточек в модальном окне действий */
+    #action-modal .category-card.active {
+        background: #444 !important;
+        border-color: #4CAF50 !important;
+        transform: scale(1) !important;
+    }
+
+    #action-modal .category-card.active .action-form {
+        display: block !important;
+        margin-top: 8px !important;
+        padding-top: 8px !important;
+        border-top: 1px solid #444 !important;
+    }
+
+    #action-modal .category-card.active .text-content {
+        margin-bottom: 8px !important;
     }
 }
 
