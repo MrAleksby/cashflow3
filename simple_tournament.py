@@ -304,7 +304,12 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                     'assets': [],
                     'income': [],
                     'expenses': [],
-                    'monthsCount': i
+                    'monthsCount': i,
+                    'salary': 5000 + (i * 1000),
+                    'passive_income': 1000 + (i * 500),
+                    'total_income': 6000 + (i * 1500),
+                    'total_expenses': 2000 + (i * 300),
+                    'flow': 4000 + (i * 1200)
                 }
                 
                 self.tournament.add_player(player_id, player_data)
@@ -331,10 +336,22 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                 assets_count = int(query_params.get('assets_count', [0])[0])
                 months_count = int(query_params.get('months_count', [0])[0])
                 
+                # Новые финансовые показатели
+                salary = int(query_params.get('salary', [0])[0])
+                passive_income = int(query_params.get('passive_income', [0])[0])
+                total_income = int(query_params.get('total_income', [0])[0])
+                total_expenses = int(query_params.get('total_expenses', [0])[0])
+                flow = int(query_params.get('flow', [0])[0])
+                
                 update_data = {
                     'cash': cash,
                     'assets': [{'name': f'Актив {i+1}'} for i in range(assets_count)],
-                    'monthsCount': months_count
+                    'monthsCount': months_count,
+                    'salary': salary,
+                    'passive_income': passive_income,
+                    'total_income': total_income,
+                    'total_expenses': total_expenses,
+                    'flow': flow
                 }
                 
                 self.tournament.update_player(player_id, update_data)

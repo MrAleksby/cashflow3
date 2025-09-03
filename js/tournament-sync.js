@@ -265,11 +265,37 @@ class TournamentSync {
                 monthsCount: window.gameState?.data?.monthsCount || this.lastMonths || 0
             };
 
-            // Отправляем через HTTP API
-            const response = await fetch(`/api/player/update?player_id=${this.playerId}&cash=${updateData.cash}&assets_count=${updateData.assets.length}&months_count=${updateData.monthsCount}`);
+            // Вычисляем финансовые показатели
+            const totalIncome = (window.gameState?.data?.income || []).reduce((sum, item) => sum + (item.amount || 0), 0);
+            const totalExpenses = (window.gameState?.data?.expense || []).reduce((sum, item) => sum + (item.amount || 0), 0);
+            const salary = (window.gameState?.data?.income || []).find(item => item.type === 'salary')?.amount || 0;
+            const passiveIncome = totalIncome - salary;
+            const flow = totalIncome - totalExpenses;
+
+            // Отправляем через HTTP API с полными финансовыми показателями
+            const queryParams = new URLSearchParams({
+                player_id: this.playerId,
+                cash: updateData.cash,
+                assets_count: updateData.assets.length,
+                months_count: updateData.monthsCount,
+                salary: salary,
+                passive_income: passiveIncome,
+                total_income: totalIncome,
+                total_expenses: totalExpenses,
+                flow: flow
+            });
+
+            const response = await fetch(`/api/player/update?${queryParams}`);
             
             if (response.ok) {
-                console.log('📊 Данные обновлены:', updateData);
+                console.log('📊 Данные обновлены:', {
+                    ...updateData,
+                    salary,
+                    passiveIncome,
+                    totalIncome,
+                    totalExpenses,
+                    flow
+                });
             } else {
                 console.error('❌ Ошибка обновления данных');
             }

@@ -250,6 +250,56 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
+        /* Финансовые показатели */
+        .financial-metrics {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            margin: 20px 0;
+        }
+
+        .metric-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .metric-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .flow-row {
+            grid-template-columns: 1fr;
+            text-align: center;
+        }
+
+        .metric-item {
+            text-align: center;
+        }
+
+        .metric-label {
+            font-size: 0.8em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+            color: #e5e7eb;
+        }
+
+        .metric-value {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #fbbf24;
+        }
+
+        .flow-value.positive {
+            color: #4ade80;
+        }
+
+        .flow-value.negative {
+            color: #ef4444;
+        }
+
         .player-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -608,7 +658,43 @@
                             ${player.is_online ? 'Онлайн' : 'Офлайн'}
                         </div>
                     </div>
+                    
+                    <!-- Основной капитал -->
                     <div class="player-cash">$${(player.cash || 0).toLocaleString()}</div>
+                    
+                    <!-- Финансовые показатели -->
+                    <div class="financial-metrics">
+                        <div class="metric-row">
+                            <div class="metric-item">
+                                <div class="metric-label">Зарплата</div>
+                                <div class="metric-value">$${(player.salary || 0).toLocaleString()}</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Пассивный доход</div>
+                                <div class="metric-value">$${(player.passive_income || 0).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="metric-row">
+                            <div class="metric-item">
+                                <div class="metric-label">Общий доход</div>
+                                <div class="metric-value">$${(player.total_income || 0).toLocaleString()}</div>
+                            </div>
+                            <div class="metric-item">
+                                <div class="metric-label">Общий расход</div>
+                                <div class="metric-value">$${(player.total_expenses || 0).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        <div class="metric-row flow-row">
+                            <div class="metric-item flow-item">
+                                <div class="metric-label">Поток</div>
+                                <div class="metric-value flow-value ${(player.flow || 0) >= 0 ? 'positive' : 'negative'}">
+                                    $${(player.flow || 0).toLocaleString()}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Дополнительная информация -->
                     <div class="player-stats">
                         <div class="stat-item">
                             <div class="stat-value">${player.assets?.length || 0}</div>
@@ -619,6 +705,8 @@
                             <div class="stat-label">Месяцев</div>
                         </div>
                     </div>
+                    
+                    <!-- Активы -->
                     <div class="player-assets">
                         <div class="assets-title">Активы:</div>
                         <div class="assets-list">
