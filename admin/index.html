@@ -92,15 +92,7 @@
             color: white;
         }
 
-        .btn-pause {
-            background: linear-gradient(45deg, #f59e0b, #d97706);
-            color: white;
-        }
 
-        .btn-resume {
-            background: linear-gradient(45deg, #10b981, #059669);
-            color: white;
-        }
 
         .btn-stop {
             background: linear-gradient(45deg, #ef4444, #dc2626);
@@ -144,10 +136,7 @@
             box-shadow: 0 0 20px #10b981;
         }
 
-        .status-paused {
-            background: #f59e0b;
-            box-shadow: 0 0 20px #f59e0b;
-        }
+
 
         .status-inactive {
             background: #6b7280;
@@ -267,9 +256,7 @@
             <button class="control-btn btn-start" id="start-tournament">
                 <i class="fas fa-play"></i> Начать турнир
             </button>
-            <button class="control-btn btn-pause" id="pause-tournament" disabled>
-                <i class="fas fa-pause"></i> Пауза
-            </button>
+
             <button class="control-btn btn-stop" id="stop-tournament" disabled>
                 <i class="fas fa-stop"></i> Завершить турнир
             </button>
@@ -330,9 +317,7 @@
         class TournamentAdmin {
             constructor() {
                 this.isActive = false;
-                this.isPaused = false;
                 this.tournamentStartTime = null;
-                this.pauseTime = null;
                 this.players = new Map();
                 this.onlineSpectators = 0;
                 
@@ -342,6 +327,7 @@
             init() {
                 this.setupControls();
                 this.startTimeUpdate();
+                this.connectToWebSocket();
                 this.fetchTournamentState();
                 
                 // Обновляем состояние каждые 2 секунды
@@ -354,15 +340,57 @@
                 document.getElementById('start-tournament').addEventListener('click', () => {
                     this.startTournament();
                 });
+            }
+            
+            connectToWebSocket() {
+                try {
+                    // Подключаемся к WebSocket серверу
+                    // Используем IP адрес сервера вместо localhost
+                    const serverIP = window.location.hostname;
+                    const wsUrl = `ws://${serverIP}:8765`;
+                    console.log('🔌 Админ панель подключается к WebSocket:', wsUrl);
+                    this.ws = new WebSocket(wsUrl);
+                    
+                    this.ws.onopen = () => {
+                        console.log('🔌 WebSocket подключение установлено (админ)');
+                        console.log('📤 Отправляем join_admin сообщение...');
+                        // Отправляем сообщение о том, что мы админ
+                        this.ws.send(JSON.stringify({
+                            type: 'join_admin'
+                        }));
+                    };
+                    
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            console.log('📨 Получено WebSocket сообщение (админ):', data);
+                            
+                            if (data.type === 'tournament_state') {
+                                this.updateTournamentState(data.data);
+                            }
+                        } catch (error) {
+                            console.error('❌ Ошибка парсинга WebSocket сообщения (админ):', error);
+                        }
+                    };
+                    
+                    this.ws.onclose = () => {
+                        console.log('🔌 WebSocket подключение закрыто (админ)');
+                        // Переподключаемся через 5 секунд
+                        setTimeout(() => {
+                            this.connectToWebSocket();
+                        }, 5000);
+                    };
+                    
+                    this.ws.onerror = (error) => {
+                        console.error('❌ WebSocket ошибка (админ):', error);
+                    };
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка создания WebSocket (админ):', error);
+                }
+            }
 
-                document.getElementById('pause-tournament').addEventListener('click', () => {
-                    if (this.isPaused) {
-                        this.resumeTournament();
-                    } else {
-                        this.pauseTournament();
-                    }
-                });
-
+            setupControls() {
                 document.getElementById('stop-tournament').addEventListener('click', () => {
                     this.stopTournament();
                 });
@@ -382,7 +410,6 @@
                     const data = await response.json();
                     if (data.status === 'success') {
                         this.isActive = true;
-                        this.isPaused = false;
                         this.tournamentStartTime = Date.now();
                         this.updateControls();
                         this.updateStatus();
@@ -390,36 +417,6 @@
                     }
                 } catch (error) {
                     console.error('❌ Ошибка запуска турнира:', error);
-                }
-            }
-
-            async pauseTournament() {
-                try {
-                    const response = await fetch('/api/tournament/pause');
-                    const data = await response.json();
-                    if (data.status === 'success') {
-                        this.isPaused = true;
-                        this.updateControls();
-                        this.updateStatus();
-                        console.log('⏸️ Турнир поставлен на паузу!');
-                    }
-                } catch (error) {
-                    console.error('❌ Ошибка паузы турнира:', error);
-                }
-            }
-
-            async resumeTournament() {
-                try {
-                    const response = await fetch('/api/tournament/resume');
-                    const data = await response.json();
-                    if (data.status === 'success') {
-                        this.isPaused = false;
-                        this.updateControls();
-                        this.updateStatus();
-                        console.log('▶️ Турнир возобновлен!');
-                    }
-                } catch (error) {
-                    console.error('❌ Ошибка возобновления турнира:', error);
                 }
             }
 
@@ -497,8 +494,8 @@
                 // Обновляем время начала турнира с сервера
                 this.tournamentStartTime = state.startTime ? state.startTime * 1000 : null;
                 
-                // Обновляем количество зрителей
-                this.onlineSpectators = 0;
+                // Обновляем количество зрителей из данных сервера
+                this.onlineSpectators = state.onlineSpectators || 0;
                 
                 // Обновляем список участников
                 this.players.clear();
@@ -514,18 +511,13 @@
 
             updateControls() {
                 const startBtn = document.getElementById('start-tournament');
-                const pauseBtn = document.getElementById('pause-tournament');
                 const stopBtn = document.getElementById('stop-tournament');
 
                 if (this.isActive) {
                     startBtn.disabled = true;
-                    pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Пауза';
-                    pauseBtn.className = 'control-btn btn-pause';
-                    pauseBtn.disabled = false;
                     stopBtn.disabled = false;
                 } else {
                     startBtn.disabled = false;
-                    pauseBtn.disabled = true;
                     stopBtn.disabled = true;
                 }
             }
@@ -565,7 +557,7 @@
                         <div class="player-name">${player.name}</div>
                         <div class="player-details">
                             $${(player.cash || 0).toLocaleString()} | 
-                            ${player.isOnline ? '🟢 Онлайн' : '🔴 Офлайн'}
+                            ${(player.isOnline || player.is_online) ? '🟢 Онлайн' : '🔴 Офлайн'}
                         </div>
 
                     `;
@@ -575,7 +567,8 @@
 
             updateStats() {
                 const players = Array.from(this.players.values());
-                const onlinePlayers = players.filter(p => p.isOnline).length;
+                // Проверяем оба варианта поля (isOnline и is_online)
+                const onlinePlayers = players.filter(p => p.isOnline || p.is_online).length;
 
                 document.getElementById('total-players').textContent = players.length;
                 document.getElementById('online-spectators').textContent = this.onlineSpectators || 0;
@@ -585,7 +578,7 @@
 
             startTimeUpdate() {
                 setInterval(() => {
-                    if (this.tournamentStartTime && this.isActive && !this.isPaused) {
+                    if (this.tournamentStartTime && this.isActive) {
                         const elapsed = Date.now() - this.tournamentStartTime;
                         const minutes = Math.floor(elapsed / 60000);
                         const seconds = Math.floor((elapsed % 60000) / 1000);

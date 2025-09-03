@@ -643,6 +643,9 @@
             }
 
             setupSocketEvents() {
+                // Подключение к WebSocket
+                this.connectToWebSocket();
+                
                 // Подключение к HTTP API
                 this.connectToAPI();
                 
@@ -652,6 +655,58 @@
                 }, 2000);
             }
 
+            connectToWebSocket() {
+                try {
+                    // Подключаемся к WebSocket серверу
+                    // Используем IP адрес сервера вместо localhost
+                    const serverIP = window.location.hostname;
+                    const wsUrl = `ws://${serverIP}:8765`;
+                    console.log('🔌 Подключение к WebSocket:', wsUrl);
+                    this.ws = new WebSocket(wsUrl);
+                    
+                    this.ws.onopen = () => {
+                        console.log('🔌 WebSocket подключение установлено');
+                        // Отправляем сообщение о том, что мы зритель
+                        this.ws.send(JSON.stringify({
+                            type: 'join_spectator'
+                        }));
+                    };
+                    
+                    this.ws.onmessage = (event) => {
+                        try {
+                            const data = JSON.parse(event.data);
+                            console.log('📨 Получено WebSocket сообщение:', data);
+                            
+                            if (data.type === 'tournament_state') {
+                                this.updateTournamentState(data.data);
+                            } else if (data.type === 'player_joined') {
+                                this.showNotification(`👤 Участник ${data.data.name} присоединился к турниру`);
+                                this.updatePlayer(data.data.id, data.data);
+                            } else if (data.type === 'player_updated') {
+                                this.updatePlayer(data.data.player_id, data.data.new_data);
+                            }
+                        } catch (error) {
+                            console.error('❌ Ошибка парсинга WebSocket сообщения:', error);
+                        }
+                    };
+                    
+                    this.ws.onclose = () => {
+                        console.log('🔌 WebSocket подключение закрыто');
+                        // Переподключаемся через 5 секунд
+                        setTimeout(() => {
+                            this.connectToWebSocket();
+                        }, 5000);
+                    };
+                    
+                    this.ws.onerror = (error) => {
+                        console.error('❌ WebSocket ошибка:', error);
+                    };
+                    
+                } catch (error) {
+                    console.error('❌ Ошибка создания WebSocket:', error);
+                }
+            }
+            
             connectToAPI() {
                 console.log('✅ Подключен к турнирному API');
                 this.fetchTournamentState();
@@ -870,7 +925,7 @@
 
             updateStats() {
                 const players = Array.from(this.players.values());
-                const onlinePlayers = players.filter(p => p.is_online).length;
+                const onlinePlayers = players.filter(p => p.isOnline).length;
                 const totalCash = players.reduce((sum, p) => sum + (p.cash || 0), 0);
 
                 document.getElementById('total-players').textContent = players.length;

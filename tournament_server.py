@@ -61,7 +61,8 @@ class TournamentServer:
             'is_active': self.is_active,
             'start_time': self.tournament_start_time,
             'total_players': len(self.players),
-            'online_players': len([p for p in self.players.values() if p.get('is_online', False)])
+            'online_players': len([p for p in self.players.values() if p.get('is_online', False)]),
+            'online_spectators': len(self.spectators)
         }
         
     def start_tournament(self):
@@ -75,6 +76,13 @@ class TournamentServer:
         self.is_active = False
         duration = time.time() - self.tournament_start_time if self.tournament_start_time else 0
         logger.info(f"🏁 Турнир завершен! Длительность: {duration:.1f} сек")
+        
+
+        
+    def reset_tournament(self):
+        """Сбросить время турнира"""
+        self.tournament_start_time = time.time()
+        logger.info("🔄 Время турнира сброшено")
 
 class TournamentWebSocketHandler:
     def __init__(self, tournament):
@@ -86,16 +94,19 @@ class TournamentWebSocketHandler:
         client_id = id(websocket)
         client_type = None
         
+        logger.info(f"🔌 Новое WebSocket подключение: {client_id}")
+        
         try:
             async for message in websocket:
                 try:
                     data = json.loads(message)
+                    logger.info(f"📨 Получено сообщение от {client_id}: {data.get('type', 'unknown')}")
                     await self.process_message(websocket, client_id, data)
                 except json.JSONDecodeError:
                     logger.error(f"Ошибка JSON: {message}")
                     
         except websockets.exceptions.ConnectionClosed:
-            pass
+            logger.info(f"🔌 WebSocket отключен: {client_id}")
         finally:
             await self.handle_disconnect(websocket, client_id)
             
@@ -124,9 +135,24 @@ class TournamentWebSocketHandler:
             
         elif message_type == 'join_spectator':
             # Зритель присоединяется
+            logger.info(f"👁️ Зритель присоединяется: {client_id}")
             client_type = 'spectator'
             self.tournament.spectators.add(client_id)
             self.clients[websocket] = {'type': 'spectator', 'id': client_id}
+            
+            logger.info(f"📊 Всего зрителей: {len(self.tournament.spectators)}")
+            
+            # Отправляем текущее состояние турнира
+            await websocket.send(json.dumps({
+                'type': 'tournament_state',
+                'data': self.tournament.get_tournament_state()
+            }))
+            
+        elif message_type == 'join_admin':
+            # Админ присоединяется
+            logger.info(f"👨‍💼 Админ присоединяется: {client_id}")
+            client_type = 'admin'
+            self.clients[websocket] = {'type': 'admin', 'id': client_id}
             
             # Отправляем текущее состояние турнира
             await websocket.send(json.dumps({
@@ -202,6 +228,10 @@ class TournamentWebSocketHandler:
                 # Зритель отключился
                 self.tournament.spectators.discard(client_id)
                 
+            elif client_info['type'] == 'admin':
+                # Админ отключился
+                logger.info(f"👨‍💼 Админ отключился: {client_id}")
+                
             del self.clients[websocket]
             
     async def broadcast_to_spectators(self, message):
@@ -272,7 +302,8 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                 'isActive': self.server.tournament.is_active,
                 'startTime': self.server.tournament.tournament_start_time,
                 'totalPlayers': len(players),
-                'onlinePlayers': len([p for p in players if p['isOnline']])
+                'onlinePlayers': len([p for p in players if p['isOnline']]),
+                'onlineSpectators': len(self.server.tournament.spectators)
             }
             
             self.wfile.write(json.dumps(response).encode())
@@ -391,6 +422,54 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             
             response = {'status': 'success', 'message': 'Все участники очищены'}
+            self.wfile.write(json.dumps(response).encode())
+            return
+
+        # API для начала турнира
+        elif self.path == '/api/tournament/start':
+            self.server.tournament.start_tournament()
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {
+                'status': 'success', 
+                'message': 'Турнир начат',
+                'start_time': self.server.tournament.tournament_start_time
+            }
+            self.wfile.write(json.dumps(response).encode())
+            return
+
+        # API для остановки турнира
+        elif self.path == '/api/tournament/stop':
+            self.server.tournament.stop_tournament()
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {
+                'status': 'success', 
+                'message': 'Турнир остановлен'
+            }
+            self.wfile.write(json.dumps(response).encode())
+            return
+
+
+
+        # API для сброса времени турнира
+        elif self.path == '/api/tournament/reset':
+            self.server.tournament.reset_tournament()
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {
+                'status': 'success', 
+                'message': 'Время турнира сброшено'
+            }
             self.wfile.write(json.dumps(response).encode())
             return
             
