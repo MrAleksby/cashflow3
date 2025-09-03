@@ -200,6 +200,13 @@ class TournamentSync {
 
         // Альтернативный способ - слушаем изменения в DOM
         this.observeGameChanges();
+        
+        // Принудительно отправляем данные каждые 3 секунды для обновления финансовых показателей
+        setInterval(() => {
+            if (this.isConnected) {
+                this.sendPlayerUpdate();
+            }
+        }, 3000);
     }
 
     /**
@@ -282,6 +289,14 @@ class TournamentSync {
                 
                 // Зарплата = общий доход - пассивный доход
                 salary = totalIncome - passiveIncome;
+                
+                console.log('💰 Финансовые показатели из GameState:', {
+                    totalIncome,
+                    totalExpenses,
+                    salary,
+                    passiveIncome,
+                    flow
+                });
             } else {
                 // Fallback: если gameState недоступен, используем базовые значения
                 salary = 5000; // Базовая зарплата
@@ -289,6 +304,14 @@ class TournamentSync {
                 totalIncome = salary + passiveIncome;
                 totalExpenses = 2000; // Базовые расходы
                 flow = totalIncome - totalExpenses;
+                
+                console.log('⚠️ Используем fallback значения:', {
+                    totalIncome,
+                    totalExpenses,
+                    salary,
+                    passiveIncome,
+                    flow
+                });
             }
 
             // Отправляем через HTTP API с полными финансовыми показателями
@@ -307,7 +330,7 @@ class TournamentSync {
             const response = await fetch(`/api/player/update?${queryParams}`);
             
             if (response.ok) {
-                console.log('📊 Данные обновлены:', {
+                console.log('📊 Данные успешно отправлены на сервер:', {
                     ...updateData,
                     salary,
                     passiveIncome,
