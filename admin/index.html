@@ -567,6 +567,7 @@
                             $${(player.cash || 0).toLocaleString()} | 
                             ${player.isOnline ? '🟢 Онлайн' : '🔴 Офлайн'}
                         </div>
+
                     `;
                     container.appendChild(playerItem);
                 });
@@ -579,6 +580,8 @@
                 document.getElementById('total-players').textContent = players.length;
                 document.getElementById('online-spectators').textContent = this.onlineSpectators || 0;
             }
+
+
 
             startTimeUpdate() {
                 setInterval(() => {

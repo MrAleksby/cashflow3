@@ -285,37 +285,64 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             params = parse_qs(parsed_url.query)
             name = params.get('name', ['Unknown'])[0]
             
-            # Создаем нового участника
-            player_id = f"player_{int(time.time() * 1000) % 1000000}"
-            player_data = {
-                'name': name,
-                'cash': 0,
-                'assets': [],
-                'income': [],
-                'expenses': [],
-                'months_count': 0,
-                'salary': 0,
-                'passive_income': 0,
-                'total_income': 0,
-                'total_expenses': 0,
-                'flow': 0,
-                'is_online': True,
-                'last_update': time.time()
-            }
+            # Проверяем, существует ли уже участник с таким именем
+            existing_player_id = None
+            for player_id, player_data in self.server.tournament.players.items():
+                if player_data.get('name') == name:
+                    existing_player_id = player_id
+                    break
             
-            self.server.tournament.players[player_id] = player_data
-            
-            self.send_response(200)
-            self.send_header('Content-Type', 'application/json')
-            self.end_headers()
-            
-            response = {
-                'playerId': player_id,
-                'player': player_data
-            }
-            
-            self.wfile.write(json.dumps(response).encode())
-            return
+            if existing_player_id:
+                # Подключаем к существующему аккаунту
+                existing_player = self.server.tournament.players[existing_player_id]
+                existing_player['is_online'] = True
+                existing_player['last_update'] = time.time()
+                
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                
+                response = {
+                    'playerId': existing_player_id,
+                    'player': existing_player,
+                    'message': 'Подключение к существующему аккаунту'
+                }
+                
+                self.wfile.write(json.dumps(response).encode())
+                return
+            else:
+                # Создаем нового участника
+                player_id = f"player_{int(time.time() * 1000) % 1000000}"
+                player_data = {
+                    'name': name,
+                    'cash': 0,
+                    'assets': [],
+                    'income': [],
+                    'expenses': [],
+                    'months_count': 0,
+                    'salary': 0,
+                    'passive_income': 0,
+                    'total_income': 0,
+                    'total_expenses': 0,
+                    'flow': 0,
+                    'is_online': True,
+                    'last_update': time.time()
+                }
+                
+                self.server.tournament.players[player_id] = player_data
+                
+                self.send_response(200)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                
+                response = {
+                    'playerId': player_id,
+                    'player': player_data,
+                    'message': 'Создан новый аккаунт'
+                }
+                
+                self.wfile.write(json.dumps(response).encode())
+                return
             
         # API для обновления данных участника
         elif self.path.startswith('/api/player/update'):
