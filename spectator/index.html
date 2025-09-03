@@ -694,30 +694,7 @@
                         </div>
                     </div>
                     
-                    <!-- Дополнительная информация -->
-                    <div class="player-stats">
-                        <div class="stat-item">
-                            <div class="stat-value">${player.assets?.length || 0}</div>
-                            <div class="stat-label">Активы</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value">${player.monthsCount || 0}</div>
-                            <div class="stat-label">Месяцев</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Активы -->
-                    <div class="player-assets">
-                        <div class="assets-title">Активы:</div>
-                        <div class="assets-list">
-                            ${(player.assets || []).slice(0, 5).map(asset => 
-                                `<span class="asset-tag">${asset.name}</span>`
-                            ).join('')}
-                            ${(player.assets || []).length > 5 ? 
-                                `<span class="asset-tag">+${(player.assets || []).length - 5}</span>` : ''
-                            }
-                        </div>
-                    </div>
+
                 `;
 
                 // Добавляем анимацию
