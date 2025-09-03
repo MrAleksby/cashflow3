@@ -233,6 +233,42 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
                 'message': f'Участник {player_name} присоединился к турниру'
             }
             self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
+
+        elif path == '/api/test/add-players':
+            # API для добавления тестовых участников
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.end_headers()
+            
+            count = int(query_params.get('count', ['3'])[0])
+            added_count = 0
+            
+            for i in range(count):
+                if len(self.tournament.players) >= 20:  # Максимум 20 участников
+                    break
+                    
+                player_id = f"test_player_{int(time.time() * 1000) + i}"
+                player_name = f"Тест {i + 1}"
+                
+                player_data = {
+                    'name': player_name,
+                    'cash': 100000 + (i * 10000),
+                    'assets': [],
+                    'income': [],
+                    'expenses': [],
+                    'monthsCount': i
+                }
+                
+                self.tournament.add_player(player_id, player_data)
+                added_count += 1
+            
+            response = {
+                'status': 'success',
+                'added_count': added_count,
+                'total_players': len(self.tournament.players),
+                'message': f'Добавлено {added_count} тестовых участников'
+            }
+            self.wfile.write(json.dumps(response, ensure_ascii=False).encode('utf-8'))
             
         elif path == '/api/player/update':
             # API для обновления данных участника
