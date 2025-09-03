@@ -281,8 +281,8 @@
                 <div class="info-label">Участников</div>
             </div>
             <div class="info-item">
-                <div class="info-value" id="online-players">0</div>
-                <div class="info-label">Онлайн</div>
+                <div class="info-value" id="online-spectators">0</div>
+                <div class="info-label">Зрителей онлайн</div>
             </div>
             <div class="info-item">
                 <div class="info-value" id="tournament-time">00:00</div>
@@ -322,6 +322,7 @@
                 this.isActive = false;
                 this.tournamentStartTime = null;
                 this.players = new Map();
+                this.onlineSpectators = 0;
                 
                 this.init();
             }
@@ -429,6 +430,9 @@
                 this.isActive = state.is_active;
                 this.tournamentStartTime = state.start_time ? state.start_time * 1000 : null;
                 
+                // Обновляем количество зрителей
+                this.onlineSpectators = state.online_spectators || 0;
+                
                 // Обновляем список участников
                 this.players.clear();
                 state.players.forEach(player => {
@@ -500,7 +504,7 @@
                 const onlinePlayers = players.filter(p => p.is_online).length;
 
                 document.getElementById('total-players').textContent = players.length;
-                document.getElementById('online-players').textContent = onlinePlayers;
+                document.getElementById('online-spectators').textContent = this.onlineSpectators || 0;
             }
 
             startTimeUpdate() {

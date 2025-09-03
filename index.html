@@ -495,6 +495,52 @@
         </div>
     </div>
 
+    <!-- Модальное окно ввода имени для турнира -->
+    <div id="player-name-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🏆 Введите ваше имя для турнира</h2>
+                <button class="close-btn" onclick="window.tournamentSync?.closePlayerNameModal()">&times;</button>
+            </div>
+            
+            <div class="modal-body">
+                <p style="margin-bottom: 20px; text-align: center; font-size: 1.1em; color: #666;">
+                    Как вас будут видеть другие участники и зрители?
+                </p>
+                
+                <div class="player-name-form">
+                    <label for="player-name-input">Ваше имя:</label>
+                    <input 
+                        type="text" 
+                        id="player-name-input" 
+                        placeholder="Например: Александр, Мария, Игорь"
+                        maxlength="30"
+                        autocomplete="off"
+                    >
+                    <div class="name-suggestions">
+                        <p style="margin: 10px 0; font-size: 0.9em; color: #888;">
+                            💡 <strong>Советы:</strong>
+                        </p>
+                        <ul style="margin: 0; padding-left: 20px; color: #666; font-size: 0.9em;">
+                            <li>Используйте реальное имя или никнейм</li>
+                            <li>Избегайте специальных символов</li>
+                            <li>Максимум 30 символов</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="join-tournament-btn" class="btn btn-primary" onclick="window.tournamentSync?.joinWithCustomName()">
+                    🚀 Присоединиться к турниру
+                </button>
+                <button id="use-random-name-btn" class="btn btn-secondary" onclick="window.tournamentSync?.useRandomName()">
+                    🎲 Использовать случайное имя
+                </button>
+            </div>
+        </div>
+    </div>
+
 
     
     <!-- Основные скрипты приложения -->

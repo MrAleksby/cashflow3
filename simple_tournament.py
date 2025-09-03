@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 class TournamentServer:
     def __init__(self):
         self.players = {}  # ID участника -> данные
+        self.spectators = {}  # IP зрителя -> время последнего просмотра
         self.tournament_start_time = None
         self.is_active = False
         
@@ -50,6 +51,31 @@ class TournamentServer:
             del self.players[player_id]
             logger.info(f"👋 Участник отключился: {player_name}")
             
+    def add_spectator(self, ip_address):
+        """Добавить зрителя"""
+        self.spectators[ip_address] = time.time()
+        logger.info(f"👀 Добавлен зритель: {ip_address} (всего: {len(self.spectators)})")
+        
+    def remove_spectator(self, ip_address):
+        """Удалить зрителя"""
+        if ip_address in self.spectators:
+            del self.spectators[ip_address]
+            
+    def cleanup_inactive_spectators(self):
+        """Очистить неактивных зрителей (не просматривали более 2 минут)"""
+        current_time = time.time()
+        inactive_spectators = []
+        
+        for ip_address, last_view in list(self.spectators.items()):
+            if current_time - last_view > 120:  # 2 минуты
+                inactive_spectators.append(ip_address)
+                
+        for ip_address in inactive_spectators:
+            self.remove_spectator(ip_address)
+            
+        if inactive_spectators:
+            logger.info(f"👀 Удалено {len(inactive_spectators)} неактивных зрителей")
+            
     def cleanup_inactive_players(self):
         """Очистить неактивных участников (не обновлялись более 5 минут)"""
         current_time = time.time()
@@ -79,12 +105,19 @@ class TournamentServer:
             else:
                 player['is_online'] = False
         
+        # Подсчитываем активных зрителей (просматривали за последние 2 минуты)
+        active_spectators = 0
+        for last_view in self.spectators.values():
+            if current_time - last_view <= 120:  # 2 минуты
+                active_spectators += 1
+        
         return {
             'players': list(self.players.values()),
             'is_active': self.is_active,
             'start_time': self.tournament_start_time,
             'total_players': len(self.players),
-            'online_players': online_count
+            'online_players': online_count,
+            'online_spectators': active_spectators
         }
         
     def start_tournament(self):
@@ -144,6 +177,11 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.end_headers()
+            
+            # Отслеживаем зрителя
+            client_ip = self.client_address[0]
+            self.tournament.add_spectator(client_ip)
+            logger.info(f"👀 Зритель подключился: {client_ip}")
             
             state = self.tournament.get_tournament_state()
             self.wfile.write(json.dumps(state, ensure_ascii=False).encode('utf-8'))
@@ -251,11 +289,12 @@ def run_http_server(tournament):
     logger.info("👑 Админ-панель: http://0.0.0.0:3000/admin")
     logger.info("🚀 API: http://0.0.0.0:3000/api/tournament/state")
     
-    # Запускаем фоновую задачу очистки неактивных участников
+    # Запускаем фоновую задачу очистки неактивных участников и зрителей
     def cleanup_task():
         while True:
             time.sleep(60)  # Каждую минуту
             tournament.cleanup_inactive_players()
+            tournament.cleanup_inactive_spectators()
     
     cleanup_thread = threading.Thread(target=cleanup_task, daemon=True)
     cleanup_thread.start()

@@ -25,8 +25,9 @@ class TournamentSync {
         }
 
         console.log('🏆 Турнирный режим активирован!');
-        this.connectToServer();
-        this.setupEventListeners();
+        
+        // Показываем модальное окно для ввода имени
+        this.showPlayerNameModal();
     }
 
     /**
@@ -51,12 +52,90 @@ class TournamentSync {
     }
 
     /**
+     * Показать модальное окно для ввода имени
+     */
+    showPlayerNameModal() {
+        const modal = document.getElementById('player-name-modal');
+        const input = document.getElementById('player-name-input');
+        
+        if (modal && input) {
+            modal.classList.add('active');
+            input.focus();
+            
+            // Обработка Enter для быстрого входа
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    this.joinWithCustomName();
+                }
+            });
+            
+            // Обработка Escape для закрытия
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    this.closePlayerNameModal();
+                }
+            });
+        }
+    }
+
+    /**
+     * Закрыть модальное окно имени
+     */
+    closePlayerNameModal() {
+        const modal = document.getElementById('player-name-modal');
+        if (modal) {
+            modal.classList.remove('active');
+        }
+    }
+
+    /**
+     * Присоединиться с пользовательским именем
+     */
+    joinWithCustomName() {
+        const input = document.getElementById('player-name-input');
+        const name = input?.value?.trim();
+        
+        if (!name || name.length < 2) {
+            this.showTournamentError('Пожалуйста, введите имя (минимум 2 символа)');
+            input?.focus();
+            return;
+        }
+        
+        if (name.length > 30) {
+            this.showTournamentError('Имя слишком длинное (максимум 30 символов)');
+            input?.focus();
+            return;
+        }
+        
+        // Устанавливаем пользовательское имя
+        this.playerName = name;
+        console.log('✅ Установлено пользовательское имя:', name);
+        
+        // Закрываем модальное окно и подключаемся к серверу
+        this.closePlayerNameModal();
+        this.connectToServer();
+    }
+
+    /**
+     * Использовать случайное имя
+     */
+    useRandomName() {
+        this.playerName = this.generatePlayerName();
+        console.log('🎲 Используем случайное имя:', this.playerName);
+        
+        // Закрываем модальное окно и подключаемся к серверу
+        this.closePlayerNameModal();
+        this.connectToServer();
+    }
+
+    /**
      * Подключение к турнирному серверу
      */
     connectToServer() {
         try {
             console.log('✅ Подключение к турнирному API');
             this.isConnected = true;
+            this.setupEventListeners();
             this.joinTournament();
             
             // Отправляем обновления каждые 5 секунд

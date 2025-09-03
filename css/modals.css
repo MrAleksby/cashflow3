@@ -96,6 +96,144 @@
     background: #ffb300;
 }
 
+/* Модальное окно имени игрока для турнира */
+#player-name-modal .modal-content {
+    max-width: 500px;
+}
+
+#player-name-modal .player-name-form {
+    margin: 20px 0;
+}
+
+#player-name-modal .player-name-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 1.1em;
+}
+
+#player-name-modal .player-name-form input {
+    width: 100%;
+    padding: 14px 16px;
+    font-size: 1.1em;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+#player-name-modal .player-name-form input:focus {
+    outline: none;
+    border-color: #4CAF50;
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+#player-name-modal .name-suggestions {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4CAF50;
+}
+
+#player-name-modal .name-suggestions ul {
+    margin: 8px 0 0 0;
+}
+
+#player-name-modal .name-suggestions li {
+    margin-bottom: 6px;
+    line-height: 1.4;
+}
+
+#player-name-modal .modal-footer {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+#player-name-modal .btn {
+    flex: 1;
+    padding: 14px 20px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+#player-name-modal .btn-primary {
+    background: linear-gradient(135deg, #4CAF50, #45a049);
+    color: white;
+}
+
+#player-name-modal .btn-primary:hover {
+    background: linear-gradient(135deg, #45a049, #3d8b40);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+#player-name-modal .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+}
+
+#player-name-modal .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268, #495057);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+    #player-name-modal .modal-content {
+        margin: 10px;
+        width: calc(100% - 20px);
+        padding: 20px 16px;
+    }
+    
+    #player-name-modal .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #player-name-modal .btn {
+        padding: 16px 20px;
+        font-size: 1.2em;
+    }
+    
+    #player-name-modal .player-name-form input {
+        padding: 16px 18px;
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    #player-name-modal .modal-content {
+        margin: 5px;
+        width: calc(100% - 10px);
+        padding: 16px 12px;
+    }
+    
+    #player-name-modal .modal-header h2 {
+        font-size: 1.3em;
+        margin-bottom: 16px;
+    }
+    
+    #player-name-modal .player-name-form input {
+        padding: 18px 20px;
+        font-size: 1.3em;
+        border-radius: 10px;
+    }
+    
+    #player-name-modal .name-suggestions {
+        padding: 12px;
+        margin-top: 16px;
+    }
+}
+
 /* Specific modal styles */
 #bankrupt-modal .modal-content {
     padding: 40px 24px 32px 24px;
