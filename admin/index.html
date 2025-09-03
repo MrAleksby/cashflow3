@@ -108,77 +108,69 @@
         }
 
         .btn-reset {
-            background: linear-gradient(45deg, #6366f1, #4f46e5);
-            color: white;
-        }
-
-        .btn-clear {
             background: linear-gradient(45deg, #8b5cf6, #7c3aed);
             color: white;
         }
 
-        .control-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        .btn-clear {
+            background: linear-gradient(45deg, #f97316, #ea580c);
+            color: white;
         }
 
         .control-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            transform: none;
         }
 
         .tournament-status {
             background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            padding: 30px;
             margin: 20px auto;
             max-width: 800px;
-            border-radius: 15px;
+            border-radius: 20px;
             text-align: center;
         }
 
         .status-indicator {
-            display: inline-block;
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            margin-right: 10px;
-            animation: pulse 2s infinite;
+            margin: 0 auto 15px;
+            transition: all 0.3s ease;
         }
 
         .status-active {
-            background: #4ade80;
+            background: #10b981;
+            box-shadow: 0 0 20px #10b981;
         }
 
         .status-paused {
             background: #f59e0b;
+            box-shadow: 0 0 20px #f59e0b;
         }
 
         .status-inactive {
             background: #6b7280;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.2); opacity: 0.7; }
-            100% { transform: scale(1); opacity: 1; }
+            box-shadow: 0 0 20px #6b7280;
         }
 
         .tournament-info {
             display: flex;
-            justify-content: center;
-            gap: 40px;
-            margin: 20px 0;
+            justify-content: space-around;
+            margin-top: 30px;
+            flex-wrap: wrap;
         }
 
         .info-item {
             text-align: center;
+            margin: 10px;
         }
 
         .info-value {
-            font-size: 1.5em;
+            font-size: 2em;
             font-weight: bold;
-            color: #4ade80;
+            color: #ffd93d;
+            margin-bottom: 5px;
         }
 
         .info-label {
@@ -188,15 +180,15 @@
 
         .players-preview {
             background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
+            padding: 30px;
             margin: 20px auto;
             max-width: 800px;
-            border-radius: 15px;
+            border-radius: 20px;
         }
 
         .players-title {
             text-align: center;
-            font-size: 1.3em;
+            font-size: 1.5em;
             margin-bottom: 20px;
             color: #ffd93d;
         }
@@ -212,6 +204,7 @@
             padding: 15px;
             border-radius: 10px;
             border-left: 4px solid #4ade80;
+            position: relative;
         }
 
         .player-name {
@@ -463,13 +456,26 @@
             async clearPlayers() {
                 if (confirm('Вы уверены, что хотите удалить всех участников?')) {
                     try {
-                        // Здесь можно добавить API для очистки участников
-                        console.log('🧹 Участники очищены!');
-                        this.players.clear();
-                        this.updatePlayersList();
-                        this.updateStats();
+                        console.log('🧹 Начинаем очистку участников...');
+                        const response = await fetch('/api/admin/clear-players');
+                        const data = await response.json();
+                        
+                        if (data.status === 'success') {
+                            console.log('🧹 Участники очищены!');
+                            alert('✅ Все участники успешно очищены!');
+                            
+                            this.players.clear();
+                            this.updatePlayersList();
+                            this.updateStats();
+                            // Обновляем состояние с сервера
+                            this.fetchTournamentState();
+                        } else {
+                            console.error('❌ Ошибка очистки участников:', data.message);
+                            alert('❌ Ошибка очистки участников: ' + data.message);
+                        }
                     } catch (error) {
                         console.error('❌ Ошибка очистки участников:', error);
+                        alert('❌ Ошибка очистки участников: ' + error.message);
                     }
                 }
             }
@@ -485,27 +491,14 @@
             }
 
             updateTournamentState(state) {
-                this.isActive = state.is_active;
-                this.isPaused = state.is_paused || false;
-                
-                // Если турнир был на паузе, а теперь возобновлен
-                if (!this.isPaused && this.pauseTime && this.tournamentStartTime) {
-                    // Корректируем время начала турнира, добавляя время паузы
-                    const pauseDuration = Date.now() - this.pauseTime;
-                    this.tournamentStartTime += pauseDuration;
-                    this.pauseTime = null;
-                }
+                this.isActive = state.isActive;
+                this.isPaused = false;
                 
                 // Обновляем время начала турнира с сервера
-                this.tournamentStartTime = state.start_time ? state.start_time * 1000 : null;
-                
-                // Если турнир на паузе, запоминаем время паузы
-                if (this.isPaused && !this.pauseTime) {
-                    this.pauseTime = Date.now();
-                }
+                this.tournamentStartTime = state.startTime ? state.startTime * 1000 : null;
                 
                 // Обновляем количество зрителей
-                this.onlineSpectators = state.online_spectators || 0;
+                this.onlineSpectators = 0;
                 
                 // Обновляем список участников
                 this.players.clear();
@@ -526,13 +519,8 @@
 
                 if (this.isActive) {
                     startBtn.disabled = true;
-                    if (this.isPaused) {
-                        pauseBtn.innerHTML = '<i class="fas fa-play"></i> Возобновить';
-                        pauseBtn.className = 'control-btn btn-resume';
-                    } else {
-                        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Пауза';
-                        pauseBtn.className = 'control-btn btn-pause';
-                    }
+                    pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Пауза';
+                    pauseBtn.className = 'control-btn btn-pause';
                     pauseBtn.disabled = false;
                     stopBtn.disabled = false;
                 } else {
@@ -547,13 +535,8 @@
                 const statusText = document.getElementById('status-text');
 
                 if (this.isActive) {
-                    if (this.isPaused) {
-                        indicator.className = 'status-indicator status-paused';
-                        statusText.textContent = 'Турнир на паузе';
-                    } else {
-                        indicator.className = 'status-indicator status-active';
-                        statusText.textContent = 'Турнир активен';
-                    }
+                    indicator.className = 'status-indicator status-active';
+                    statusText.textContent = 'Турнир активен';
                 } else {
                     indicator.className = 'status-indicator status-inactive';
                     statusText.textContent = 'Турнир не активен';
@@ -574,6 +557,7 @@
                 }
 
                 container.innerHTML = '';
+                
                 this.players.forEach(player => {
                     const playerItem = document.createElement('div');
                     playerItem.className = 'player-item';
@@ -581,7 +565,7 @@
                         <div class="player-name">${player.name}</div>
                         <div class="player-details">
                             $${(player.cash || 0).toLocaleString()} | 
-                            ${player.is_online ? '🟢 Онлайн' : '🔴 Офлайн'}
+                            ${player.isOnline ? '🟢 Онлайн' : '🔴 Офлайн'}
                         </div>
                     `;
                     container.appendChild(playerItem);
@@ -590,7 +574,7 @@
 
             updateStats() {
                 const players = Array.from(this.players.values());
-                const onlinePlayers = players.filter(p => p.is_online).length;
+                const onlinePlayers = players.filter(p => p.isOnline).length;
 
                 document.getElementById('total-players').textContent = players.length;
                 document.getElementById('online-spectators').textContent = this.onlineSpectators || 0;
@@ -604,26 +588,17 @@
                         const seconds = Math.floor((elapsed % 60000) / 1000);
                         const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
                         document.getElementById('tournament-time').textContent = timeString;
-                    } else if (this.tournamentStartTime && this.isActive && this.isPaused && this.pauseTime) {
-                        // При паузе показываем время на момент паузы
-                        const elapsed = this.pauseTime - this.tournamentStartTime;
-                        const minutes = Math.floor(elapsed / 60000);
-                        const seconds = Math.floor((elapsed % 60000) / 1000);
-                        const timeString = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')} ⏸️`;
-                        document.getElementById('tournament-time').textContent = timeString;
                     } else {
                         document.getElementById('tournament-time').textContent = '00:00';
                     }
                 }, 1000);
-                }
+            }
         }
 
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
-            new TournamentAdmin();
+            window.tournamentAdmin = new TournamentAdmin();
         });
     </script>
 </body>
 </html>
-
-

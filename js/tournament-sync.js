@@ -1,20 +1,18 @@
 /**
- * TournamentSync - синхронизация с турнирным сервером
- * Отправляет все действия участника в реальном времени
+ * Простая система синхронизации турнира
+ * Без сложной логики восстановления - только базовое подключение
  */
+
 class TournamentSync {
     constructor() {
-        this.playerId = this.generatePlayerId();
-        this.playerName = this.generatePlayerName();
+        this.playerId = null;
+        this.playerName = null;
         this.isConnected = false;
         this.isTournamentMode = false;
         
         this.init();
     }
 
-    /**
-     * Инициализация турнирной синхронизации
-     */
     init() {
         // Проверяем, включен ли турнирный режим
         this.isTournamentMode = window.location.search.includes('tournament=true');
@@ -26,29 +24,8 @@ class TournamentSync {
 
         console.log('🏆 Турнирный режим активирован!');
         
-        // Показываем модальное окно для ввода имени
+        // Всегда показываем модальное окно для ввода имени
         this.showPlayerNameModal();
-    }
-
-    /**
-     * Генерация уникального ID участника
-     */
-    generatePlayerId() {
-        return 'player_' + Math.random().toString(36).substr(2, 9);
-    }
-
-    /**
-     * Генерация имени участника
-     */
-    generatePlayerName() {
-        const names = [
-            'Алексей', 'Мария', 'Дмитрий', 'Анна', 'Сергей',
-            'Елена', 'Андрей', 'Ольга', 'Иван', 'Татьяна',
-            'Михаил', 'Наталья', 'Владимир', 'Ирина', 'Николай'
-        ];
-        const randomName = names[Math.floor(Math.random() * names.length)];
-        const randomNumber = Math.floor(Math.random() * 100);
-        return `${randomName} ${randomNumber}`;
     }
 
     /**
@@ -59,6 +36,10 @@ class TournamentSync {
         const input = document.getElementById('player-name-input');
         
         if (modal && input) {
+            // Очищаем поле ввода
+            input.value = '';
+            input.placeholder = 'Введите ваше имя';
+            
             modal.classList.add('active');
             input.focus();
             
@@ -79,7 +60,7 @@ class TournamentSync {
     }
 
     /**
-     * Закрыть модальное окно имени
+     * Закрыть модальное окно
      */
     closePlayerNameModal() {
         const modal = document.getElementById('player-name-modal');
@@ -93,17 +74,10 @@ class TournamentSync {
      */
     joinWithCustomName() {
         const input = document.getElementById('player-name-input');
-        const name = input?.value?.trim();
+        const name = input.value.trim();
         
-        if (!name || name.length < 2) {
-            this.showTournamentError('Пожалуйста, введите имя (минимум 2 символа)');
-            input?.focus();
-            return;
-        }
-        
-        if (name.length > 30) {
-            this.showTournamentError('Имя слишком длинное (максимум 30 символов)');
-            input?.focus();
+        if (!name) {
+            alert('Пожалуйста, введите имя!');
             return;
         }
         
@@ -138,10 +112,10 @@ class TournamentSync {
             this.setupEventListeners();
             this.joinTournament();
             
-            // Отправляем обновления каждые 5 секунд
+            // Отправляем обновления каждые 3 секунды
             setInterval(() => {
                 this.sendPlayerUpdate();
-            }, 5000);
+            }, 3000);
             
         } catch (error) {
             console.error('❌ Ошибка подключения к API:', error);
@@ -160,15 +134,16 @@ class TournamentSync {
             const response = await fetch(`/api/player/join?name=${encodeURIComponent(this.playerName)}`);
             const data = await response.json();
             
-            if (data.status === 'success') {
-                this.playerId = data.player_id;
-                console.log('🎯 Присоединились к турниру:', this.playerName);
+            if (data.playerId) {
+                this.playerId = data.playerId;
+                console.log('🎯 Присоединились к турниру:', this.playerName, 'с ID:', this.playerId);
+                
                 this.showTournamentNotification(`Присоединились к турниру как ${this.playerName}`);
                 
                 // Сразу отправляем первое обновление
                 this.sendPlayerUpdate();
             } else {
-                console.error('❌ Ошибка подключения к турниру:', data.message);
+                console.error('❌ Ошибка подключения к турниру:', data);
             }
         } catch (error) {
             console.error('❌ Ошибка подключения к турниру:', error);
@@ -197,129 +172,57 @@ class TournamentSync {
                 this.sendPlayerUpdate();
             });
         }
-
-        // Альтернативный способ - слушаем изменения в DOM
-        this.observeGameChanges();
-        
-        // Принудительно отправляем данные каждые 3 секунды для обновления финансовых показателей
-        setInterval(() => {
-            if (this.isConnected) {
-                this.sendPlayerUpdate();
-            }
-        }, 3000);
-    }
-
-    /**
-     * Наблюдение за изменениями в игре
-     */
-    observeGameChanges() {
-        // Создаем наблюдатель за изменениями в DOM
-        const observer = new MutationObserver((mutations) => {
-            mutations.forEach((mutation) => {
-                if (mutation.type === 'childList' || mutation.type === 'attributes') {
-                    // Проверяем, изменились ли важные элементы
-                    this.checkForGameChanges();
-                }
-            });
-        });
-
-        // Начинаем наблюдение
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true,
-            attributes: true,
-            attributeFilter: ['data-value', 'textContent']
-        });
-    }
-
-    /**
-     * Проверка изменений в игре
-     */
-    checkForGameChanges() {
-        // Проверяем изменения баланса
-        const cashElement = document.getElementById('top-cash-amount');
-        if (cashElement) {
-            const currentCash = parseInt(cashElement.textContent) || 0;
-            if (this.lastCash !== currentCash) {
-                this.lastCash = currentCash;
-                this.sendPlayerUpdate();
-            }
-        }
-
-        // Проверяем изменения счетчика месяцев
-        const monthsElement = document.getElementById('months-counter');
-        if (monthsElement) {
-            const currentMonths = parseInt(monthsElement.textContent) || 0;
-            if (this.lastMonths !== currentMonths) {
-                this.lastMonths = currentMonths;
-                this.sendPlayerUpdate();
-            }
-        }
     }
 
     /**
      * Отправка обновления данных участника
      */
     async sendPlayerUpdate() {
-        if (!this.isConnected) return;
+        if (!this.isConnected || !this.playerId) {
+            return;
+        }
 
         try {
-            const updateData = {
-                cash: window.gameState?.cash || this.lastCash || 0,
-                assets: window.gameState?.data?.asset || [],
-                income: window.gameState?.data?.income || [],
-                expenses: window.gameState?.data?.expense || [],
-                monthsCount: window.gameState?.data?.monthsCount || this.lastMonths || 0
-            };
+            // Получаем данные из игры
+            const cash = window.cash || 0;
+            const assets = window.data?.asset || [];
+            const income = window.data?.income || [];
+            const expenses = window.data?.expense || [];
+            const monthsCount = window.data?.monthsCount || 0;
 
-            // Вычисляем финансовые показатели используя методы GameState
+            // Вычисляем финансовые показатели
             let totalIncome = 0;
             let totalExpenses = 0;
             let salary = 0;
             let passiveIncome = 0;
             let flow = 0;
 
-            // Пытаемся получить данные из gameState
-            if (window.gameState) {
-                // Используем встроенные методы GameState для вычисления
-                totalIncome = window.gameState.calculateTotalIncome();
-                totalExpenses = window.gameState.calculateTotalExpense();
-                passiveIncome = window.gameState.calculatePassiveIncome();
-                flow = window.gameState.calculateCashflow();
-                
-                // Зарплата = общий доход - пассивный доход
+            if (window.data) {
+                totalIncome = (window.data.income || []).reduce((sum, item) => sum + (item.value || 0), 0);
+                totalExpenses = (window.data.expense || []).reduce((sum, item) => sum + (item.value || 0), 0);
+                passiveIncome = (window.data.income || []).reduce((sum, item) => {
+                    if (item.type === 'passive') {
+                        return sum + (item.value || 0);
+                    }
+                    return sum;
+                }, 0);
                 salary = totalIncome - passiveIncome;
-                
-                console.log('💰 Финансовые показатели из GameState:', {
-                    totalIncome,
-                    totalExpenses,
-                    salary,
-                    passiveIncome,
-                    flow
-                });
-            } else {
-                // Fallback: если gameState недоступен, используем базовые значения
-                salary = 5000; // Базовая зарплата
-                passiveIncome = 1000; // Базовый пассивный доход
-                totalIncome = salary + passiveIncome;
-                totalExpenses = 2000; // Базовые расходы
                 flow = totalIncome - totalExpenses;
-                
-                console.log('⚠️ Используем fallback значения:', {
-                    totalIncome,
-                    totalExpenses,
-                    salary,
-                    passiveIncome,
-                    flow
-                });
+            } else {
+                // Fallback значения
+                salary = 5000;
+                passiveIncome = 1000;
+                totalIncome = salary + passiveIncome;
+                totalExpenses = 2000;
+                flow = totalIncome - totalExpenses;
             }
 
-            // Отправляем через HTTP API с полными финансовыми показателями
+            // Отправляем через HTTP API
             const queryParams = new URLSearchParams({
                 player_id: this.playerId,
-                cash: updateData.cash,
-                assets_count: updateData.assets.length,
-                months_count: updateData.monthsCount,
+                cash: cash,
+                assets_count: assets.length,
+                months_count: monthsCount,
                 salary: salary,
                 passive_income: passiveIncome,
                 total_income: totalIncome,
@@ -330,183 +233,86 @@ class TournamentSync {
             const response = await fetch(`/api/player/update?${queryParams}`);
             
             if (response.ok) {
-                console.log('📊 Данные успешно отправлены на сервер:', {
-                    ...updateData,
-                    salary,
-                    passiveIncome,
-                    totalIncome,
-                    totalExpenses,
-                    flow
-                });
-            } else {
-                console.error('❌ Ошибка обновления данных');
+                const data = await response.json();
+                if (data.success) {
+                    console.log('✅ Данные участника обновлены');
+                }
             }
         } catch (error) {
-            console.error('❌ Ошибка отправки данных:', error);
+            console.error('❌ Ошибка обновления данных:', error);
         }
     }
 
     /**
-     * Отправка действия участника
-     */
-    sendPlayerAction(actionType, description = '') {
-        if (!this.isConnected) return;
-
-        const actionData = {
-            type: actionType,
-            description: description,
-            timestamp: Date.now()
-        };
-
-        // Логируем действие локально
-        console.log('🎯 Действие участника:', actionType, description);
-        
-        // Можно добавить отправку через API если нужно
-        // this.sendPlayerUpdate();
-    }
-
-
-
-    /**
-     * Показать уведомление о турнире
+     * Показать уведомление
      */
     showTournamentNotification(message) {
-        // Создаем уведомление
+        // Создаем простое уведомление
         const notification = document.createElement('div');
-        notification.className = 'tournament-notification';
-        notification.innerHTML = `
-            <div class="notification-content">
-                <i class="fas fa-trophy"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-        // Добавляем стили
         notification.style.cssText = `
             position: fixed;
             top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, #4ade80, #22c55e);
+            right: 20px;
+            background: #4ade80;
             color: white;
-            padding: 15px 25px;
-            border-radius: 25px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-weight: bold;
-            animation: slideDown 0.5s ease-out;
+            padding: 15px 20px;
+            border-radius: 8px;
+            z-index: 1000;
+            font-size: 14px;
+            max-width: 300px;
+            word-wrap: break-word;
         `;
-
-        // Добавляем анимацию
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideDown {
-                from { transform: translateX(-50%) translateY(-100%); opacity: 0; }
-                to { transform: translateX(-50%) translateY(0); opacity: 1; }
-            }
-        `;
-        document.head.appendChild(style);
-
+        notification.textContent = message;
+        
         document.body.appendChild(notification);
-
-        // Убираем через 3 секунды
+        
         setTimeout(() => {
-            notification.style.animation = 'slideUp 0.5s ease-in';
-            notification.style.animationFillMode = 'forwards';
-            
-            const slideUpStyle = document.createElement('style');
-            slideUpStyle.textContent = `
-                @keyframes slideUp {
-                    from { transform: translateX(-50%) translateY(0); opacity: 1; }
-                    to { transform: translateX(-50%) translateY(-100%); opacity: 0; }
-                }
-            `;
-            document.head.appendChild(slideUpStyle);
-            
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 500);
+            if (notification.parentNode) {
+                notification.remove();
+            }
         }, 3000);
     }
 
     /**
-     * Показать ошибку турнира
+     * Показать ошибку
      */
     showTournamentError(message) {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'tournament-error';
-        errorDiv.innerHTML = `
-            <div class="error-content">
-                <i class="fas fa-exclamation-triangle"></i>
-                <span>${message}</span>
-            </div>
-        `;
-
-        errorDiv.style.cssText = `
+        const notification = document.createElement('div');
+        notification.style.cssText = `
             position: fixed;
             top: 20px;
             right: 20px;
-            background: linear-gradient(45deg, #ef4444, #dc2626);
+            background: #ef4444;
             color: white;
             padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            z-index: 10000;
-            font-weight: bold;
+            border-radius: 8px;
+            z-index: 1000;
+            font-size: 14px;
             max-width: 300px;
+            word-wrap: break-word;
         `;
-
-        document.body.appendChild(errorDiv);
-
-        // Убираем через 5 секунд
+        notification.textContent = message;
+        
+        document.body.appendChild(notification);
+        
         setTimeout(() => {
-            if (document.body.contains(errorDiv)) {
-                document.body.removeChild(errorDiv);
+            if (notification.parentNode) {
+                notification.remove();
             }
         }, 5000);
     }
 
     /**
-     * Получить текущие данные игрока
+     * Генерация случайного имени
      */
-    getCurrentPlayerData() {
-        return {
-            id: this.playerId,
-            name: this.playerName,
-            cash: window.gameState?.cash || this.lastCash || 0,
-            assets: window.gameState?.data?.asset || [],
-            income: window.gameState?.data?.income || [],
-            expenses: window.gameState?.data?.expense || [],
-            monthsCount: window.gameState?.data?.monthsCount || this.lastMonths || 0
-        };
-    }
-
-    /**
-     * Отключение от турнира
-     */
-    disconnect() {
-        if (this.socket) {
-            this.socket.close();
-            this.socket = null;
-        }
-        this.isConnected = false;
+    generatePlayerName() {
+        const names = ['Алексей', 'Мария', 'Дмитрий', 'Анна', 'Сергей', 'Елена', 'Андрей', 'Ольга', 'Владимир', 'Наталья'];
+        const randomIndex = Math.floor(Math.random() * names.length);
+        return names[randomIndex];
     }
 }
 
-// Автоматическая инициализация при загрузке страницы
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        if (window.location.search.includes('tournament=true')) {
-            window.tournamentSync = new TournamentSync();
-        }
-    });
-} else {
-    if (window.location.search.includes('tournament=true')) {
-        window.tournamentSync = new TournamentSync();
-    }
-}
-
-// Экспорт для использования в других модулях
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = TournamentSync;
-}
+// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', () => {
+    window.tournamentSync = new TournamentSync();
+});

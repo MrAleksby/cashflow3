@@ -241,6 +241,157 @@ class CustomHTTPRequestHandler(SimpleHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
         
+    def do_GET(self):
+        """Обработка GET запросов с поддержкой API"""
+        # API для получения состояния турнира
+        if self.path == '/api/tournament/state':
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            # Получаем данные турнира
+            players = []
+            for player_id, player_data in self.server.tournament.players.items():
+                players.append({
+                    'id': player_id,
+                    'name': player_data.get('name', 'Unknown'),
+                    'cash': player_data.get('cash', 0),
+                    'assets_count': len(player_data.get('assets', [])),
+                    'months_count': player_data.get('months_count', 0),
+                    'salary': player_data.get('salary', 0),
+                    'passive_income': player_data.get('passive_income', 0),
+                    'total_income': player_data.get('total_income', 0),
+                    'total_expenses': player_data.get('total_expenses', 0),
+                    'flow': player_data.get('flow', 0),
+                    'isOnline': player_data.get('is_online', False),
+                    'lastUpdate': player_data.get('last_update', 0)
+                })
+            
+            response = {
+                'players': players,
+                'isActive': self.server.tournament.is_active,
+                'startTime': self.server.tournament.tournament_start_time,
+                'totalPlayers': len(players),
+                'onlinePlayers': len([p for p in players if p['isOnline']])
+            }
+            
+            self.wfile.write(json.dumps(response).encode())
+            return
+            
+        # API для подключения участника
+        elif self.path.startswith('/api/player/join'):
+            from urllib.parse import parse_qs, urlparse
+            parsed_url = urlparse(self.path)
+            params = parse_qs(parsed_url.query)
+            name = params.get('name', ['Unknown'])[0]
+            
+            # Создаем нового участника
+            player_id = f"player_{int(time.time() * 1000) % 1000000}"
+            player_data = {
+                'name': name,
+                'cash': 0,
+                'assets': [],
+                'income': [],
+                'expenses': [],
+                'months_count': 0,
+                'salary': 0,
+                'passive_income': 0,
+                'total_income': 0,
+                'total_expenses': 0,
+                'flow': 0,
+                'is_online': True,
+                'last_update': time.time()
+            }
+            
+            self.server.tournament.players[player_id] = player_data
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {
+                'playerId': player_id,
+                'player': player_data
+            }
+            
+            self.wfile.write(json.dumps(response).encode())
+            return
+            
+        # API для обновления данных участника
+        elif self.path.startswith('/api/player/update'):
+            from urllib.parse import parse_qs, urlparse
+            parsed_url = urlparse(self.path)
+            params = parse_qs(parsed_url.query)
+            
+            player_id = params.get('player_id', [''])[0]
+            if not player_id or player_id not in self.server.tournament.players:
+                self.send_response(404)
+                self.send_header('Content-Type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps({'error': 'Player not found'}).encode())
+                return
+            
+            # Обновляем данные участника
+            player = self.server.tournament.players[player_id]
+            player['cash'] = int(params.get('cash', [0])[0])
+            player['assets_count'] = int(params.get('assets_count', [0])[0])
+            player['months_count'] = int(params.get('months_count', [0])[0])
+            player['salary'] = int(params.get('salary', [0])[0])
+            player['passive_income'] = int(params.get('passive_income', [0])[0])
+            player['total_income'] = int(params.get('total_income', [0])[0])
+            player['total_expenses'] = int(params.get('total_expenses', [0])[0])
+            player['flow'] = int(params.get('flow', [0])[0])
+            player['last_update'] = time.time()
+            player['is_online'] = True
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {'success': True, 'player': player}
+            self.wfile.write(json.dumps(response).encode())
+            return
+            
+
+        
+        # API для очистки всех участников (админ) - через GET с параметром
+        elif self.path == '/api/admin/clear-players':
+            # Очищаем всех участников
+            self.server.tournament.players.clear()
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {'status': 'success', 'message': 'Все участники очищены'}
+            self.wfile.write(json.dumps(response).encode())
+            return
+            
+        # Обычная обработка файлов
+        else:
+            super().do_GET()
+    
+    def do_POST(self):
+        """Обработка POST запросов"""
+        # API для очистки всех участников (админ)
+        if self.path == '/api/admin/clear-players':
+            # Очищаем всех участников
+            self.server.tournament.players.clear()
+            
+            self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
+            self.end_headers()
+            
+            response = {'status': 'success', 'message': 'Все участники очищены'}
+            self.wfile.write(json.dumps(response).encode())
+            return
+        
+        # Если endpoint не найден
+        self.send_response(404)
+        self.send_header('Content-Type', 'application/json')
+        self.end_headers()
+        self.wfile.write(json.dumps({'error': 'Endpoint not found'}).encode())
+        
     def translate_path(self, path):
         # Маршрутизация для зрительской страницы
         if path == '/spectator':
@@ -267,7 +418,12 @@ async def main():
     
     # Запускаем HTTP сервер в отдельном потоке
     def run_http_server():
-        httpd = HTTPServer(('0.0.0.0', 3000), CustomHTTPRequestHandler)  # Слушаем на всех интерфейсах
+        class TournamentHTTPServer(HTTPServer):
+            def __init__(self, server_address, RequestHandlerClass, tournament):
+                super().__init__(server_address, RequestHandlerClass)
+                self.tournament = tournament
+        
+        httpd = TournamentHTTPServer(('0.0.0.0', 3000), CustomHTTPRequestHandler, tournament)
         logger.info("🌐 HTTP сервер запущен на http://0.0.0.0:3000")
         logger.info("📱 Участники: http://0.0.0.0:3000?tournament=true")
         logger.info("👁️ Зрители: http://0.0.0.0:3000/spectator")
